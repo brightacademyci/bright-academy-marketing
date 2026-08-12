@@ -33,6 +33,7 @@ export const content = {
       achievements: "Achievements",
       sites: "Our Sites",
       gallery: "Gallery",
+      faq: "FAQ",
       contact: "Contact",
       login: "Parent / Staff Login",
       enroll: "Enroll Now",
@@ -165,6 +166,46 @@ export const content = {
       eyebrow: "Gallery",
       title: "Life at Bright Academy",
     },
+    // Every answer here restates a fact already published elsewhere on the
+    // site (age range, sites, languages, curriculum, enrollment flow,
+    // tournament results) — deliberately no pricing/trial/cancellation
+    // questions yet, since we don't have confirmed answers for those and
+    // this is a real parent-facing page, not a place to guess.
+    faq: {
+      eyebrow: "FAQ",
+      title: "Questions parents ask us",
+      subtitle: "Everything you need to know before you enroll.",
+      items: [
+        {
+          q: "What ages do you accept?",
+          a: "Children from 14 months to 17 years old, across seven age-specific programs — from Bright Babies (14–23 months) through Bright Pro (15–17 years).",
+        },
+        {
+          q: "Where do you train?",
+          a: "Five sites across Abidjan and Grand-Bassam. See the Our Sites section above to find the one closest to you.",
+        },
+        {
+          q: "What languages are sessions run in?",
+          a: "All sessions run in both English and French.",
+        },
+        {
+          q: "What's your coaching approach?",
+          a: "A real curriculum, not improvised drills — built on Horst Wein's Funino and Formino frameworks, with every session evaluated across four pillars: technical, game intelligence, mental, and physical.",
+        },
+        {
+          q: "How do I enroll my child?",
+          a: "Create a parent account through our portal, register your child, and choose their training site — no invite link needed. It takes a few minutes.",
+        },
+        {
+          q: "Do your players compete?",
+          a: "Yes — Bright Academy players have already won titles at international tournaments, including the Surf Cup International in Morocco and the Abu Dhabi Cup.",
+        },
+      ],
+    },
+    chat: {
+      prefill: "Hi! I'd like to know more about enrolling my child at Bright Academy.",
+      label: "Chat on WhatsApp",
+    },
     enrollCta: {
       title: "Ready to get your child started?",
       subtitle:
@@ -189,6 +230,7 @@ export const content = {
       achievements: "Palmarès",
       sites: "Nos sites",
       gallery: "Galerie",
+      faq: "FAQ",
       contact: "Contact",
       login: "Connexion parent / staff",
       enroll: "Inscrire mon enfant",
@@ -315,6 +357,41 @@ export const content = {
     gallery: {
       eyebrow: "Galerie",
       title: "La vie à Bright Academy",
+    },
+    faq: {
+      eyebrow: "FAQ",
+      title: "Les questions que les parents nous posent",
+      subtitle: "Tout ce qu'il faut savoir avant de vous inscrire.",
+      items: [
+        {
+          q: "Quel âge faut-il avoir ?",
+          a: "Nous accueillons les enfants de 14 mois à 17 ans, à travers sept programmes adaptés à chaque âge — de Bright Babies (14–23 mois) à Bright Pro (15–17 ans).",
+        },
+        {
+          q: "Où se déroulent les entraînements ?",
+          a: "Sur cinq sites à Abidjan et Grand-Bassam. Consultez la section Nos sites ci-dessus pour trouver le plus proche de chez vous.",
+        },
+        {
+          q: "Dans quelles langues sont données les séances ?",
+          a: "Toutes les séances sont données en anglais et en français.",
+        },
+        {
+          q: "Quelle est votre approche pédagogique ?",
+          a: "Un vrai curriculum, pas des exercices improvisés — fondé sur les méthodes Funino et Formino de Horst Wein, avec chaque séance évaluée selon quatre piliers : technique, intelligence de jeu, mental et physique.",
+        },
+        {
+          q: "Comment inscrire mon enfant ?",
+          a: "Créez un compte parent sur notre portail, inscrivez votre enfant et choisissez son site d'entraînement — aucun lien d'invitation nécessaire. Cela prend quelques minutes.",
+        },
+        {
+          q: "Vos joueurs participent-ils à des compétitions ?",
+          a: "Oui — les joueurs de Bright Academy ont déjà remporté des titres lors de tournois internationaux, dont la Surf Cup International au Maroc et l'Abu Dhabi Cup.",
+        },
+      ],
+    },
+    chat: {
+      prefill: "Bonjour ! J'aimerais en savoir plus sur l'inscription de mon enfant à Bright Academy.",
+      label: "Discuter sur WhatsApp",
     },
     enrollCta: {
       title: "Prêt à inscrire votre enfant ?",

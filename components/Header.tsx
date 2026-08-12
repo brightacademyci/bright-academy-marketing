@@ -5,13 +5,14 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "./LanguageProvider";
 import { ENROLL_URL, LOGIN_URL } from "@/lib/content";
 
-const SECTIONS: { id: string; key: "about" | "approach" | "achievements" | "programs" | "sites" | "gallery" }[] = [
+const SECTIONS: { id: string; key: "about" | "approach" | "achievements" | "programs" | "sites" | "gallery" | "faq" }[] = [
   { id: "about", key: "about" },
   { id: "approach", key: "approach" },
   { id: "achievements", key: "achievements" },
   { id: "programs", key: "programs" },
   { id: "sites", key: "sites" },
   { id: "gallery", key: "gallery" },
+  { id: "faq", key: "faq" },
 ];
 
 export function Header() {
