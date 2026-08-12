@@ -168,9 +168,10 @@ export const content = {
     },
     // Every answer here restates a fact already published elsewhere on the
     // site (age range, sites, languages, curriculum, enrollment flow,
-    // tournament results) — deliberately no pricing/trial/cancellation
-    // questions yet, since we don't have confirmed answers for those and
-    // this is a real parent-facing page, not a place to guess.
+    // tournament results, pricing, trial sessions, cancellation policy).
+    // Pricing/annual-fee/cancellation entries are sourced from the live
+    // Bright Academy OS database (fee_plans table) and its published
+    // enrollment terms — not guessed at — pulled 2026-08-12.
     faq: {
       eyebrow: "FAQ",
       title: "Questions parents ask us",
@@ -199,6 +200,30 @@ export const content = {
         {
           q: "Do your players compete?",
           a: "Yes — Bright Academy players have already won titles at international tournaments, including the Surf Cup International in Morocco and the Abu Dhabi Cup.",
+        },
+        {
+          q: "How much does it cost?",
+          a: "Monthly fees depend on your child's age and how many sessions a week they train. Our Classique formula (1–2 sessions/week) starts at 22,000 XOF/month, scaling with age; our Elite formula (4 sessions/week, available only at Complexe Sportif de Biafra and Palais des Sports de Treichville) runs 75,000–97,000 XOF/month. Prefer to pay as you go? Single sessions are 6,000–9,000 XOF depending on age, and private coaching is 20,000 XOF/session. Quarterly billing is available at a discount, and the exact rate for your child's age group is confirmed when you register.",
+        },
+        {
+          q: "Is there a yearly registration fee?",
+          a: "Yes. On top of your program fee, there's a one-time annual enrollment fee for our sporting season (September–May): 30,000 XOF for new players, 25,000 XOF for returning ones. Two training kits are also required each season (40,000 XOF).",
+        },
+        {
+          q: "Can we try a session before enrolling?",
+          a: "Yes — message us on WhatsApp or reach out through the enrollment portal, and our staff will help arrange a trial session at the site nearest you before you commit to full enrollment.",
+        },
+        {
+          q: "What's your cancellation policy?",
+          a: "You can withdraw your child at any time with written notice to the academy; it takes effect at the end of the current billing month unless we agree otherwise. In line with our enrollment terms, registration fees and subscriptions already paid aren't refunded for a voluntary withdrawal during the season.",
+        },
+        {
+          q: "How do I pay, and when am I billed?",
+          a: "Once your child's registration is confirmed, we invoice automatically each month (or each quarter, if you choose that plan). You can pay by cash, Mobile Money, or bank transfer at any of our sites.",
+        },
+        {
+          q: "What about medical information and insurance?",
+          a: "We ask for relevant medical details (allergies, ongoing treatment, emergency contacts) at registration so our staff can respond quickly if needed. We recommend parents arrange their own individual accident insurance for their child, since the academy doesn't automatically insure every player.",
         },
       ],
     },
@@ -386,6 +411,30 @@ export const content = {
         {
           q: "Vos joueurs participent-ils à des compétitions ?",
           a: "Oui — les joueurs de Bright Academy ont déjà remporté des titres lors de tournois internationaux, dont la Surf Cup International au Maroc et l'Abu Dhabi Cup.",
+        },
+        {
+          q: "Combien ça coûte ?",
+          a: "Les frais mensuels dépendent de l'âge de votre enfant et du nombre de séances par semaine. Notre formule Classique (1 à 2 séances/semaine) démarre à 22 000 XOF/mois et évolue selon l'âge ; notre formule Élite (4 séances/semaine, disponible uniquement au Complexe Sportif de Biafra et au Palais des Sports de Treichville) va de 75 000 à 97 000 XOF/mois. Vous préférez payer à la séance ? Comptez 6 000 à 9 000 XOF selon l'âge, et 20 000 XOF pour un cours particulier. La facturation trimestrielle est proposée à tarif préférentiel, et le tarif exact selon la catégorie d'âge de votre enfant vous est confirmé lors de l'inscription.",
+        },
+        {
+          q: "Y a-t-il des frais d'inscription annuels ?",
+          a: "Oui. En plus de la cotisation du programme choisi, des frais d'adhésion annuelle s'appliquent pour la saison sportive (septembre à mai) : 30 000 XOF pour un nouveau joueur, 25 000 XOF pour un joueur qui revient. Deux tenues d'entraînement sont également requises chaque saison (40 000 XOF).",
+        },
+        {
+          q: "Peut-on essayer une séance avant de s'inscrire ?",
+          a: "Oui — contactez-nous sur WhatsApp ou via le portail d'inscription, et notre équipe vous aidera à organiser une séance d'essai sur le site le plus proche de chez vous avant de vous engager pleinement.",
+        },
+        {
+          q: "Quelle est votre politique d'annulation ?",
+          a: "Vous pouvez retirer votre enfant à tout moment, par simple notification écrite à l'académie ; le retrait prend effet à la fin du mois de cotisation en cours, sauf accord contraire. Conformément à nos Conditions d'Inscription, les frais d'inscription et cotisations déjà réglés ne sont pas remboursés en cas de retrait volontaire en cours de saison.",
+        },
+        {
+          q: "Comment et quand suis-je facturé ?",
+          a: "Une fois l'inscription de votre enfant confirmée, une facture est émise automatiquement chaque mois (ou chaque trimestre, selon la formule choisie). Le paiement se fait en espèces, par Mobile Money ou par virement bancaire, sur l'un de nos sites.",
+        },
+        {
+          q: "Qu'en est-il des informations médicales et de l'assurance ?",
+          a: "Nous demandons certaines informations médicales utiles (allergies, traitements en cours, contacts d'urgence) lors de l'inscription, afin que notre personnel puisse réagir rapidement en cas de besoin. Nous recommandons aux parents de souscrire leur propre assurance individuelle accident pour leur enfant, l'académie n'assurant pas systématiquement chaque joueur à titre individuel.",
         },
       ],
     },
