@@ -57,22 +57,20 @@ export function Sites() {
                 onClick={() => setSelected(i)}
                 className={`flex items-start gap-3 rounded-2xl p-5 text-left shadow-sm ring-1 transition ${
                   i === selected
-                    ? "bg-navy text-white ring-2 ring-orange"
-                    : "bg-white text-navy ring-black/5 hover:ring-navy/25"
+                    ? "bg-white/10 text-white ring-2 ring-orange"
+                    : "bg-white/5 text-white ring-white/10 hover:ring-orange/30"
                 }`}
               >
                 <span
                   className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${
-                    i === selected ? "bg-white/15 text-white" : "bg-navy/10 text-navy"
+                    i === selected ? "bg-white/20 text-white" : "bg-white/10 text-white"
                   }`}
                 >
                   {i + 1}
                 </span>
                 <div>
                   <h3 className="text-[14px] font-semibold">{s.name}</h3>
-                  <p className={`mt-0.5 text-[13px] ${i === selected ? "text-white/75" : "text-navy-deep/70"}`}>
-                    {s.area}
-                  </p>
+                  <p className="mt-0.5 text-[13px] text-white/70">{s.area}</p>
                 </div>
               </button>
             ))}

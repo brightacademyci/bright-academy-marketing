@@ -26,12 +26,12 @@ export function Footer() {
             <p className="text-[12px] font-semibold uppercase tracking-wide text-white/50">{t.footer.contact}</p>
             <ul className="mt-3 space-y-2 text-[13px]">
               <li>
-                <a href={FOOTER_SOCIAL.whatsapp} className="hover:text-white transition">
+                <a href={FOOTER_SOCIAL.whatsapp} className="hover:text-orange transition">
                   {t.footer.whatsapp}: {WHATSAPP_DISPLAY}
                 </a>
               </li>
               <li>
-                <a href={LOGIN_URL} className="hover:text-white transition">
+                <a href={LOGIN_URL} className="hover:text-orange transition">
                   {t.footer.parentLogin}
                 </a>
               </li>
@@ -42,22 +42,22 @@ export function Footer() {
             <p className="text-[12px] font-semibold uppercase tracking-wide text-white/50">{t.footer.social}</p>
             <ul className="mt-3 space-y-2 text-[13px]">
               <li>
-                <a href={FOOTER_SOCIAL.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+                <a href={FOOTER_SOCIAL.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-orange transition">
                   Facebook
                 </a>
               </li>
               <li>
-                <a href={FOOTER_SOCIAL.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+                <a href={FOOTER_SOCIAL.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-orange transition">
                   Instagram
                 </a>
               </li>
               <li>
-                <a href={FOOTER_SOCIAL.tiktok} target="_blank" rel="noopener noreferrer" className="hover:text-white transition">
+                <a href={FOOTER_SOCIAL.tiktok} target="_blank" rel="noopener noreferrer" className="hover:text-orange transition">
                   TikTok
                 </a>
               </li>
               <li>
-                <a href={FOOTER_SOCIAL.whatsapp} className="hover:text-white transition">
+                <a href={FOOTER_SOCIAL.whatsapp} className="hover:text-orange transition">
                   WhatsApp
                 </a>
               </li>

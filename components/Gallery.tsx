@@ -6,6 +6,7 @@ import { useLanguage } from "./LanguageProvider";
 import { Reveal } from "./Reveal";
 import { Lightbox } from "./Lightbox";
 import { GallerySlideshow } from "./GallerySlideshow";
+import { PitchDiagram } from "./PitchDiagram";
 
 // Distinct alt text per photo rather than one generic caption repeated 8
 // times — better for screen readers and image search alike.
@@ -31,35 +32,38 @@ export function Gallery() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="gallery" className="mx-auto max-w-content px-5 py-16 md:py-24">
-      <Reveal className="max-w-2xl">
-        <span className="text-[12px] font-semibold uppercase tracking-wide text-orange-text">{t.gallery.eyebrow}</span>
-        <h2 className="mt-2 font-display text-2xl font-bold text-navy md:text-3xl">{t.gallery.title}</h2>
-      </Reveal>
+    <section id="gallery" className="relative overflow-hidden bg-navy-deep py-16 text-white md:py-24">
+      <PitchDiagram className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.05]" />
+      <div className="relative mx-auto max-w-content px-5">
+        <Reveal className="max-w-2xl">
+          <span className="text-[12px] font-semibold uppercase tracking-wide text-orange">{t.gallery.eyebrow}</span>
+          <h2 className="mt-2 font-display text-2xl font-bold text-white md:text-3xl">{t.gallery.title}</h2>
+        </Reveal>
 
-      <Reveal className="mt-8">
-        <GallerySlideshow />
-      </Reveal>
+        <Reveal className="mt-8">
+          <GallerySlideshow />
+        </Reveal>
 
-      <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-        {IMAGES.map((img, i) => (
-          <button
-            key={img.file}
-            onClick={() => setOpenIndex(i)}
-            className="group relative aspect-square overflow-hidden rounded-xl"
-            aria-label={`Open photo: ${img.alt}`}
-          >
-            <Image
-              src={`/images/${img.file}`}
-              alt={img.alt}
-              fill
-              className="object-cover transition duration-300 group-hover:scale-105"
-              sizes="(min-width: 768px) 25vw, 50vw"
-              loading={i < 4 ? "eager" : "lazy"}
-            />
-            <span className="absolute inset-0 bg-navy-deep/0 transition group-hover:bg-navy-deep/10" />
-          </button>
-        ))}
+        <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+          {IMAGES.map((img, i) => (
+            <button
+              key={img.file}
+              onClick={() => setOpenIndex(i)}
+              className="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-white/10"
+              aria-label={`Open photo: ${img.alt}`}
+            >
+              <Image
+                src={`/images/${img.file}`}
+                alt={img.alt}
+                fill
+                className="object-cover transition duration-300 group-hover:scale-105"
+                sizes="(min-width: 768px) 25vw, 50vw"
+                loading={i < 4 ? "eager" : "lazy"}
+              />
+              <span className="absolute inset-0 bg-navy-deep/0 transition group-hover:bg-navy-deep/20" />
+            </button>
+          ))}
+        </div>
       </div>
 
       {openIndex !== null && (

@@ -29,7 +29,7 @@ export function Header() {
   return (
     <header
       className={`sticky top-0 z-50 border-b transition-all duration-300 ${
-        scrolled ? "border-white/10 bg-navy-dark/95 shadow-sm backdrop-blur-md" : "border-transparent bg-navy-dark backdrop-blur"
+        scrolled ? "border-white/10 bg-navy-deep/95 shadow-sm backdrop-blur-md" : "border-transparent bg-navy-deep backdrop-blur"
       }`}
     >
       <div
@@ -44,7 +44,7 @@ export function Header() {
 
         <nav className="hidden items-center gap-5 lg:flex">
           {SECTIONS.map((s) => (
-            <a key={s.id} href={`#${s.id}`} className="text-[13px] font-medium text-white/80 hover:text-white">
+            <a key={s.id} href={`#${s.id}`} className="text-[13px] font-medium text-white/80 hover:text-orange">
               {t.nav[s.key]}
             </a>
           ))}
@@ -57,12 +57,12 @@ export function Header() {
           >
             {lang === "en" ? "FR" : "EN"}
           </button>
-          <a href={LOGIN_URL} className="text-[13px] font-medium text-white/80 hover:text-white">
+          <a href={LOGIN_URL} className="text-[13px] font-medium text-white/80 hover:text-orange">
             {t.nav.login}
           </a>
           <a
             href={ENROLL_URL}
-            className="rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-navy hover:bg-white/90"
+            className="rounded-full bg-orange px-4 py-2 text-[13px] font-semibold text-navy-deep hover:bg-orange/90"
           >
             {t.nav.enroll}
           </a>
@@ -78,14 +78,14 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-navy-dark px-5 py-4 lg:hidden">
+        <div className="border-t border-white/10 bg-navy-deep px-5 py-4 lg:hidden">
           <nav className="flex flex-col gap-3">
             {SECTIONS.map((s) => (
-              <a key={s.id} href={`#${s.id}`} onClick={() => setOpen(false)} className="text-sm font-medium text-white/90">
+              <a key={s.id} href={`#${s.id}`} onClick={() => setOpen(false)} className="text-sm font-medium text-white/90 hover:text-orange">
                 {t.nav[s.key]}
               </a>
             ))}
-            <a href={LOGIN_URL} className="text-sm font-medium text-white/90">
+            <a href={LOGIN_URL} className="text-sm font-medium text-white/90 hover:text-orange">
               {t.nav.login}
             </a>
             <div className="mt-1 flex items-center gap-3">
@@ -97,7 +97,7 @@ export function Header() {
               </button>
               <a
                 href={ENROLL_URL}
-                className="flex-1 rounded-full bg-white px-4 py-2 text-center text-[13px] font-semibold text-navy"
+                className="flex-1 rounded-full bg-orange px-4 py-2 text-center text-[13px] font-semibold text-navy-deep"
               >
                 {t.nav.enroll}
               </a>

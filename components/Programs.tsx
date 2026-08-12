@@ -28,7 +28,7 @@ export function Programs() {
               <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {group.categories.map((c, i) => (
                   <Reveal key={c.name} delay={i * 60}>
-                    <div className="h-full rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/10 hover:ring-white/25">
+                    <div className="h-full rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/10 hover:ring-orange/30">
                       <div className="flex items-baseline justify-between gap-2">
                         <h4 className="font-display text-[15px] font-semibold text-white">{c.name}</h4>
                         <span className="whitespace-nowrap text-[11px] font-semibold text-orange">{c.range}</span>
@@ -45,10 +45,13 @@ export function Programs() {
         <Reveal className="mt-10">
           <a
             href={ENROLL_URL}
-            className="flex flex-col items-start justify-center rounded-2xl bg-white p-6 text-navy transition duration-300 hover:-translate-y-1 hover:bg-white/90 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col items-start justify-center rounded-2xl bg-white/5 p-6 text-white ring-1 ring-orange/40 transition duration-300 hover:-translate-y-1 hover:bg-white/10 hover:ring-orange/70 sm:flex-row sm:items-center sm:justify-between"
           >
             <span className="font-display text-[16px] font-semibold">{t.hero.ctaPrimary}</span>
-            <span className="mt-2 text-[13px] text-navy-deep/70 sm:mt-0">{t.programs.subtitle}</span>
+            <span className="mt-2 flex items-center gap-2 text-[13px] text-white/70 sm:mt-0">
+              {t.programs.subtitle}
+              <span aria-hidden className="text-orange">→</span>
+            </span>
           </a>
         </Reveal>
       </div>

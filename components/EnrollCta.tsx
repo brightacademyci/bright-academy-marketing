@@ -9,7 +9,7 @@ export function EnrollCta() {
   const { t } = useLanguage();
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-navy py-16 text-white md:py-20">
+    <section id="contact" className="relative overflow-hidden bg-navy-deep py-16 text-white md:py-20">
       <div
         aria-hidden
         className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-orange/20 blur-3xl"
@@ -24,7 +24,7 @@ export function EnrollCta() {
         <p className="mt-3 max-w-md text-[14px] text-white/75">{t.enrollCta.subtitle}</p>
         <a
           href={ENROLL_URL}
-          className="mt-7 rounded-full bg-white px-8 py-3.5 text-[14px] font-semibold text-navy transition hover:-translate-y-0.5 hover:bg-white/90 hover:shadow-lg"
+          className="mt-7 rounded-full bg-orange px-8 py-3.5 text-[14px] font-semibold text-navy-deep transition hover:-translate-y-0.5 hover:bg-orange/90 hover:shadow-lg"
         >
           {t.enrollCta.cta}
         </a>

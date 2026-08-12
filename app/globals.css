@@ -22,8 +22,8 @@ html {
 }
 
 body {
-  background: theme("colors.bg");
-  color: theme("colors.navy.deep");
+  background: theme("colors.navy.deep");
+  color: theme("colors.white");
   font-family: theme("fontFamily.sans");
 }
 
@@ -31,7 +31,7 @@ body {
    white box with a hard shadow and cramped padding. */
 .leaflet-container {
   font-family: "Inter", system-ui, sans-serif;
-  background: theme("colors.bg");
+  background: theme("colors.navy.deep");
 }
 .leaflet-popup-content-wrapper {
   border-radius: 14px;
@@ -42,4 +42,26 @@ body {
 }
 .leaflet-popup-tip {
   box-shadow: 0 8px 24px rgba(7, 20, 38, 0.1);
+}
+
+/* The site's whole palette is now dark navy + orange, but map tiles are
+   inherently light street-map imagery pulled from OpenStreetMap — an
+   invert+hue-rotate filter is the standard trick for a "dark mode map"
+   without switching tile providers (and taking on a second, differently-
+   rate-limited image host just for this one section). Scoped to the tile
+   pane only, so our own orange/navy pin markers and the popups above stay
+   their real colors instead of getting inverted too. */
+.leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.6);
+}
+
+/* Leaflet's built-in zoom control ships as hard-coded white squares —
+   restyle to match the dark map rather than punching a white hole in it. */
+.leaflet-control-zoom a {
+  background-color: theme("colors.navy.deep") !important;
+  color: theme("colors.white") !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+.leaflet-control-zoom a:hover {
+  background-color: theme("colors.navy.dark") !important;
 }

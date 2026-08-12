@@ -9,7 +9,7 @@ export function Hero() {
   const { t } = useLanguage();
 
   return (
-    <section id="top" className="relative overflow-hidden bg-navy-dark text-white">
+    <section id="top" className="relative overflow-hidden bg-navy-deep text-white">
       <div className="absolute inset-0 animate-kenburns">
         <Image
           src="/images/hero.jpg"
@@ -21,7 +21,7 @@ export function Hero() {
           sizes="100vw"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-navy-dark/80 via-navy-dark/70 to-navy-dark" />
+      <div className="absolute inset-0 bg-gradient-to-b from-navy-deep/80 via-navy-deep/70 to-navy-deep" />
 
       <div className="relative mx-auto flex max-w-content flex-col items-start px-5 py-20 md:py-28">
         <span className="animate-fadeInUp rounded-full bg-white/10 px-3 py-1 text-[12px] font-medium tracking-wide text-white/80">
@@ -43,13 +43,13 @@ export function Hero() {
         <div className="mt-7 flex animate-fadeInUp flex-wrap gap-3" style={{ animationDelay: "240ms" }}>
           <a
             href={ENROLL_URL}
-            className="rounded-full bg-white px-6 py-3 text-[14px] font-semibold text-navy transition hover:-translate-y-0.5 hover:bg-white/90 hover:shadow-lg"
+            className="rounded-full bg-orange px-6 py-3 text-[14px] font-semibold text-navy-deep transition hover:-translate-y-0.5 hover:bg-orange/90 hover:shadow-lg"
           >
             {t.hero.ctaPrimary}
           </a>
           <a
             href="#programs"
-            className="rounded-full border border-white/30 px-6 py-3 text-[14px] font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10"
+            className="rounded-full border border-orange/30 px-6 py-3 text-[14px] font-semibold text-white transition hover:-translate-y-0.5 hover:bg-orange/10"
           >
             {t.hero.ctaSecondary}
           </a>
