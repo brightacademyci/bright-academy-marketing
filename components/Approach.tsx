@@ -2,13 +2,15 @@
 
 import { useLanguage } from "./LanguageProvider";
 import { Reveal } from "./Reveal";
+import { PitchDiagram } from "./PitchDiagram";
 
 export function Approach() {
   const { t } = useLanguage();
 
   return (
-    <section id="approach" className="bg-navy/[0.03] py-16 md:py-24">
-      <div className="mx-auto max-w-content px-5">
+    <section id="approach" className="relative overflow-hidden bg-navy/[0.03] py-16 md:py-24">
+      <PitchDiagram className="pointer-events-none absolute inset-0 h-full w-full text-navy/[0.05]" />
+      <div className="relative mx-auto max-w-content px-5">
         <Reveal className="max-w-2xl">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-orange-text">{t.approach.eyebrow}</span>
           <h2 className="mt-2 font-display text-2xl font-bold text-navy md:text-3xl">{t.approach.title}</h2>

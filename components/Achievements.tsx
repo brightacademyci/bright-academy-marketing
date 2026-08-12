@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useLanguage } from "./LanguageProvider";
 import { Reveal } from "./Reveal";
+import { PitchDiagram } from "./PitchDiagram";
 
 function TrophyIcon() {
   return (
@@ -23,6 +24,7 @@ export function Achievements() {
         aria-hidden
         className="pointer-events-none absolute -left-20 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-orange/10 blur-3xl"
       />
+      <PitchDiagram className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.07]" />
       <div className="relative mx-auto max-w-content px-5">
         <Reveal className="max-w-2xl">
           <span className="text-[12px] font-semibold uppercase tracking-wide text-orange">{t.achievements.eyebrow}</span>
