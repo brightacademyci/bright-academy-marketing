@@ -1,0 +1,45 @@
+/* Self-hosted fonts (shipped as static assets via the @fontsource npm
+   packages) — Inter for body copy, Space Grotesk for headlines. Avoids any
+   runtime or build-time dependency on Google's font CDN. @import must come
+   before all other rules, including @tailwind, per the CSS spec. */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  /* Accounts for the sticky header so anchor jumps (nav links, the hero
+     scroll cue) don't tuck the section title underneath it. */
+  scroll-padding-top: 76px;
+}
+
+body {
+  background: theme("colors.bg");
+  color: theme("colors.navy.deep");
+  font-family: theme("fontFamily.sans");
+}
+
+/* Leaflet popup — restyled to match the site rather than Leaflet's default
+   white box with a hard shadow and cramped padding. */
+.leaflet-container {
+  font-family: "Inter", system-ui, sans-serif;
+  background: theme("colors.bg");
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(7, 20, 38, 0.18);
+}
+.leaflet-popup-content {
+  margin: 12px 14px;
+}
+.leaflet-popup-tip {
+  box-shadow: 0 8px 24px rgba(7, 20, 38, 0.1);
+}
