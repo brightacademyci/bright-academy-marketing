@@ -10,12 +10,11 @@
 // below is a placeholder "#"), and, once the domain is restructured, the
 // APP_URL the Enroll button points to.
 
-// Where "Enroll Now" and every other app-handoff link goes. Today
-// brightacademyci.com aliases straight to the OS app, so pointing there is
-// safe immediately. Once the planned domain restructuring happens (this
-// marketing site takes over the root domain, the OS app moves to a
-// subdomain like app.brightacademyci.com), update this one constant.
-export const APP_URL = "https://www.brightacademyci.com";
+// Where "Enroll Now" and every other app-handoff link goes. The domain
+// restructuring moved the OS app to portal.brightacademyci.com and gave
+// brightacademyci.com to this marketing site — this constant now points at
+// its permanent home.
+export const APP_URL = "https://portal.brightacademyci.com";
 export const ENROLL_URL = `${APP_URL}/signup/parent`;
 export const LOGIN_URL = `${APP_URL}/login`;
 
