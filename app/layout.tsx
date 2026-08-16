@@ -54,10 +54,19 @@ import { FOOTER_SOCIAL, SITE_URL } from "@/lib/content";
 // brand name + country, nothing to translate. DESCRIPTION/DESCRIPTION_EN
 // (the part that still carries the "football academy Abidjan" keywords
 // for search) were deliberately left untouched — only the title changed.
-const TITLE = "Bright Academy Côte d'Ivoire";
+// CHANGED AGAIN per Patrick's explicit instruction (2026-08-16, SEO/social
+// follow-up): "Côte d'Ivoire" spelled out → "CI", matching how the brand
+// is already written everywhere else that isn't this title — the Google
+// Business Profile name ("Bright Academy CI"), the Instagram handle
+// (@brightacademy_ci), the TikTok handle (@bright_academy.ci), and the
+// Facebook page name ("Bright Academy CI"). This makes the browser-tab/
+// search-result/social-share title consistent with those, instead of the
+// odd one out. DESCRIPTION/DESCRIPTION_EN untouched again — same reasoning
+// as the entry above, only the title changed.
+const TITLE = "Bright Academy CI";
 const DESCRIPTION =
   "Bright Academy propose une formation structurée pour les enfants de 14 mois à 17 ans sur cinq sites à Abidjan et Grand-Bassam. Programmes adaptés à chaque âge, curriculum en quatre piliers et résultats internationaux.";
-const TITLE_EN = "Bright Academy Côte d'Ivoire";
+const TITLE_EN = "Bright Academy CI";
 const DESCRIPTION_EN =
   "Structured football development for children aged 14 months to 17 years across five locations in Abidjan and Grand-Bassam, with age-specific programmes, a four-pillar curriculum, and international results.";
 
