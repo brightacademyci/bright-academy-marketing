@@ -3,14 +3,19 @@
 import Image from "next/image";
 import { useLanguage } from "./LanguageProvider";
 import { Reveal } from "./Reveal";
-import { PitchDiagram } from "./PitchDiagram";
+import { BrandDiagram } from "./BrandDiagram";
 
 export function About() {
   const { t } = useLanguage();
 
   return (
+    // Reverted to dark 2026-08-13 — Patrick's follow-up: he'd asked for a
+    // "professional and light" treatment on About/Kit/FAQ/Sites, but after
+    // seeing it live he wants the site uniform in navy-deep instead, so this
+    // (along with KitShowcase, Sites, FAQ) is back to matching every other
+    // section on the page.
     <section id="about" className="relative overflow-hidden bg-navy-deep py-16 text-white md:py-24">
-      <PitchDiagram className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.05]" />
+      <BrandDiagram className="pointer-events-none absolute inset-0 h-full w-full text-white/[0.05]" />
       <div className="relative mx-auto grid max-w-content gap-10 px-5 md:grid-cols-2 md:items-center md:gap-14">
         <Reveal className="relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-white/10">
           <Image

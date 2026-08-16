@@ -32,6 +32,10 @@ const config: Config = {
         // Fonts — it just works, offline included.
         sans: ["Inter", "system-ui", "sans-serif"],
         display: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
+        // Chunky, rounded display font used only for the Programs section's
+        // category titles (Bright Babies, Bright Kicks, ...) — matches the
+        // lettering on the category badge graphics Patrick sent, 2026-08-13.
+        badge: ["Fredoka", "Space Grotesk", "system-ui", "sans-serif"],
       },
       keyframes: {
         kenburns: {

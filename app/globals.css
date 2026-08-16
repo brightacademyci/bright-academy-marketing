@@ -9,10 +9,35 @@
 @import "@fontsource/space-grotesk/500.css";
 @import "@fontsource/space-grotesk/600.css";
 @import "@fontsource/space-grotesk/700.css";
+/* Fredoka — added 2026-08-13. Patrick pointed at the chunky, rounded
+   lettering on the category badge graphics he sent ("BRIGHT JUNIOR", etc.)
+   and asked for that lettering style on the site. Scoped to the Programs
+   section's category titles only (font-badge, see tailwind.config.ts) —
+   the rest of the site keeps Space Grotesk. */
+@import "@fontsource/fredoka/600.css";
+@import "@fontsource/fredoka/700.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Accessibility pass 2026-08-13 (Priority 11) — a consistent, on-brand
+   visible focus state for every interactive element on the site (links,
+   buttons, form fields). Uses :focus-visible rather than :focus so it only
+   shows for keyboard/assistive-tech navigation, not on every mouse click,
+   matching modern browser default behavior. Placed after @tailwind
+   utilities so it wins the cascade over the one existing case that turned
+   focus off outright without an equivalent replacement (CareersForm's
+   `focus:outline-none` — see that file, now paired with its own visible
+   ring so this is a backstop, not the only defense there). Skips
+   `.leaflet-*` — Leaflet's own controls already have their own focus
+   handling and this site doesn't restyle third-party pieces further than
+   the map dark-mode filter above. */
+:focus-visible {
+  outline: 2px solid theme("colors.orange.DEFAULT");
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 
 html {
   scroll-behavior: smooth;

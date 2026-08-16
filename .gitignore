@@ -4,3 +4,13 @@ out
 .vercel
 *.log
 .DS_Store
+tsconfig.tsbuildinfo
+
+# Added 2026-08-13, Priority 15 QA pass ("verify no secrets/credentials
+# committed"). Only .env.example (no real secrets) exists in this project
+# right now, but nothing was previously excluding a real .env/.env.local if
+# one gets created locally — this is the standard Next.js env ignore list,
+# added preventatively before that becomes a live risk.
+.env
+.env.local
+.env.*.local
