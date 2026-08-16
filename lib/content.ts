@@ -122,11 +122,34 @@ export const content = {
         { title: "A four-pillar curriculum, evaluated by age" },
         { title: "Purely educational, play-based learning" },
       ],
-      // Reserved for a future "Meet the Team" section — not built yet since
-      // there's no bio/photo content for it. Once Patrick sends that, this
-      // becomes a real link instead of dead content (currently unused by
-      // About.tsx).
-      cta: "Meet the coaching staff",
+      // Added 2026-08-16 — Patrick sent his founder bio and photos; this
+      // now links to the new Founder section below instead of sitting
+      // unused (see About.tsx).
+      cta: "Meet our founder",
+    },
+    // Added 2026-08-16, Patrick's explicit request: a founder bio section,
+    // built from the professional bio text and photos he sent directly.
+    // Body condensed to five web-friendly paragraphs; every fact here (the
+    // countries coached in, the founding years/cities, the coaching
+    // education, the degree) comes straight from what Patrick provided —
+    // nothing added or guessed. Photo: /images/founder-patrick.jpg, chosen
+    // from the set Patrick sent as the most polished/on-brand option (see
+    // report back to Patrick for the full reasoning on that choice).
+    founder: {
+      eyebrow: "Meet the Founder",
+      name: "Patrick Asaiah Asseu",
+      role: "Founder & President, Bright Academy",
+      photoAlt: "Patrick Asaiah Asseu, Founder and President of Bright Academy",
+      body: [
+        "Patrick Asaiah Asseu founded Bright Academy on a simple conviction: that football should develop better people, not just better players.",
+        "A former professional footballer and youth coach, Patrick has coached across Côte d'Ivoire, Egypt, Thailand, and the Philippines. He founded Bright Academy in Manila in 2019, then launched Bright Academy CI in 2021.",
+        "His coaching philosophy centers on developing technical ability, game intelligence, creativity, decision-making, confidence, discipline, and character in every player.",
+        "He has trained through the Chelsea Foundation and a Funiño clinic based on Horst Wein's methodology, and holds a Bachelor's degree in Sociology from Université Cheikh Anta Diop de Dakar.",
+        "His vision for Bright Academy is simple: give every child, regardless of ability or background, the chance to grow through football — on the pitch and in life.",
+      ],
+      quote:
+        "Football is the vehicle. Development is the mission. Our goal is to help every child discover their potential, on the pitch and in life.",
+      quoteAttribution: "Patrick Asaiah Asseu, Founder & President, Bright Academy",
     },
     philosophy: {
       eyebrow: "Our Philosophy",
@@ -577,7 +600,23 @@ export const content = {
         { title: "Un curriculum en quatre piliers, évalué selon l'âge" },
         { title: "Un apprentissage par le jeu, purement éducatif" },
       ],
-      cta: "Découvrir le staff technique",
+      cta: "Découvrir notre fondateur",
+    },
+    founder: {
+      eyebrow: "Rencontrer le fondateur",
+      name: "Patrick Asaiah Asseu",
+      role: "Fondateur & Président, Bright Academy",
+      photoAlt: "Patrick Asaiah Asseu, fondateur et président de Bright Academy",
+      body: [
+        "Patrick Asaiah Asseu a fondé Bright Academy autour d'une conviction simple : le football doit former de meilleures personnes, pas seulement de meilleurs joueurs.",
+        "Ancien footballeur professionnel et entraîneur de jeunes, Patrick a entraîné en Côte d'Ivoire, en Égypte, en Thaïlande et aux Philippines. Il a fondé Bright Academy à Manille en 2019, puis lancé Bright Academy CI en 2021.",
+        "Sa philosophie d'entraînement place au centre le développement technique, l'intelligence de jeu, la créativité, la prise de décision, la confiance en soi, la discipline et le caractère de chaque joueur.",
+        "Il s'est formé auprès de la Chelsea Foundation et lors d'un clinique Funiño basé sur la méthodologie de Horst Wein, et est titulaire d'une licence de sociologie de l'Université Cheikh Anta Diop de Dakar.",
+        "Sa vision pour Bright Academy est simple : donner à chaque enfant, quels que soient son niveau ou ses moyens, la chance de grandir à travers le football — sur le terrain comme dans la vie.",
+      ],
+      quote:
+        "Le football est le véhicule. Le développement est la mission. Notre objectif est d'aider chaque enfant à découvrir son potentiel, sur le terrain comme dans la vie.",
+      quoteAttribution: "Patrick Asaiah Asseu, Fondateur & Président, Bright Academy",
     },
     philosophy: {
       eyebrow: "Notre philosophie",

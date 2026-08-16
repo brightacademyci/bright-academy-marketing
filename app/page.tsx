@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
+import { Founder } from "@/components/Founder";
 import { Philosophy } from "@/components/Philosophy";
 import { Approach } from "@/components/Approach";
 import { SafetySection } from "@/components/SafetySection";
@@ -51,6 +52,7 @@ export default async function HomePage() {
       <Header />
       <Hero />
       <About />
+      <Founder />
       <Philosophy />
       <Approach />
       <SafetySection />

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useLanguage } from "./LanguageProvider";
 import { Reveal } from "./Reveal";
 import { BrandDiagram } from "./BrandDiagram";
@@ -49,6 +50,17 @@ export function About() {
               </li>
             ))}
           </ul>
+
+          {/* Added 2026-08-16 — the cta field was reserved for exactly this
+           *  since 2026-08-13 (see the field's own comment in content.ts);
+           *  now that Patrick's founder bio/photo exist, it's a real link. */}
+          <Link
+            href="#founder"
+            className="mt-6 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange hover:text-orange/80"
+          >
+            {t.about.cta}
+            <span aria-hidden>→</span>
+          </Link>
         </Reveal>
       </div>
     </section>
