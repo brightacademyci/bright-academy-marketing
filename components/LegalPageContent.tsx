@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useLanguage } from "./LanguageProvider";
-import { LEGAL_CONTENT, getDraftNotice, type LegalSlug } from "@/lib/legal-content";
+import { LEGAL_CONTENT, getPolicyNotice, type LegalSlug } from "@/lib/legal-content";
 
-// Renders one draft legal/policy page — see lib/legal-content.ts for why
-// every page here is explicitly marked as a draft rather than final wording.
+// Renders one legal/policy page — see lib/legal-content.ts's top comment
+// for the provenance of this content (Patrick's confirmed answers,
+// 2026-08-17; not yet lawyer-reviewed).
 export function LegalPageContent({ slug }: { slug: LegalSlug }) {
   const { lang } = useLanguage();
   const page = LEGAL_CONTENT[slug][lang];
@@ -20,7 +21,7 @@ export function LegalPageContent({ slug }: { slug: LegalSlug }) {
           role="note"
           className="mt-5 rounded-xl border border-orange/40 bg-orange/10 px-4 py-3 text-[13px] font-medium leading-relaxed text-orange"
         >
-          {getDraftNotice(lang)}
+          {getPolicyNotice(lang)}
         </div>
         <h1 className="mt-6 font-display text-2xl font-bold text-white md:text-3xl">{page.title}</h1>
         <p className="mt-3 text-[14px] leading-relaxed text-white/70">{page.intro}</p>

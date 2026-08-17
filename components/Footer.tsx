@@ -5,12 +5,12 @@ import Image from "next/image";
 import { useLanguage } from "./LanguageProvider";
 import { FOOTER_SOCIAL, LOGIN_URL, WHATSAPP_DISPLAY } from "@/lib/content";
 
-// LEGAL_PAGES — added 2026-08-13, site improvement pass, Priority 13. Every
-// route here (app/legal/[slug]) renders a clearly-marked draft ("awaiting
-// legal review") rather than a finished policy — Bright Academy collects
-// contact and medical information about children, and this project has no
-// approved legal wording on file for any of these documents. See
-// app/legal/[slug]/page.tsx and the delivery summary's confirmation list.
+// LEGAL_PAGES — added 2026-08-13, site improvement pass, Priority 13.
+// Filled in with real content 2026-08-17 (see lib/legal-content.ts's top
+// comment for provenance — Patrick's confirmed answers, not yet
+// lawyer-reviewed). Bright Academy collects contact and medical
+// information about children, so these pages matter — see
+// app/legal/[slug]/page.tsx.
 const LEGAL_PAGES: { href: string; key: "privacy" | "terms" | "enrollmentTerms" | "cancellation" | "safeguarding" | "photoConsent" }[] = [
   { href: "/legal/privacy-policy", key: "privacy" },
   { href: "/legal/terms", key: "terms" },

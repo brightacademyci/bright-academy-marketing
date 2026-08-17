@@ -38,6 +38,13 @@ export const WHATSAPP_NUMBER = "0716478625";
 export const WHATSAPP_DISPLAY = "+225 07 16 47 86 25";
 export const WHATSAPP_LINK = "https://wa.me/2250716478625";
 
+// Published contact address for legal/policy pages (privacy rights
+// requests, safeguarding-concern reports) — Patrick's confirmed answer,
+// 2026-08-17, when the legal pages moved from placeholder drafts to real
+// content (see lib/legal-content.ts). Kept here rather than duplicated in
+// that file, same centralization convention as WHATSAPP_DISPLAY above.
+export const SAFEGUARDING_EMAIL = "brightacademyci@gmail.com";
+
 export type Lang = "en" | "fr";
 
 // CORRECTED AGAIN 2026-08-15 — Patrick sent the runners-up team photo and
