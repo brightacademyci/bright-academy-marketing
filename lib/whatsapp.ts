@@ -1,10 +1,14 @@
-// Trial-session WhatsApp booking — added 2026-08-13, site improvement
-// pass, Priority 4. The OS app's parent portal has no self-service trial
-// request flow (checked: its "leads"/trial-scheduling tooling in
-// bright-academy-os is staff-only, behind login, for front-desk/admin
-// roles logging an inquiry on a parent's behalf — there's no public
-// endpoint a parent can hit directly). Per Patrick's brief, the fallback
-// is WhatsApp with a prefilled message, which is what this builds.
+// Trial-session WhatsApp message builder — added 2026-08-13, site
+// improvement pass, Priority 4. Originally the ONLY trial-booking path
+// (bright-academy-os had no public trial-request endpoint at the time).
+// As of 2026-08-17, app/api/public/trial-request on bright-academy-os
+// exists and TrialButton/TrialRequestForm route a request there first —
+// it lands as a real Leads entry addressed to the chosen site's
+// receptionist, per Patrick's explicit ask that a request reach the
+// platform, not only WhatsApp. This module is kept and still used —
+// TrialRequestForm.tsx renders its output as a secondary "chat with us
+// directly" link on the same /trial page, for anyone who'd rather not
+// fill in a form.
 //
 // CONFIRMED PAID TRIAL POLICY: a trial session is billed at the selected
 // programme's normal single-session ("à la carte") price — never free,

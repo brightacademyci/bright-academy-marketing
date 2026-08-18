@@ -90,8 +90,9 @@ export function Sites() {
           <p className="mt-3 text-[14px] text-white/70">{t.sites.subtitle}</p>
           {/* Added 2026-08-13, Priority 4 — trial booking near locations,
            *  as specified. No single programme is implied by "pick a
-           *  site", so this uses the generic WhatsApp message. */}
-          <TrialButton className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange hover:text-orange/80" />
+           *  site", but the currently-selected site card does drive which
+           *  site the /trial form's own picker pre-fills (2026-08-17). */}
+          <TrialButton siteName={t.sites.list[selected]?.name} className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange hover:text-orange/80" />
         </Reveal>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,1fr)_1.3fr] lg:items-stretch">

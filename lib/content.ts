@@ -402,6 +402,39 @@ export const content = {
       backToNews: "← Back to News",
       notFound: "This post could not be found.",
     },
+    // Added 2026-08-17 — the trial-request flow used to jump straight to a
+    // prefilled WhatsApp message (see lib/whatsapp.ts's own history). Per
+    // Patrick's explicit ask, a request now also lands as a real Leads
+    // entry on the OS app, notified to the chosen site's receptionist —
+    // this dict backs that new /trial page + form. WhatsApp stays as a
+    // secondary option on the same page for anyone who'd rather chat.
+    trialRequest: {
+      eyebrow: "Book a Trial",
+      title: "Request a trial session",
+      subtitle:
+        "Tell us about your child and your preferred site — a member of our team will confirm the price, schedule, and availability by phone or WhatsApp.",
+      paidNotice: "Trial sessions are paid, at the same price as a single regular session for the programme you join — never free.",
+      form: {
+        title: "Your details",
+        guardianName: "Your full name",
+        guardianPhone: "Phone number",
+        guardianEmail: "Email (optional)",
+        childFirstName: "Child's first name (optional)",
+        childLastName: "Child's last name (optional)",
+        childDateOfBirth: "Child's date of birth (optional)",
+        site: "Preferred site (optional)",
+        sitePlaceholder: "Select a site…",
+        programInterest: "Programme of interest (optional)",
+        programPlaceholder: "e.g. Bright Kids, Bright Elite…",
+        message: "Anything else we should know? (optional)",
+        submit: "Request a trial session",
+        submitting: "Sending…",
+        success: "Thank you — your request has been received. A member of our team will contact you shortly to confirm the details.",
+        errorGeneric: "Something went wrong sending your request. Please try again, or reach us on WhatsApp.",
+      },
+      whatsappAlt: "Prefer to chat right away?",
+      whatsappAltLink: "Message us on WhatsApp instead.",
+    },
     careers: {
       eyebrow: "Careers",
       title: "Join the Bright Academy team",
@@ -814,6 +847,33 @@ export const content = {
       seeAll: "Voir toutes les actualités →",
       backToNews: "← Retour aux actualités",
       notFound: "Cet article est introuvable.",
+    },
+    trialRequest: {
+      eyebrow: "Séance d'essai",
+      title: "Demander une séance d'essai",
+      subtitle:
+        "Parlez-nous de votre enfant et du site souhaité — un membre de notre équipe vous confirmera le tarif, l'horaire et la disponibilité par téléphone ou WhatsApp.",
+      paidNotice: "Les séances d'essai sont payantes, au même tarif qu'une séance individuelle du programme choisi — jamais gratuites.",
+      form: {
+        title: "Vos informations",
+        guardianName: "Votre nom complet",
+        guardianPhone: "Numéro de téléphone",
+        guardianEmail: "E-mail (optionnel)",
+        childFirstName: "Prénom de l'enfant (optionnel)",
+        childLastName: "Nom de l'enfant (optionnel)",
+        childDateOfBirth: "Date de naissance de l'enfant (optionnelle)",
+        site: "Site souhaité (optionnel)",
+        sitePlaceholder: "Sélectionnez un site…",
+        programInterest: "Programme souhaité (optionnel)",
+        programPlaceholder: "ex. Bright Kids, Bright Elite…",
+        message: "Autre chose à nous préciser ? (optionnel)",
+        submit: "Demander une séance d'essai",
+        submitting: "Envoi…",
+        success: "Merci — votre demande a bien été reçue. Un membre de notre équipe vous recontactera sous peu pour confirmer les détails.",
+        errorGeneric: "Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer, ou contactez-nous sur WhatsApp.",
+      },
+      whatsappAlt: "Vous préférez discuter tout de suite ?",
+      whatsappAltLink: "Contactez-nous sur WhatsApp.",
     },
     careers: {
       eyebrow: "Carrières",

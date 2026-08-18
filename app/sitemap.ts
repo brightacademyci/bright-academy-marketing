@@ -31,6 +31,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/first-team`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    // /trial added 2026-08-17 — the new trial-request form (see
+    // TrialRequestForm.tsx), a real, populated, high-intent conversion page.
+    { url: `${SITE_URL}/trial`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     // /gallery and /faq added 2026-08-13 (Priority 6) — real, populated
     // pages now that the homepage sections link out to them.
     { url: `${SITE_URL}/gallery`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
