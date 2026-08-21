@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { LegalPageContent } from "@/components/LegalPageContent";
 import { LEGAL_SLUGS, LEGAL_CONTENT, type LegalSlug } from "@/lib/legal-content";
+import { SITE_URL } from "@/lib/content";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -35,9 +36,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // convention already applied to every other route's metadata in this
   // pass (see app/layout.tsx and the other app/**/page.tsx generateMetadata
   // fixes).
+  const title = `${LEGAL_CONTENT[slug].fr.title} — Bright Academy`;
   return {
-    title: `${LEGAL_CONTENT[slug].fr.title} — Bright Academy`,
+    title,
     alternates: { canonical: `/legal/${slug}` },
+    // Added 2026-08-20 -- see app/first-team/page.tsx's comment on why
+    // every page needs its own openGraph block.
+    openGraph: {
+      title,
+      url: `${SITE_URL}/legal/${slug}`,
+      images: [{ url: "/images/og/social-share.jpg", width: 1200, height: 630 }],
+      type: "website",
+    },
   };
 }
 
