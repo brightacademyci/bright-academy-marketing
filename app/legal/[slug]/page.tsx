@@ -39,7 +39,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${LEGAL_CONTENT[slug].fr.title} — Bright Academy`;
   return {
     title,
-    alternates: { canonical: `/legal/${slug}` },
+    alternates: {
+      canonical: `/legal/${slug}`,
+      // Self-referencing hreflang, added 2026-08-21 -- matches app/layout.tsx's
+      // homepage stub and the same reasoning: this is a client-side language
+      // toggle with no per-URL routing, so there's no distinct French/English
+      // URL to point hreflang at. Real per-language alternates need the kind
+      // of URL-based locale routing flagged as out of scope for this pass --
+      // this stub is strictly better than omitting hreflang entirely, not a
+      // substitute for real routing.
+      languages: { fr: `/legal/${slug}`, en: `/legal/${slug}`, "x-default": `/legal/${slug}` },
+    },
     // Added 2026-08-20 -- see app/first-team/page.tsx's comment on why
     // every page needs its own openGraph block.
     openGraph: {

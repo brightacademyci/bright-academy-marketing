@@ -13,7 +13,17 @@ const DESCRIPTION = "Bright Football Club D'Attinguié — l'équipe première d
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: "/first-team" },
+  alternates: {
+    canonical: "/first-team",
+  // Self-referencing hreflang, added 2026-08-21 -- matches app/layout.tsx's
+  // homepage stub and the same reasoning: this is a client-side language
+  // toggle with no per-URL routing, so there's no distinct French/English
+  // URL to point hreflang at. Real per-language alternates need the kind
+  // of URL-based locale routing flagged as out of scope for this pass --
+  // this stub is strictly better than omitting hreflang entirely, not a
+  // substitute for real routing.
+    languages: { fr: "/first-team", en: "/first-team", "x-default": "/first-team" },
+  },
   // Added 2026-08-20 -- every page inherited the homepage's Open Graph
   // block (Next doesn't deep-merge it), so sharing any of these links on
   // social showed the homepage's title/description instead of the page's

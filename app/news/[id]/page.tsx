@@ -21,7 +21,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
-    alternates: { canonical: `/news/${id}` },
+    alternates: {
+      canonical: `/news/${id}`,
+      // Self-referencing hreflang, added 2026-08-21 -- matches app/layout.tsx's
+      // homepage stub and the same reasoning: this is a client-side language
+      // toggle with no per-URL routing, so there's no distinct French/English
+      // URL to point hreflang at. Real per-language alternates need the kind
+      // of URL-based locale routing flagged as out of scope for this pass --
+      // this stub is strictly better than omitting hreflang entirely, not a
+      // substitute for real routing.
+      languages: { fr: `/news/${id}`, en: `/news/${id}`, "x-default": `/news/${id}` },
+    },
     // Added 2026-08-20 -- see first-team/page.tsx's comment on why every
     // page needs its own openGraph block. Uses the article's own cover
     // image when it has one, same fallback the site-wide image otherwise.

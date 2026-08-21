@@ -20,7 +20,17 @@ const DESCRIPTION = "Annonces, résultats et actualités de Bright Academy.";
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: "/news" },
+  alternates: {
+    canonical: "/news",
+  // Self-referencing hreflang, added 2026-08-21 -- matches app/layout.tsx's
+  // homepage stub and the same reasoning: this is a client-side language
+  // toggle with no per-URL routing, so there's no distinct French/English
+  // URL to point hreflang at. Real per-language alternates need the kind
+  // of URL-based locale routing flagged as out of scope for this pass --
+  // this stub is strictly better than omitting hreflang entirely, not a
+  // substitute for real routing.
+    languages: { fr: "/news", en: "/news", "x-default": "/news" },
+  },
   robots: { index: false, follow: true },
   // Added 2026-08-20 -- see first-team/page.tsx's comment on why every
   // page needs its own openGraph block. Kept even though this page is
