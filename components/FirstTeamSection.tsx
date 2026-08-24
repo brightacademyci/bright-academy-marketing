@@ -23,12 +23,30 @@ import type { FirstTeam, FirstTeamPlayer } from "@/lib/api";
 // grouping reuses the OS app's own classifyPosition() heuristic
 // (lib/position-groups.ts, mirrored here) since `position` is free text
 // staff type into the roster, never a fixed enum.
-type TabKey = "squad" | "staff" | "gallery" | "standings";
+type TabKey = "squad" | "staff" | "fixtures" | "gallery" | "standings";
 
 function groupPlayers(players: FirstTeamPlayer[]): Record<PositionGroup, FirstTeamPlayer[]> {
   const groups: Record<PositionGroup, FirstTeamPlayer[]> = { gk: [], def: [], mid: [], fwd: [], other: [] };
   for (const p of players) groups[classifyPosition(p.position)].push(p);
   return groups;
+}
+
+// Same try/catch-wrapped toLocaleDateString pattern as
+// NewsListSection/LatestNewsSection/NewsPostSection's own formatDate() —
+// plus a time, since a fixture (unlike a news post) is meaningless without
+// kickoff time.
+function formatFixtureDateTime(iso: string, lang: "en" | "fr") {
+  try {
+    return new Date(iso).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", {
+      weekday: "short",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
 }
 
 function PlayerCard({ player }: { player: FirstTeamPlayer }) {
@@ -74,6 +92,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
   const TABS: { key: TabKey; label: string; count: number }[] = [
     { key: "squad", label: tabs.squad, count: team.players.length },
     { key: "staff", label: tabs.staff, count: team.staff.length },
+    { key: "fixtures", label: tabs.fixtures, count: team.fixtures.length },
     { key: "gallery", label: tabs.gallery, count: team.gallery.length },
     { key: "standings", label: tabs.standings, count: team.standings.length },
   ];
@@ -93,6 +112,51 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
             </p>
           )}
         </Reveal>
+
+        {/* Next Fixture — added 2026-08-24, Patrick's ask after scheduling a
+         *  first-team match with no way to show it (or the opponent's logo)
+         *  on the public site. Always visible regardless of the active tab,
+         *  same reasoning as the "Follow the club" footer below: this is
+         *  time-sensitive info, not squad/staff/gallery/standings content
+         *  that belongs behind a tab click. */}
+        {team.nextFixture && (
+          <Reveal className="mt-8 flex flex-col gap-4 rounded-2xl bg-white/5 p-5 ring-1 ring-orange/30 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-orange/40">
+                {team.nextFixture.opponentLogoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={team.nextFixture.opponentLogoUrl} alt={team.nextFixture.opponentName} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="font-display text-[13px] font-bold text-white/70">
+                    {team.nextFixture.opponentName.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <div>
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-orange">
+                  {t.firstTeam.nextFixture.label}
+                </span>
+                <h3 className="font-display text-[15px] font-bold text-white">
+                  {t.firstTeam.nextFixture.vs} {team.nextFixture.opponentName}
+                </h3>
+                <p className="mt-0.5 text-[12px] text-white/60">
+                  {formatFixtureDateTime(team.nextFixture.matchDate, lang)}
+                  {" · "}
+                  {team.nextFixture.venue || t.firstTeam.nextFixture.venueTbc}
+                </p>
+              </div>
+            </div>
+            <span
+              className={`shrink-0 self-start rounded-full px-3.5 py-1.5 text-[11px] font-semibold sm:self-center ${
+                team.nextFixture.isHome
+                  ? "bg-orange/15 text-orange ring-1 ring-orange/30"
+                  : "bg-white/10 text-white/70 ring-1 ring-white/15"
+              }`}
+            >
+              {team.nextFixture.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
+            </span>
+          </Reveal>
+        )}
 
         {(team.coverImageUrl || team.about) && (
           <Reveal className="mt-8 overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10">
@@ -212,6 +276,60 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                         <h3 className="font-display text-[14px] font-semibold text-white">{member.fullName}</h3>
                         <p className="text-[12px] font-semibold text-orange">{member.roleLabel}</p>
                       </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+          </Reveal>
+        )}
+
+        {/* Fixtures — added 2026-08-24, Patrick's follow-up ask after the
+         *  Next Fixture banner above: a full list of everything currently
+         *  on the calendar, not just the very next match. Same data
+         *  (team.fixtures) the banner uses, just every row instead of the
+         *  first one. */}
+        {activeTab === "fixtures" && (
+          <Reveal className="mt-8">
+            <h2 className="font-display text-xl font-bold text-white">{t.firstTeam.fixturesTitle}</h2>
+            {team.fixtures.length === 0 ? (
+              <p className="mt-4 text-[13px] text-white/60">{t.firstTeam.noFixtures}</p>
+            ) : (
+              <div className="mt-6 space-y-3">
+                {team.fixtures.map((fx, i) => (
+                  <Reveal key={`${fx.matchDate}-${fx.opponentName}-${i}`} delay={i * 40}>
+                    <div className="flex flex-col gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3.5">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-orange/30">
+                          {fx.opponentLogoUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={fx.opponentLogoUrl} alt={fx.opponentName} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="font-display text-[12px] font-bold text-white/70">
+                              {fx.opponentName.slice(0, 2).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-display text-[14px] font-semibold text-white">
+                            {t.firstTeam.nextFixture.vs} {fx.opponentName}
+                          </h3>
+                          <p className="mt-0.5 text-[12px] text-white/60">
+                            {formatFixtureDateTime(fx.matchDate, lang)}
+                            {" · "}
+                            {fx.venue || t.firstTeam.nextFixture.venueTbc}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className={`shrink-0 self-start rounded-full px-3.5 py-1.5 text-[11px] font-semibold sm:self-center ${
+                          fx.isHome
+                            ? "bg-orange/15 text-orange ring-1 ring-orange/30"
+                            : "bg-white/10 text-white/70 ring-1 ring-white/15"
+                        }`}
+                      >
+                        {fx.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
+                      </span>
                     </div>
                   </Reveal>
                 ))}

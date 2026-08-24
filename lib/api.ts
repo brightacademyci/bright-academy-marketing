@@ -131,6 +131,14 @@ export interface FirstTeamStanding {
   isOwnTeam: boolean;
 }
 
+export interface FirstTeamNextFixture {
+  matchDate: string;
+  venue: string | null;
+  isHome: boolean;
+  opponentName: string;
+  opponentLogoUrl: string | null;
+}
+
 export interface FirstTeam {
   teamName: string;
   division: string | null;
@@ -142,6 +150,12 @@ export interface FirstTeam {
   staff: FirstTeamStaffMember[];
   gallery: FirstTeamGalleryPhoto[];
   standings: FirstTeamStanding[];
+  /** Mirrors PublicFirstTeam.nextFixture in bright-academy-os (2026-08-24) —
+   *  see that repo's lib/data/public-site.ts for the full note. */
+  nextFixture: FirstTeamNextFixture | null;
+  /** Mirrors PublicFirstTeam.fixtures — every scheduled fixture, soonest
+   *  first, feeds the Fixtures tab in FirstTeamSection.tsx. */
+  fixtures: FirstTeamNextFixture[];
 }
 
 const EMPTY_FIRST_TEAM: FirstTeam = {
@@ -155,6 +169,8 @@ const EMPTY_FIRST_TEAM: FirstTeam = {
   staff: [],
   gallery: [],
   standings: [],
+  nextFixture: null,
+  fixtures: [],
 };
 
 export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {
