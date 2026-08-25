@@ -23,6 +23,9 @@ const PUBLIC_API_BASE = `${APP_URL}/api/public`;
 const COACHES_REVALIDATE_SECONDS = 900;
 const GALLERY_REVALIDATE_SECONDS = 60;
 const NEWS_REVALIDATE_SECONDS = 300;
+// Videos change about as often as the photo gallery (a new highlight
+// reel/session clip) — same short window.
+const VIDEOS_REVALIDATE_SECONDS = 60;
 // First Team info/squad/standings change a handful of times a season, not
 // daily — a long window like coaches is the right fit.
 const FIRST_TEAM_REVALIDATE_SECONDS = 900;
@@ -43,6 +46,19 @@ export interface PublicGalleryItem {
   photoUrl: string;
   siteName: string | null;
   createdAt: string;
+}
+
+// Added 2026-08-25 for the Videos section/tab — mirrors PublicGalleryItem's
+// own shape closely (see bright-academy-os's lib/data/public-site.ts's
+// PublicVideo). videoUrl is already a canonical embeddable YouTube/Vimeo
+// URL by the time it reaches here (normalized server-side at write time),
+// so components/Videos.tsx and FirstTeamSection.tsx's Videos tab can drop
+// it straight into an <iframe>.
+export interface PublicVideo {
+  id: string;
+  title: string | null;
+  caption: string | null;
+  videoUrl: string;
 }
 
 export interface PublicNewsPost {
@@ -79,6 +95,11 @@ export async function getGalleryItems(limit = 30): Promise<PublicGalleryItem[]> 
     GALLERY_REVALIDATE_SECONDS
   );
   return data?.items ?? [];
+}
+
+export async function getVideos(limit = 30): Promise<PublicVideo[]> {
+  const data = await safeFetchJson<{ videos: PublicVideo[] }>(`${PUBLIC_API_BASE}/videos?limit=${limit}`, VIDEOS_REVALIDATE_SECONDS);
+  return data?.videos ?? [];
 }
 
 export async function getNewsPosts(lang: Lang): Promise<PublicNewsPost[]> {
@@ -158,6 +179,8 @@ export interface FirstTeam {
   players: FirstTeamPlayer[];
   staff: FirstTeamStaffMember[];
   gallery: FirstTeamGalleryPhoto[];
+  /** Mirrors PublicFirstTeam.videos in bright-academy-os (2026-08-25). */
+  videos: PublicVideo[];
   standings: FirstTeamStanding[];
   /** Mirrors PublicFirstTeam.nextFixture in bright-academy-os (2026-08-24) —
    *  see that repo's lib/data/public-site.ts for the full note. */
@@ -178,6 +201,7 @@ const EMPTY_FIRST_TEAM: FirstTeam = {
   players: [],
   staff: [],
   gallery: [],
+  videos: [],
   standings: [],
   nextFixture: null,
   fixtures: [],

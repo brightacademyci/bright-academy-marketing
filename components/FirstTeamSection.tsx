@@ -23,7 +23,7 @@ import type { FirstTeam, FirstTeamPlayer } from "@/lib/api";
 // grouping reuses the OS app's own classifyPosition() heuristic
 // (lib/position-groups.ts, mirrored here) since `position` is free text
 // staff type into the roster, never a fixed enum.
-type TabKey = "squad" | "staff" | "fixtures" | "gallery" | "standings";
+type TabKey = "squad" | "staff" | "fixtures" | "gallery" | "videos" | "standings";
 
 function groupPlayers(players: FirstTeamPlayer[]): Record<PositionGroup, FirstTeamPlayer[]> {
   const groups: Record<PositionGroup, FirstTeamPlayer[]> = { gk: [], def: [], mid: [], fwd: [], other: [] };
@@ -94,6 +94,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
     { key: "staff", label: tabs.staff, count: team.staff.length },
     { key: "fixtures", label: tabs.fixtures, count: team.fixtures.length },
     { key: "gallery", label: tabs.gallery, count: team.gallery.length },
+    { key: "videos", label: tabs.videos, count: team.videos.length },
     { key: "standings", label: tabs.standings, count: team.standings.length },
   ];
 
@@ -416,6 +417,41 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                 onClose={() => setOpenPhotoIndex(null)}
                 onNavigate={setOpenPhotoIndex}
               />
+            )}
+          </Reveal>
+        )}
+
+        {/* Videos — added 2026-08-25, mirrors the Gallery tab above exactly,
+            minus the Lightbox (each card is already a playable embed, no
+            need for a click-to-enlarge step). */}
+        {activeTab === "videos" && (
+          <Reveal className="mt-8">
+            <h2 className="font-display text-xl font-bold text-white">{t.firstTeam.videosTitle}</h2>
+            {team.videos.length === 0 ? (
+              <p className="mt-4 text-[13px] text-white/60">{t.firstTeam.noVideos}</p>
+            ) : (
+              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+                {team.videos.map((video) => (
+                  <div key={video.id} className="overflow-hidden rounded-xl ring-1 ring-white/10">
+                    <div className="aspect-video">
+                      <iframe
+                        src={video.videoUrl}
+                        title={video.title || team.teamName}
+                        className="h-full w-full"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                    {(video.title || video.caption) && (
+                      <div className="bg-white/5 px-4 py-3">
+                        {video.title && <p className="font-display text-[14px] font-semibold text-white">{video.title}</p>}
+                        {video.caption && <p className="text-[12px] text-white/60">{video.caption}</p>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </Reveal>
         )}

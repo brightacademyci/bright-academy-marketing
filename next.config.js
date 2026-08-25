@@ -26,6 +26,17 @@ const nextConfig = {
       `img-src 'self' data: ${SUPABASE_ORIGIN} ${OSM_TILES}`,
       "font-src 'self' data:",
       `connect-src 'self' ${SUPABASE_ORIGIN} ${OSM_TILES}`,
+      // Added 2026-08-25 for the Videos section/tab (components/Videos.tsx,
+      // FirstTeamSection.tsx's Videos tab) — with no frame-src set,
+      // browsers fall back to default-src 'self' for embedded iframes
+      // too, which would silently block every YouTube/Vimeo embed on this
+      // public-facing site. Scoped to just the two embed hosts the OS
+      // app's toEmbedUrl() ever normalizes a link into (same allowance
+      // just added to bright-academy-os's own CSP for its /gallery
+      // preview) — same "check a blanket security default against every
+      // feature that needs the thing it locks down" fix as the
+      // geolocation Permissions-Policy issue below.
+      "frame-src https://www.youtube.com https://player.vimeo.com",
       "frame-ancestors 'none'",
       "object-src 'none'",
       "base-uri 'self'",

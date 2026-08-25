@@ -10,12 +10,13 @@ import { KitShowcase } from "@/components/KitShowcase";
 import { Programs } from "@/components/Programs";
 import { Sites } from "@/components/Sites";
 import { Gallery } from "@/components/Gallery";
+import { Videos } from "@/components/Videos";
 import { LatestNewsSection } from "@/components/LatestNewsSection";
 import { FAQ } from "@/components/FAQ";
 import { EnrollCta } from "@/components/EnrollCta";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { getGalleryItems, getNewsPosts } from "@/lib/api";
+import { getGalleryItems, getNewsPosts, getVideos } from "@/lib/api";
 
 // Server Component (not "use client") specifically so this can await the
 // live gallery feed before rendering — see lib/api.ts's getGalleryItems()
@@ -41,10 +42,11 @@ import { getGalleryItems, getNewsPosts } from "@/lib/api";
 // already renders nothing at all when there's no post published, same as
 // the old order).
 export default async function HomePage() {
-  const [liveGalleryItems, newsEn, newsFr] = await Promise.all([
+  const [liveGalleryItems, newsEn, newsFr, videos] = await Promise.all([
     getGalleryItems(30),
     getNewsPosts("en"),
     getNewsPosts("fr"),
+    getVideos(8),
   ]);
 
   return (
@@ -62,6 +64,7 @@ export default async function HomePage() {
       <Sites />
       <Achievements />
       <Gallery liveItems={liveGalleryItems} limit={8} />
+      <Videos items={videos} limit={4} />
       <FAQ limit={6} />
       <EnrollCta />
       <Footer />

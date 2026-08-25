@@ -381,6 +381,14 @@ export const content = {
       eyebrow: "Gallery",
       title: "Life at Bright Academy",
     },
+    // Added 2026-08-25, Patrick's follow-up to the photo gallery ask — a
+    // video option "on the website both for the first team and for the
+    // academy." Mirrors gallery's eyebrow/title shape exactly; see
+    // components/Videos.tsx.
+    videos: {
+      eyebrow: "Videos",
+      title: "Watch Bright Academy",
+    },
     ourCoaches: {
       eyebrow: "Our Coaches",
       title: "Meet the coaching staff",
@@ -469,7 +477,7 @@ export const content = {
       title: "Bright Football Club",
       subtitle: "Our senior/first team — the pathway for our most advanced players.",
       divisionLabel: "Division",
-      tabs: { squad: "Squad", staff: "Staff", fixtures: "Fixtures", gallery: "Gallery", standings: "Standings" },
+      tabs: { squad: "Squad", staff: "Staff", fixtures: "Fixtures", gallery: "Gallery", videos: "Videos", standings: "Standings" },
       squadTitle: "Squad",
       provisionalBadge: "Provisional squad — subject to change",
       noSquad: "The squad list will be posted here soon.",
@@ -478,6 +486,10 @@ export const content = {
       noStaff: "The coaching staff will be posted here soon.",
       galleryTitle: "Gallery",
       noGallery: "Photos from the First Team will be posted here soon.",
+      // Added 2026-08-25, mirrors galleryTitle/noGallery — see the Videos
+      // tab in FirstTeamSection.tsx.
+      videosTitle: "Videos",
+      noVideos: "Videos from the First Team will be posted here soon.",
       standingsTitle: "League Table",
       noStandings: "This season's league table will be posted here once it's final.",
       standingsHeaders: { pos: "Pos", team: "Team", played: "P", won: "W", drawn: "D", lost: "L", gf: "GF", ga: "GA", gd: "GD", pts: "Pts" },
@@ -841,6 +853,10 @@ export const content = {
       eyebrow: "Galerie",
       title: "La vie à Bright Academy",
     },
+    videos: {
+      eyebrow: "Vidéos",
+      title: "Regardez Bright Academy",
+    },
     ourCoaches: {
       eyebrow: "Nos entraîneurs",
       title: "Découvrez le staff technique",
@@ -919,7 +935,7 @@ export const content = {
       title: "Bright Football Club",
       subtitle: "Notre équipe première — le débouché pour nos joueurs les plus avancés.",
       divisionLabel: "Division",
-      tabs: { squad: "Effectif", staff: "Staff", fixtures: "Calendrier", gallery: "Galerie", standings: "Classement" },
+      tabs: { squad: "Effectif", staff: "Staff", fixtures: "Calendrier", gallery: "Galerie", videos: "Vidéos", standings: "Classement" },
       squadTitle: "Effectif",
       provisionalBadge: "Effectif provisoire — susceptible d'évoluer",
       noSquad: "La liste de l'effectif sera bientôt publiée ici.",
@@ -928,6 +944,8 @@ export const content = {
       noStaff: "Le staff technique sera bientôt publié ici.",
       galleryTitle: "Galerie",
       noGallery: "Les photos de l'équipe première seront bientôt publiées ici.",
+      videosTitle: "Vidéos",
+      noVideos: "Les vidéos de l'équipe première seront bientôt publiées ici.",
       standingsTitle: "Classement",
       noStandings: "Le classement de la saison sera publié ici une fois final.",
       standingsHeaders: { pos: "Pos", team: "Équipe", played: "J", won: "G", drawn: "N", lost: "P", gf: "BP", ga: "BC", gd: "Diff", pts: "Pts" },
