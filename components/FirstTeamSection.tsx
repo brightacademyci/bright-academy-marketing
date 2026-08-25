@@ -144,14 +144,25 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
              *  static /logo/crest.png every other part of the site already
              *  uses (Header/Footer), not a Storage-backed field — nothing
              *  to sign, unlike the opponent's. */}
+            {/* Fixed-width w-full on the name spans (2026-08-25, Patrick's
+             *  report: on a real phone the two names ran together into
+             *  unreadable overlapping text). Root cause: `items-center` on
+             *  a flex-col column stops children from stretching to the
+             *  column's own w-28/w-32 — a bare <span> then sizes to its
+             *  own text content instead, so a long club name silently
+             *  spilled out past its crest into the neighboring column
+             *  instead of truncating. w-full pins the span to the column
+             *  width so truncate actually has something to truncate
+             *  against. Paired with opponentShortName/shortName (same
+             *  fix's other half) so it rarely even needs to. */}
             <div className="mt-5 flex items-center justify-center gap-4 sm:gap-10">
-              <div className="flex w-24 flex-col items-center gap-2 text-center sm:w-32">
+              <div className="flex w-28 flex-col items-center gap-2 text-center sm:w-36">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-2 ring-2 ring-orange/40 sm:h-20 sm:w-20">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/logo/crest.png" alt={team.teamName || "Bright Football Club"} className="h-full w-full object-contain" />
                 </div>
-                <span className="truncate text-[12px] font-semibold leading-tight text-white/90">
-                  {team.teamName || "Bright Football Club"}
+                <span className="w-full truncate text-[12px] font-semibold leading-tight text-white/90">
+                  {team.shortName}
                 </span>
               </div>
 
@@ -159,7 +170,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                 {t.firstTeam.nextFixture.vsBadge}
               </span>
 
-              <div className="flex w-24 flex-col items-center gap-2 text-center sm:w-32">
+              <div className="flex w-28 flex-col items-center gap-2 text-center sm:w-36">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-white/20 sm:h-20 sm:w-20">
                   {team.nextFixture.opponentLogoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -170,8 +181,8 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                     </span>
                   )}
                 </div>
-                <span className="truncate text-[12px] font-semibold leading-tight text-white/90">
-                  {team.nextFixture.opponentName}
+                <span className="w-full truncate text-[12px] font-semibold leading-tight text-white/90">
+                  {team.nextFixture.opponentShortName}
                 </span>
               </div>
             </div>
@@ -344,7 +355,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                           </div>
                         </div>
                         <div className="min-w-0">
-                          <h3 className="truncate font-display text-[14px] font-semibold text-white">{fx.opponentName}</h3>
+                          <h3 className="truncate font-display text-[14px] font-semibold text-white">{fx.opponentShortName}</h3>
                           <p className="mt-0.5 text-[12px] text-white/60">
                             {formatFixtureDateTime(fx.matchDate, lang)}
                             {" · "}

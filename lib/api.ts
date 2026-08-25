@@ -136,11 +136,20 @@ export interface FirstTeamNextFixture {
   venue: string | null;
   isHome: boolean;
   opponentName: string;
+  /** Short display name/alias — mirrors PublicFirstTeamFixture.opponentShortName
+   *  in bright-academy-os (2026-08-25). Always a usable, already-shortened
+   *  string (server-side fallback to an auto-derived truncation when no
+   *  manual alias is set) — safe to render directly in the compact
+   *  crest-vs-crest widgets below. */
+  opponentShortName: string;
   opponentLogoUrl: string | null;
 }
 
 export interface FirstTeam {
   teamName: string;
+  /** Short display name/alias for the home crest label — mirrors
+   *  PublicFirstTeam.shortName in bright-academy-os (2026-08-25). */
+  shortName: string;
   division: string | null;
   about: string | null;
   crestImageUrl: string | null;
@@ -160,6 +169,7 @@ export interface FirstTeam {
 
 const EMPTY_FIRST_TEAM: FirstTeam = {
   teamName: "Bright Football Club",
+  shortName: "Bright Football Club",
   division: null,
   about: null,
   crestImageUrl: null,
