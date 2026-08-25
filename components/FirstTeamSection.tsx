@@ -120,41 +120,67 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
          *  time-sensitive info, not squad/staff/gallery/standings content
          *  that belongs behind a tab click. */}
         {team.nextFixture && (
-          <Reveal className="mt-8 flex flex-col gap-4 rounded-2xl bg-white/5 p-5 ring-1 ring-orange/30 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-orange/40">
-                {team.nextFixture.opponentLogoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={team.nextFixture.opponentLogoUrl} alt={team.nextFixture.opponentName} className="h-full w-full object-cover" />
-                ) : (
-                  <span className="font-display text-[13px] font-bold text-white/70">
-                    {team.nextFixture.opponentName.slice(0, 2).toUpperCase()}
-                  </span>
-                )}
-              </div>
-              <div>
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-orange">
-                  {t.firstTeam.nextFixture.label}
+          <Reveal className="mt-8 rounded-2xl bg-white/5 p-5 ring-1 ring-orange/30 sm:p-7">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-orange">
+                {t.firstTeam.nextFixture.label}
+              </span>
+              <span
+                className={`shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${
+                  team.nextFixture.isHome
+                    ? "bg-orange/15 text-orange ring-1 ring-orange/30"
+                    : "bg-white/10 text-white/70 ring-1 ring-white/15"
+                }`}
+              >
+                {team.nextFixture.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
+              </span>
+            </div>
+
+            {/* Crest-vs-crest match card — redesigned 2026-08-25 on
+             *  Patrick's explicit ask ("take an example on Manchester,
+             *  Chelsea, or PSG... we need to have both logos") — a single
+             *  opponent-only badge with a "vs Name" heading read as half a
+             *  fixture. Bright Football Club's own crest is the same
+             *  static /logo/crest.png every other part of the site already
+             *  uses (Header/Footer), not a Storage-backed field — nothing
+             *  to sign, unlike the opponent's. */}
+            <div className="mt-5 flex items-center justify-center gap-4 sm:gap-10">
+              <div className="flex w-24 flex-col items-center gap-2 text-center sm:w-32">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-2 ring-2 ring-orange/40 sm:h-20 sm:w-20">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo/crest.png" alt={team.teamName || "Bright Football Club"} className="h-full w-full object-contain" />
+                </div>
+                <span className="truncate text-[12px] font-semibold leading-tight text-white/90">
+                  {team.teamName || "Bright Football Club"}
                 </span>
-                <h3 className="font-display text-[15px] font-bold text-white">
-                  {t.firstTeam.nextFixture.vs} {team.nextFixture.opponentName}
-                </h3>
-                <p className="mt-0.5 text-[12px] text-white/60">
-                  {formatFixtureDateTime(team.nextFixture.matchDate, lang)}
-                  {" · "}
-                  {team.nextFixture.venue || t.firstTeam.nextFixture.venueTbc}
-                </p>
+              </div>
+
+              <span className="shrink-0 font-display text-[13px] font-bold text-white/40 sm:text-[15px]">
+                {t.firstTeam.nextFixture.vsBadge}
+              </span>
+
+              <div className="flex w-24 flex-col items-center gap-2 text-center sm:w-32">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-white/20 sm:h-20 sm:w-20">
+                  {team.nextFixture.opponentLogoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={team.nextFixture.opponentLogoUrl} alt={team.nextFixture.opponentName} className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="font-display text-[15px] font-bold text-white/70">
+                      {team.nextFixture.opponentName.slice(0, 2).toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <span className="truncate text-[12px] font-semibold leading-tight text-white/90">
+                  {team.nextFixture.opponentName}
+                </span>
               </div>
             </div>
-            <span
-              className={`shrink-0 self-start rounded-full px-3.5 py-1.5 text-[11px] font-semibold sm:self-center ${
-                team.nextFixture.isHome
-                  ? "bg-orange/15 text-orange ring-1 ring-orange/30"
-                  : "bg-white/10 text-white/70 ring-1 ring-white/15"
-              }`}
-            >
-              {team.nextFixture.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
-            </span>
+
+            <p className="mt-5 text-center text-[12px] text-white/60">
+              {formatFixtureDateTime(team.nextFixture.matchDate, lang)}
+              {" · "}
+              {team.nextFixture.venue || t.firstTeam.nextFixture.venueTbc}
+            </p>
           </Reveal>
         )}
 
@@ -299,21 +325,26 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                 {team.fixtures.map((fx, i) => (
                   <Reveal key={`${fx.matchDate}-${fx.opponentName}-${i}`} delay={i * 40}>
                     <div className="flex flex-col gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex items-center gap-3.5">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-orange/30">
-                          {fx.opponentLogoUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={fx.opponentLogoUrl} alt={fx.opponentName} className="h-full w-full object-cover" />
-                          ) : (
-                            <span className="font-display text-[12px] font-bold text-white/70">
-                              {fx.opponentName.slice(0, 2).toUpperCase()}
-                            </span>
-                          )}
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex shrink-0 items-center gap-1.5">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 ring-2 ring-orange/30">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/logo/crest.png" alt={team.teamName || "Bright Football Club"} className="h-full w-full object-contain" />
+                          </div>
+                          <span className="text-[10px] font-bold text-white/40">{t.firstTeam.nextFixture.vsBadge}</span>
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-orange/30">
+                            {fx.opponentLogoUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={fx.opponentLogoUrl} alt={fx.opponentName} className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="font-display text-[12px] font-bold text-white/70">
+                                {fx.opponentName.slice(0, 2).toUpperCase()}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-display text-[14px] font-semibold text-white">
-                            {t.firstTeam.nextFixture.vs} {fx.opponentName}
-                          </h3>
+                        <div className="min-w-0">
+                          <h3 className="truncate font-display text-[14px] font-semibold text-white">{fx.opponentName}</h3>
                           <p className="mt-0.5 text-[12px] text-white/60">
                             {formatFixtureDateTime(fx.matchDate, lang)}
                             {" · "}

@@ -484,7 +484,7 @@ export const content = {
       // Next-fixture banner (2026-08-24) — see components/FirstTeamSection.tsx.
       nextFixture: {
         label: "Next Fixture",
-        vs: "vs",
+        vsBadge: "VS",
         home: "Home",
         away: "Away",
         venueTbc: "Venue to be confirmed",
@@ -933,7 +933,7 @@ export const content = {
       standingsHeaders: { pos: "Pos", team: "Équipe", played: "J", won: "G", drawn: "N", lost: "P", gf: "BP", ga: "BC", gd: "Diff", pts: "Pts" },
       nextFixture: {
         label: "Prochain match",
-        vs: "contre",
+        vsBadge: "VS",
         home: "Domicile",
         away: "Extérieur",
         venueTbc: "Lieu à confirmer",
