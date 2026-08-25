@@ -97,7 +97,7 @@ export function Hero() {
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/15 sm:aspect-[5/4] md:aspect-[4/5]">
             <Image
               src="/images/hero.jpg"
-              alt="Bright Academy goalkeeper making a save during training"
+              alt="Bright Academy players training on the pitch"
               fill
               priority
               fetchPriority="high"
