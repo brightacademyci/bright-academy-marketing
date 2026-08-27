@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { LiveMatchBanner } from "@/components/LiveMatchBanner";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
 import { Founder } from "@/components/Founder";
@@ -16,7 +17,7 @@ import { FAQ } from "@/components/FAQ";
 import { EnrollCta } from "@/components/EnrollCta";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { getGalleryItems, getNewsPosts, getVideos } from "@/lib/api";
+import { getFirstTeam, getGalleryItems, getNewsPosts, getVideos } from "@/lib/api";
 
 // Server Component (not "use client") specifically so this can await the
 // live gallery feed before rendering — see lib/api.ts's getGalleryItems()
@@ -42,16 +43,22 @@ import { getGalleryItems, getNewsPosts, getVideos } from "@/lib/api";
 // already renders nothing at all when there's no post published, same as
 // the old order).
 export default async function HomePage() {
-  const [liveGalleryItems, newsEn, newsFr, videos] = await Promise.all([
+  // getFirstTeam's nextFixture/isLive fields aren't lang-dependent (they
+  // come straight from the fixtures/opponents tables, not lib/content.ts),
+  // so a single "fr" call is enough here — unlike newsEn/newsFr below,
+  // which carry genuinely per-language post content.
+  const [liveGalleryItems, newsEn, newsFr, videos, team] = await Promise.all([
     getGalleryItems(30),
     getNewsPosts("en"),
     getNewsPosts("fr"),
     getVideos(8),
+    getFirstTeam("fr"),
   ]);
 
   return (
     <main>
       <Header />
+      <LiveMatchBanner fixture={team.nextFixture} />
       <Hero />
       <About />
       <Founder />

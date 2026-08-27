@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useLanguage } from "./LanguageProvider";
 import { Reveal } from "./Reveal";
@@ -126,15 +127,23 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
               <span className="text-[11px] font-semibold uppercase tracking-wide text-orange">
                 {t.firstTeam.nextFixture.label}
               </span>
-              <span
-                className={`shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${
-                  team.nextFixture.isHome
-                    ? "bg-orange/15 text-orange ring-1 ring-orange/30"
-                    : "bg-white/10 text-white/70 ring-1 ring-white/15"
-                }`}
-              >
-                {team.nextFixture.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
-              </span>
+              <div className="flex shrink-0 items-center gap-2">
+                {team.nextFixture.isLive && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-orange/20 px-3 py-1.5 text-[11px] font-bold text-orange ring-1 ring-orange/40">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange" />
+                    {t.firstTeam.nextFixture.live}
+                  </span>
+                )}
+                <span
+                  className={`rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${
+                    team.nextFixture.isHome
+                      ? "bg-orange/15 text-orange ring-1 ring-orange/30"
+                      : "bg-white/10 text-white/70 ring-1 ring-white/15"
+                  }`}
+                >
+                  {team.nextFixture.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
+                </span>
+              </div>
             </div>
 
             {/* Crest-vs-crest match card — redesigned 2026-08-25 on
@@ -193,6 +202,17 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
               {" · "}
               {team.nextFixture.venue || t.firstTeam.nextFixture.venueTbc}
             </p>
+
+            {team.nextFixture.isLive && (
+              <div className="mt-5 text-center">
+                <Link
+                  href={`/live/${team.nextFixture.id}`}
+                  className="inline-flex items-center gap-2 rounded-full bg-orange px-5 py-2.5 text-[12px] font-bold text-white shadow-sm transition hover:bg-orange/90"
+                >
+                  {t.firstTeam.nextFixture.watchLive}
+                </Link>
+              </div>
+            )}
           </Reveal>
         )}
 
@@ -364,15 +384,26 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                           </p>
                         </div>
                       </div>
-                      <span
-                        className={`shrink-0 self-start rounded-full px-3.5 py-1.5 text-[11px] font-semibold sm:self-center ${
-                          fx.isHome
-                            ? "bg-orange/15 text-orange ring-1 ring-orange/30"
-                            : "bg-white/10 text-white/70 ring-1 ring-white/15"
-                        }`}
-                      >
-                        {fx.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
-                      </span>
+                      <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
+                        {fx.isLive && (
+                          <Link
+                            href={`/live/${fx.id}`}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-orange px-3 py-1.5 text-[11px] font-bold text-white"
+                          >
+                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                            {t.firstTeam.nextFixture.live}
+                          </Link>
+                        )}
+                        <span
+                          className={`rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${
+                            fx.isHome
+                              ? "bg-orange/15 text-orange ring-1 ring-orange/30"
+                              : "bg-white/10 text-white/70 ring-1 ring-white/15"
+                          }`}
+                        >
+                          {fx.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
+                        </span>
+                      </div>
                     </div>
                   </Reveal>
                 ))}

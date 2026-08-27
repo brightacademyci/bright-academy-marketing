@@ -472,6 +472,17 @@ export const content = {
         errorGeneric: "Something went wrong submitting your application. Please try again, or reach us on WhatsApp.",
       },
     },
+    // Homepage live-match banner — added 2026-08-27 alongside the live
+    // match-day feature (see components/LiveMatchBanner.tsx). Only rendered
+    // when the First Team's next fixture is currently live — this is the
+    // direct answer to "we can see that there is a game today", surfaced
+    // right on the homepage rather than requiring a visit to /first-team.
+    liveBanner: {
+      badge: "LIVE NOW",
+      heading: "Bright Football Club is playing right now",
+      vsBadge: "vs",
+      cta: "Watch Live",
+    },
     firstTeam: {
       eyebrow: "First Team",
       title: "Bright Football Club",
@@ -500,6 +511,8 @@ export const content = {
         home: "Home",
         away: "Away",
         venueTbc: "Venue to be confirmed",
+        live: "LIVE",
+        watchLive: "Watch Live",
       },
       fixturesTitle: "Fixtures",
       noFixtures: "No matches are on the calendar yet — check back soon.",
@@ -930,6 +943,12 @@ export const content = {
         errorGeneric: "Une erreur est survenue lors de l'envoi de votre candidature. Veuillez réessayer, ou contactez-nous sur WhatsApp.",
       },
     },
+    liveBanner: {
+      badge: "EN DIRECT",
+      heading: "Bright Football Club joue en ce moment",
+      vsBadge: "vs",
+      cta: "Voir le match en direct",
+    },
     firstTeam: {
       eyebrow: "Équipe première",
       title: "Bright Football Club",
@@ -955,6 +974,8 @@ export const content = {
         home: "Domicile",
         away: "Extérieur",
         venueTbc: "Lieu à confirmer",
+        live: "EN DIRECT",
+        watchLive: "Voir en direct",
       },
       fixturesTitle: "Calendrier",
       noFixtures: "Aucun match n'est encore programmé — revenez bientôt.",

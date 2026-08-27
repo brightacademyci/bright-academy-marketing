@@ -153,6 +153,9 @@ export interface FirstTeamStanding {
 }
 
 export interface FirstTeamNextFixture {
+  /** Added 2026-08-27 alongside the live-match feature — links this card to
+   *  /live/[id] on this site, which calls getLiveMatch() below. */
+  id: string;
   matchDate: string;
   venue: string | null;
   isHome: boolean;
@@ -164,6 +167,8 @@ export interface FirstTeamNextFixture {
    *  crest-vs-crest widgets below. */
   opponentShortName: string;
   opponentLogoUrl: string | null;
+  /** True from kickoff through full-time — added 2026-08-27. */
+  isLive: boolean;
 }
 
 export interface FirstTeam {
@@ -210,4 +215,54 @@ const EMPTY_FIRST_TEAM: FirstTeam = {
 export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {
   const data = await safeFetchJson<FirstTeam>(`${PUBLIC_API_BASE}/first-team?lang=${lang}`, FIRST_TEAM_REVALIDATE_SECONDS);
   return data ?? EMPTY_FIRST_TEAM;
+}
+
+// --- Live match (added 2026-08-27) -----------------------------------------
+// Backs app/live/[id]/page.tsx — Patrick's ask for the platform's live
+// match-day console (kickoff/goals/half-time/stoppage/full-time, entered by
+// staff in the OS app) to actually show up here, on the public site itself,
+// not just as a link he has to hand out separately. Mirrors
+// bright-academy-os's own getPublicLiveMatch()/PublicLiveMatch shape
+// exactly (see that repo's lib/data/public-site.ts) — this is a thin fetch
+// wrapper, not a second implementation of the live-clock math.
+export interface LiveLineupPlayer {
+  displayName: string;
+  jerseyNumber: number | null;
+  position: string | null;
+  isStarter: boolean;
+  photoUrl: string | null;
+}
+
+export interface LiveMatchEvent {
+  eventType: string;
+  minute: number | null;
+  playerName: string | null;
+  notes: string | null;
+}
+
+export interface LiveMatch {
+  found: boolean;
+  teamName: string;
+  opponentName: string;
+  opponentLogoUrl: string | null;
+  isHome: boolean;
+  venue: string | null;
+  matchDate: string;
+  ourScore: number | null;
+  opponentScore: number | null;
+  status: string;
+  livePhase: "first_half" | "half_time" | "second_half" | "full_time" | null;
+  halfStartedAt: string | null;
+  firstHalfStoppage: number;
+  secondHalfStoppage: number;
+  lineup: LiveLineupPlayer[];
+  events: LiveMatchEvent[];
+  namesShown: boolean;
+}
+
+const LIVE_MATCH_REVALIDATE_SECONDS = 15;
+
+export async function getLiveMatch(id: string): Promise<LiveMatch | null> {
+  const data = await safeFetchJson<LiveMatch>(`${PUBLIC_API_BASE}/live-match/${encodeURIComponent(id)}`, LIVE_MATCH_REVALIDATE_SECONDS);
+  return data && data.found ? data : null;
 }
