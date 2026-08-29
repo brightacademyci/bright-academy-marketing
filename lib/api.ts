@@ -302,6 +302,37 @@ export interface LiveMatchFanVote {
   pct: number;
 }
 
+/** Added 2026-08-29 — mirrors bright-academy-os's PublicMatchTeamStats.
+ *  Real team match analytics (shots, corners, possession, etc.) entered
+ *  by staff from a third-party GPS/video tracking tool, not derived from
+ *  match_events. null until staff enter it for a fixture. */
+export interface LiveMatchTeamStats {
+  usShots: number | null;
+  opponentShots: number | null;
+  usTotalAttempts: number | null;
+  opponentTotalAttempts: number | null;
+  usCorners: number | null;
+  opponentCorners: number | null;
+  usFreeKicks: number | null;
+  opponentFreeKicks: number | null;
+  usThrowIns: number | null;
+  opponentThrowIns: number | null;
+  usFouls: number | null;
+  opponentFouls: number | null;
+  usPenalties: number | null;
+  opponentPenalties: number | null;
+  usTackles: number | null;
+  opponentTackles: number | null;
+  usPassesCompleted: number | null;
+  opponentPassesCompleted: number | null;
+  usPossessionPct: number | null;
+  opponentPossessionPct: number | null;
+  usPossessionMinutes: number | null;
+  opponentPossessionMinutes: number | null;
+  usPossessionWon: number | null;
+  opponentPossessionWon: number | null;
+}
+
 export interface LiveMatch {
   found: boolean;
   teamName: string;
@@ -337,6 +368,8 @@ export interface LiveMatch {
   /** Added 2026-08-29 — see LiveMatchOpponentPlayer's note above. Empty
    *  until staff enter it for this fixture. */
   opponentLineup: LiveMatchOpponentPlayer[];
+  /** Added 2026-08-29 — see LiveMatchTeamStats' note above. */
+  teamStats: LiveMatchTeamStats | null;
 }
 
 const LIVE_MATCH_REVALIDATE_SECONDS = 15;

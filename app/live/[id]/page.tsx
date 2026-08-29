@@ -8,7 +8,7 @@ import { PitchDiagram } from "@/components/PitchDiagram";
 import { LiveAutoRefresh } from "@/components/live/live-auto-refresh";
 import { FanVoteWidget } from "@/components/live/fan-vote-widget";
 import { computeLiveClock } from "@/lib/live-match-clock";
-import { getLiveMatch } from "@/lib/api";
+import { getLiveMatch, type LiveMatchTeamStats } from "@/lib/api";
 import { APP_URL, SITE_URL } from "@/lib/content";
 
 // Public, branded live-match page — added 2026-08-27 directly in response
@@ -71,6 +71,19 @@ const STRINGS = {
     matchTypeInternal: "Internal",
     matchTypeExternal: "vs. another club",
     matchTypeTournament: "Tournament",
+    matchStats: "Match Stats",
+    statPossession: "Possession",
+    statShots: "Shots",
+    statTotalAttempts: "Total attempts",
+    statCorners: "Corners",
+    statFreeKicks: "Free kicks",
+    statThrowIns: "Throw-ins",
+    statFouls: "Fouls",
+    statPenalties: "Penalties",
+    statTackles: "Tackles",
+    statPassesCompleted: "Passes completed",
+    statPossessionMinutes: "Possession (min)",
+    statPossessionWon: "Possession won",
   },
   fr: {
     title: "Match — Bright Academy",
@@ -105,6 +118,19 @@ const STRINGS = {
     matchTypeInternal: "Interne",
     matchTypeExternal: "contre un autre club",
     matchTypeTournament: "Tournoi",
+    matchStats: "Statistiques du match",
+    statPossession: "Possession",
+    statShots: "Tirs",
+    statTotalAttempts: "Tentatives totales",
+    statCorners: "Corners",
+    statFreeKicks: "Coups francs",
+    statThrowIns: "Touches",
+    statFouls: "Fautes",
+    statPenalties: "Penaltys",
+    statTackles: "Tacles",
+    statPassesCompleted: "Passes réussies",
+    statPossessionMinutes: "Possession (min)",
+    statPossessionWon: "Possession gagnée",
   },
 };
 
@@ -233,6 +259,64 @@ function GoalTicker({
         ))}
       </div>
     </div>
+  );
+}
+
+/** Real team match stats (shots, corners, possession, etc.) — mirrors the
+ *  OS app's own MatchStatsPanel exactly, just themed orange/blue instead
+ *  of green/blue (same swap MomentumChart already makes on this site).
+ *  Bar is split proportional to the two raw values, not out of a fixed
+ *  max — Possession is the one row where that's also literally "the"
+ *  percentage since the two sides sum to 100. */
+function MatchStatsPanel({ stats, t }: { stats: LiveMatchTeamStats; t: (typeof STRINGS)["en"] }) {
+  const rows: { label: string; us: number | null; opponent: number | null; suffix?: string }[] = [
+    { label: t.statPossession, us: stats.usPossessionPct, opponent: stats.opponentPossessionPct, suffix: "%" },
+    { label: t.statShots, us: stats.usShots, opponent: stats.opponentShots },
+    { label: t.statTotalAttempts, us: stats.usTotalAttempts, opponent: stats.opponentTotalAttempts },
+    { label: t.statCorners, us: stats.usCorners, opponent: stats.opponentCorners },
+    { label: t.statFreeKicks, us: stats.usFreeKicks, opponent: stats.opponentFreeKicks },
+    { label: t.statThrowIns, us: stats.usThrowIns, opponent: stats.opponentThrowIns },
+    { label: t.statFouls, us: stats.usFouls, opponent: stats.opponentFouls },
+    { label: t.statPenalties, us: stats.usPenalties, opponent: stats.opponentPenalties },
+    { label: t.statTackles, us: stats.usTackles, opponent: stats.opponentTackles },
+    { label: t.statPassesCompleted, us: stats.usPassesCompleted, opponent: stats.opponentPassesCompleted },
+    { label: t.statPossessionMinutes, us: stats.usPossessionMinutes, opponent: stats.opponentPossessionMinutes },
+    { label: t.statPossessionWon, us: stats.usPossessionWon, opponent: stats.opponentPossessionWon },
+  ].filter((r) => r.us !== null && r.opponent !== null);
+
+  if (rows.length === 0) return null;
+
+  return (
+    <section className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-7">
+      <h2 className="mb-4 text-[11px] font-bold uppercase tracking-wide text-orange">{t.matchStats}</h2>
+      <div className="space-y-3.5">
+        {rows.map((r) => {
+          const us = r.us as number;
+          const opponent = r.opponent as number;
+          const total = us + opponent || 1;
+          const usPct = (us / total) * 100;
+          return (
+            <div key={r.label}>
+              <div className="mb-1 flex items-center justify-between text-[12px]">
+                <span className="w-10 font-semibold tabular-nums">
+                  {us}
+                  {r.suffix ?? ""}
+                </span>
+                <span className="text-white/50">{r.label}</span>
+                <span className="w-10 text-right font-semibold tabular-nums">
+                  {opponent}
+                  {r.suffix ?? ""}
+                </span>
+              </div>
+              <div className="flex h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div className="bg-orange" style={{ width: `${usPct}%` }} />
+                <div className="bg-blue-400" style={{ width: `${100 - usPct}%` }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -494,6 +578,8 @@ function LiveMatchBody({
             </div>
           </section>
         )}
+
+        {match.teamStats && <MatchStatsPanel stats={match.teamStats} t={t} />}
 
         <MomentumChart momentum={momentum} t={t} />
 
