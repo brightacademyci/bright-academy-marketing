@@ -267,6 +267,18 @@ export interface LiveMatchVideo {
   videoUrl: string;
 }
 
+/** Added 2026-08-29, mirrors bright-academy-os's PublicOpponentLineupPlayer
+ *  (lib/data/public-site.ts) — free-text name + shirt number a coach/
+ *  director/content manager typed in from the opponent's own paper match
+ *  sheet (e.g. Diambars', which Patrick forwarded). No photo, no
+ *  withheld-names handling like our own `lineup` above — an opposing
+ *  academy's own squad list, not one of ours. */
+export interface LiveMatchOpponentPlayer {
+  fullName: string;
+  jerseyNumber: number | null;
+  isStarter: boolean;
+}
+
 export interface LiveMatch {
   found: boolean;
   teamName: string;
@@ -290,6 +302,9 @@ export interface LiveMatch {
    *  any highlight clip(s) a photographer/director attached to this
    *  specific fixture (bright-academy-os's public_videos.match_id). */
   videos: LiveMatchVideo[];
+  /** Added 2026-08-29 — see LiveMatchOpponentPlayer's note above. Empty
+   *  until staff enter it for this fixture. */
+  opponentLineup: LiveMatchOpponentPlayer[];
 }
 
 const LIVE_MATCH_REVALIDATE_SECONDS = 15;

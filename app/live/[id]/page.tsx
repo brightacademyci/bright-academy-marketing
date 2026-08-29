@@ -52,6 +52,7 @@ const STRINGS = {
     namesWithheld: "Player names withheld for this squad.",
     highlights: "Highlights",
     opponentLabel: "Opponent",
+    opponentLineup: "Opponent Lineup",
   },
   fr: {
     title: "Match — Bright Academy",
@@ -69,6 +70,7 @@ const STRINGS = {
     namesWithheld: "Noms des joueurs masqués pour cette équipe.",
     highlights: "Temps forts",
     opponentLabel: "Adversaire",
+    opponentLineup: "Composition adverse",
   },
 };
 
@@ -237,6 +239,29 @@ function LiveMatchBody({
               </section>
             )}
             {!match.namesShown && <p className="text-[11px] italic text-white/30 sm:col-span-2">{t.namesWithheld}</p>}
+          </div>
+        )}
+
+        {match.opponentLineup.length > 0 && (
+          <div className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-7">
+            <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">
+              {t.opponentLineup} — {match.opponentName}
+            </h2>
+            <ul className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
+              {match.opponentLineup.map((p, i) => (
+                <li key={i} className="flex items-center gap-2.5 text-[13px]">
+                  <span
+                    className={
+                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold " +
+                      (p.isStarter ? "bg-white/10" : "bg-white/5 text-white/60")
+                    }
+                  >
+                    {p.jerseyNumber ?? "–"}
+                  </span>
+                  <span className={p.isStarter ? "text-white/90" : "text-white/60"}>{p.fullName}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
