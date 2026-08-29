@@ -169,6 +169,15 @@ export interface FirstTeamNextFixture {
   opponentLogoUrl: string | null;
   /** True from kickoff through full-time — added 2026-08-27. */
   isLive: boolean;
+  /** Added 2026-08-28, mirrors PublicFirstTeamFixture.status/ourScore/
+   *  opponentScore in bright-academy-os — see that repo's lib/data/
+   *  public-site.ts for the full note on the results gap this fixes.
+   *  nextFixture and every row in `fixtures` are always status="upcoming"
+   *  (or "live", same moment isLive is true); status="final" only appears
+   *  in the new `results` list below. */
+  status: "upcoming" | "live" | "final";
+  ourScore: number | null;
+  opponentScore: number | null;
 }
 
 export interface FirstTeam {
@@ -193,6 +202,10 @@ export interface FirstTeam {
   /** Mirrors PublicFirstTeam.fixtures — every scheduled fixture, soonest
    *  first, feeds the Fixtures tab in FirstTeamSection.tsx. */
   fixtures: FirstTeamNextFixture[];
+  /** Added 2026-08-28, mirrors PublicFirstTeam.results — recently played
+   *  matches with a final score, most recent first, capped at 10. Feeds the
+   *  Results section of the same Fixtures tab. */
+  results: FirstTeamNextFixture[];
 }
 
 const EMPTY_FIRST_TEAM: FirstTeam = {
@@ -210,6 +223,7 @@ const EMPTY_FIRST_TEAM: FirstTeam = {
   standings: [],
   nextFixture: null,
   fixtures: [],
+  results: [],
 };
 
 export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {

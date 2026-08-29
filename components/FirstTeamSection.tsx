@@ -8,7 +8,7 @@ import { PitchDiagram } from "./PitchDiagram";
 import { Lightbox } from "./Lightbox";
 import { FIRST_TEAM_SOCIAL } from "@/lib/content";
 import { classifyPosition, POSITION_GROUP_ORDER, type PositionGroup } from "@/lib/position-groups";
-import type { FirstTeam, FirstTeamPlayer } from "@/lib/api";
+import type { FirstTeam, FirstTeamNextFixture, FirstTeamPlayer } from "@/lib/api";
 
 // Same server-fetch-both-languages, pick-on-the-client pattern as
 // OurCoachesSection/NewsListSection — see that component's own comment for
@@ -76,6 +76,86 @@ function PlayerCard({ player }: { player: FirstTeamPlayer }) {
   );
 }
 
+interface FixtureRowDict {
+  nextFixture: { vsBadge: string; home: string; away: string; venueTbc: string; live: string };
+  fullTime: string;
+}
+
+/** Shared row for both the Upcoming and Results lists on the Fixtures tab
+ *  (added 2026-08-28 — Patrick's report that the tab could show "we play
+ *  tomorrow" but never "we won 4-1 last week": the previous version only
+ *  ever had upcoming fixtures to render, full stop). Otherwise the same
+ *  crest-vs-crest layout the old single fixtures list used; only the
+ *  trailing badge changes — an upcoming/live fixture keeps the existing
+ *  Home/Away pill (plus the "Watch Live" link while fx.isLive), a played
+ *  result swaps that pill for the final score with a soft win/draw/loss
+ *  accent (subtle tint, not a loud red/green — matching Patrick's "soft,
+ *  high-end, friendly" brief). */
+function FixtureRow({ fx, team, lang, t }: { fx: FirstTeamNextFixture; team: FirstTeam; lang: "en" | "fr"; t: FixtureRowDict }) {
+  const isFinal = fx.status === "final" && fx.ourScore !== null && fx.opponentScore !== null;
+  const outcome = isFinal ? (fx.ourScore! > fx.opponentScore! ? "win" : fx.ourScore! < fx.opponentScore! ? "loss" : "draw") : null;
+  const outcomeStyles: Record<string, string> = {
+    win: "bg-emerald-400/15 text-emerald-300 ring-1 ring-emerald-400/30",
+    draw: "bg-white/10 text-white/70 ring-1 ring-white/15",
+    loss: "bg-rose-400/10 text-rose-300 ring-1 ring-rose-400/25",
+  };
+
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 ring-2 ring-orange/30">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo/crest.png" alt={team.teamName || "Bright Football Club"} className="h-full w-full object-contain" />
+          </div>
+          <span className="text-[10px] font-bold text-white/40">{t.nextFixture.vsBadge}</span>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-orange/30">
+            {fx.opponentLogoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={fx.opponentLogoUrl} alt={fx.opponentName} className="h-full w-full object-cover" />
+            ) : (
+              <span className="font-display text-[12px] font-bold text-white/70">{fx.opponentName.slice(0, 2).toUpperCase()}</span>
+            )}
+          </div>
+        </div>
+        <div className="min-w-0">
+          <h3 className="truncate font-display text-[14px] font-semibold text-white">{fx.opponentShortName}</h3>
+          <p className="mt-0.5 text-[12px] text-white/60">
+            {formatFixtureDateTime(fx.matchDate, lang)}
+            {" · "}
+            {fx.venue || t.nextFixture.venueTbc}
+          </p>
+        </div>
+      </div>
+      {isFinal ? (
+        <span className={`shrink-0 self-start rounded-full px-3.5 py-1.5 text-[12px] font-bold sm:self-center ${outcomeStyles[outcome!]}`}>
+          {fx.ourScore} – {fx.opponentScore}
+          <span className="ml-1.5 text-[10px] font-semibold opacity-70">{t.fullTime}</span>
+        </span>
+      ) : (
+        <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
+          {fx.isLive && (
+            <Link
+              href={`/live/${fx.id}`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-orange px-3 py-1.5 text-[11px] font-bold text-white"
+            >
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+              {t.nextFixture.live}
+            </Link>
+          )}
+          <span
+            className={`rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${
+              fx.isHome ? "bg-orange/15 text-orange ring-1 ring-orange/30" : "bg-white/10 text-white/70 ring-1 ring-white/15"
+            }`}
+          >
+            {fx.isHome ? t.nextFixture.home : t.nextFixture.away}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr: FirstTeam }) {
   const { lang, t } = useLanguage();
   const team = useMemo(() => (lang === "fr" ? teamFr : teamEn), [lang, teamEn, teamFr]);
@@ -93,7 +173,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
   const TABS: { key: TabKey; label: string; count: number }[] = [
     { key: "squad", label: tabs.squad, count: team.players.length },
     { key: "staff", label: tabs.staff, count: team.staff.length },
-    { key: "fixtures", label: tabs.fixtures, count: team.fixtures.length },
+    { key: "fixtures", label: tabs.fixtures, count: team.fixtures.length + team.results.length },
     { key: "gallery", label: tabs.gallery, count: team.gallery.length },
     { key: "videos", label: tabs.videos, count: team.videos.length },
     { key: "standings", label: tabs.standings, count: team.standings.length },
@@ -346,69 +426,42 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
          *  Next Fixture banner above: a full list of everything currently
          *  on the calendar, not just the very next match. Same data
          *  (team.fixtures) the banner uses, just every row instead of the
-         *  first one. */}
+         *  first one.
+         *
+         *  Results section added 2026-08-28: Patrick's report that this tab
+         *  could show "we play tomorrow" but never "we won 4-1 last week" —
+         *  see FixtureRow's own comment above for the shared-row rationale. */}
         {activeTab === "fixtures" && (
-          <Reveal className="mt-8">
-            <h2 className="font-display text-xl font-bold text-white">{t.firstTeam.fixturesTitle}</h2>
-            {team.fixtures.length === 0 ? (
-              <p className="mt-4 text-[13px] text-white/60">{t.firstTeam.noFixtures}</p>
-            ) : (
-              <div className="mt-6 space-y-3">
-                {team.fixtures.map((fx, i) => (
-                  <Reveal key={`${fx.matchDate}-${fx.opponentName}-${i}`} delay={i * 40}>
-                    <div className="flex flex-col gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex shrink-0 items-center gap-1.5">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 ring-2 ring-orange/30">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="/logo/crest.png" alt={team.teamName || "Bright Football Club"} className="h-full w-full object-contain" />
-                          </div>
-                          <span className="text-[10px] font-bold text-white/40">{t.firstTeam.nextFixture.vsBadge}</span>
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-orange/30">
-                            {fx.opponentLogoUrl ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={fx.opponentLogoUrl} alt={fx.opponentName} className="h-full w-full object-cover" />
-                            ) : (
-                              <span className="font-display text-[12px] font-bold text-white/70">
-                                {fx.opponentName.slice(0, 2).toUpperCase()}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="truncate font-display text-[14px] font-semibold text-white">{fx.opponentShortName}</h3>
-                          <p className="mt-0.5 text-[12px] text-white/60">
-                            {formatFixtureDateTime(fx.matchDate, lang)}
-                            {" · "}
-                            {fx.venue || t.firstTeam.nextFixture.venueTbc}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
-                        {fx.isLive && (
-                          <Link
-                            href={`/live/${fx.id}`}
-                            className="inline-flex items-center gap-1.5 rounded-full bg-orange px-3 py-1.5 text-[11px] font-bold text-white"
-                          >
-                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                            {t.firstTeam.nextFixture.live}
-                          </Link>
-                        )}
-                        <span
-                          className={`rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${
-                            fx.isHome
-                              ? "bg-orange/15 text-orange ring-1 ring-orange/30"
-                              : "bg-white/10 text-white/70 ring-1 ring-white/15"
-                          }`}
-                        >
-                          {fx.isHome ? t.firstTeam.nextFixture.home : t.firstTeam.nextFixture.away}
-                        </span>
-                      </div>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            )}
+          <Reveal className="mt-8 space-y-10">
+            <div>
+              <h2 className="font-display text-xl font-bold text-white">{t.firstTeam.upcomingLabel}</h2>
+              {team.fixtures.length === 0 ? (
+                <p className="mt-4 text-[13px] text-white/60">{t.firstTeam.noFixtures}</p>
+              ) : (
+                <div className="mt-5 space-y-3">
+                  {team.fixtures.map((fx, i) => (
+                    <Reveal key={fx.id} delay={i * 40}>
+                      <FixtureRow fx={fx} team={team} lang={lang} t={t.firstTeam} />
+                    </Reveal>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <h2 className="font-display text-xl font-bold text-white">{t.firstTeam.resultsLabel}</h2>
+              {team.results.length === 0 ? (
+                <p className="mt-4 text-[13px] text-white/60">{t.firstTeam.noResults}</p>
+              ) : (
+                <div className="mt-5 space-y-3">
+                  {team.results.map((fx, i) => (
+                    <Reveal key={fx.id} delay={i * 40}>
+                      <FixtureRow fx={fx} team={team} lang={lang} t={t.firstTeam} />
+                    </Reveal>
+                  ))}
+                </div>
+              )}
+            </div>
           </Reveal>
         )}
 

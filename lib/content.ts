@@ -516,6 +516,13 @@ export const content = {
       },
       fixturesTitle: "Fixtures",
       noFixtures: "No matches are on the calendar yet — check back soon.",
+      // Added 2026-08-28 alongside the Results section on the Fixtures tab
+      // — see FirstTeamSection.tsx and bright-academy-os's lib/data/
+      // public-site.ts for the results-gap this fixes.
+      upcomingLabel: "Upcoming",
+      resultsLabel: "Results",
+      noResults: "No results yet this season — check back after the first match.",
+      fullTime: "FT",
       followTitle: "Follow the club",
     },
     // Every answer here restates a fact already published elsewhere on the
@@ -979,6 +986,10 @@ export const content = {
       },
       fixturesTitle: "Calendrier",
       noFixtures: "Aucun match n'est encore programmé — revenez bientôt.",
+      upcomingLabel: "À venir",
+      resultsLabel: "Résultats",
+      noResults: "Aucun résultat cette saison pour le moment — revenez après le premier match.",
+      fullTime: "Fin",
       followTitle: "Suivez le club",
     },
     faq: {
