@@ -32,7 +32,12 @@ interface PageProps {
 
 const STRINGS = {
   en: {
-    title: "Live Match — Bright Academy",
+    // Renamed from "Live Match" (2026-08-29) — this page now doubles as
+    // the general match-detail page for every fixture (played or
+    // upcoming), not just ones currently in progress. Route path stays
+    // /live/[id] (existing links, the OS app's own share link) — only the
+    // copy changed.
+    title: "Match — Bright Academy",
     notFound: "This match isn't available right now.",
     backHome: "Back to homepage",
     live: "LIVE",
@@ -45,9 +50,11 @@ const STRINGS = {
     home: "Home",
     away: "Away",
     namesWithheld: "Player names withheld for this squad.",
+    highlights: "Highlights",
+    opponentLabel: "Opponent",
   },
   fr: {
-    title: "Match en direct — Bright Academy",
+    title: "Match — Bright Academy",
     notFound: "Ce match n'est pas disponible pour le moment.",
     backHome: "Retour à l'accueil",
     live: "EN DIRECT",
@@ -60,6 +67,8 @@ const STRINGS = {
     home: "Domicile",
     away: "Extérieur",
     namesWithheld: "Noms des joueurs masqués pour cette équipe.",
+    highlights: "Temps forts",
+    opponentLabel: "Adversaire",
   },
 };
 
@@ -231,6 +240,34 @@ function LiveMatchBody({
           </div>
         )}
 
+        {match.videos.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.highlights}</h2>
+            <div className="space-y-5">
+              {match.videos.map((v) => (
+                <div key={v.id} className="overflow-hidden rounded-2xl ring-1 ring-white/10">
+                  <div className="aspect-video">
+                    <iframe
+                      src={v.videoUrl}
+                      title={v.title || t.highlights}
+                      className="h-full w-full"
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  {(v.title || v.caption) && (
+                    <div className="bg-white/5 px-4 py-3">
+                      {v.title && <p className="font-display text-[14px] font-semibold text-white">{v.title}</p>}
+                      {v.caption && <p className="text-[12px] text-white/60">{v.caption}</p>}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section>
           <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.events}</h2>
           {match.events.length === 0 ? (
@@ -242,7 +279,11 @@ function LiveMatchBody({
                   <span className="w-9 shrink-0 text-right tabular-nums text-white/40">{e.minute !== null ? `${e.minute}'` : ""}</span>
                   <span className="shrink-0">{EVENT_ICON[e.eventType] ?? "•"}</span>
                   <span className="text-white/90">{eventLabel(e.eventType, lang)}</span>
-                  {e.playerName && <span className="text-white/50">— {e.playerName}</span>}
+                  {e.playerName ? (
+                    <span className="text-white/50">— {e.playerName}</span>
+                  ) : (
+                    e.isOpponent && <span className="text-white/50">— {match.opponentName}</span>
+                  )}
                   {e.notes && e.eventType === "stoppage_time" && <span className="text-white/50">{e.notes}</span>}
                 </li>
               ))}

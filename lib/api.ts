@@ -252,6 +252,19 @@ export interface LiveMatchEvent {
   minute: number | null;
   playerName: string | null;
   notes: string | null;
+  /** Added 2026-08-29 — bright-academy-os's public API has returned this
+   *  since 2026-08-28 (see that repo's match_events.is_opponent migration)
+   *  but this site never picked it up, so an opponent's unattributed goal/
+   *  card/injury rendered identically to one of our own here, same bug
+   *  already fixed on the OS app's internal live pages. */
+  isOpponent: boolean;
+}
+
+export interface LiveMatchVideo {
+  id: string;
+  title: string | null;
+  caption: string | null;
+  videoUrl: string;
 }
 
 export interface LiveMatch {
@@ -272,6 +285,11 @@ export interface LiveMatch {
   lineup: LiveLineupPlayer[];
   events: LiveMatchEvent[];
   namesShown: boolean;
+  /** Added 2026-08-29, Patrick's ask right after fixtures became clickable:
+   *  "here the link to the youtube video of our first team last game" —
+   *  any highlight clip(s) a photographer/director attached to this
+   *  specific fixture (bright-academy-os's public_videos.match_id). */
+  videos: LiveMatchVideo[];
 }
 
 const LIVE_MATCH_REVALIDATE_SECONDS = 15;

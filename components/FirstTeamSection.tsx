@@ -101,7 +101,10 @@ function FixtureRow({ fx, team, lang, t }: { fx: FirstTeamNextFixture; team: Fir
   };
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between">
+    <Link
+      href={`/live/${fx.id}`}
+      className="flex flex-col gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition hover:bg-white/10 hover:ring-orange/30 sm:flex-row sm:items-center sm:justify-between"
+    >
       <div className="flex min-w-0 items-center gap-3">
         <div className="flex shrink-0 items-center gap-1.5">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-1 ring-2 ring-orange/30">
@@ -135,13 +138,10 @@ function FixtureRow({ fx, team, lang, t }: { fx: FirstTeamNextFixture; team: Fir
       ) : (
         <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
           {fx.isLive && (
-            <Link
-              href={`/live/${fx.id}`}
-              className="inline-flex items-center gap-1.5 rounded-full bg-orange px-3 py-1.5 text-[11px] font-bold text-white"
-            >
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-orange px-3 py-1.5 text-[11px] font-bold text-white">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
               {t.nextFixture.live}
-            </Link>
+            </span>
           )}
           <span
             className={`rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${
@@ -152,7 +152,7 @@ function FixtureRow({ fx, team, lang, t }: { fx: FirstTeamNextFixture; team: Fir
           </span>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -202,7 +202,15 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
          *  time-sensitive info, not squad/staff/gallery/standings content
          *  that belongs behind a tab click. */}
         {team.nextFixture && (
-          <Reveal className="mt-8 rounded-2xl bg-white/5 p-5 ring-1 ring-orange/30 sm:p-7">
+          <Reveal className="mt-8">
+            {/* Whole card is clickable (2026-08-29, Patrick: "the games we
+             *  played should be clickable even the games we haven't played
+             *  yet") — links to the same general match page every Fixtures-
+             *  tab row now uses (see FixtureRow above). */}
+            <Link
+              href={`/live/${team.nextFixture.id}`}
+              className="block rounded-2xl bg-white/5 p-5 ring-1 ring-orange/30 transition hover:bg-white/10 hover:ring-orange/50 sm:p-7"
+            >
             <div className="flex items-center justify-between gap-2">
               <span className="text-[11px] font-semibold uppercase tracking-wide text-orange">
                 {t.firstTeam.nextFixture.label}
@@ -284,15 +292,9 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
             </p>
 
             {team.nextFixture.isLive && (
-              <div className="mt-5 text-center">
-                <Link
-                  href={`/live/${team.nextFixture.id}`}
-                  className="inline-flex items-center gap-2 rounded-full bg-orange px-5 py-2.5 text-[12px] font-bold text-white shadow-sm transition hover:bg-orange/90"
-                >
-                  {t.firstTeam.nextFixture.watchLive}
-                </Link>
-              </div>
+              <p className="mt-5 text-center text-[12px] font-bold text-orange">{t.firstTeam.nextFixture.watchLive}</p>
             )}
+            </Link>
           </Reveal>
         )}
 
