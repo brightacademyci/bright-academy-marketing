@@ -245,6 +245,11 @@ export interface LiveLineupPlayer {
   position: string | null;
   isStarter: boolean;
   photoUrl: string | null;
+  /** Added 2026-08-29 for the Fan Vote picker — mirrors bright-academy-os's
+   *  PublicLiveLineupPlayer.playerId (see that repo's lib/data/
+   *  public-site.ts). Null whenever displayName is anonymized, same
+   *  namesShown gate. */
+  playerId: string | null;
 }
 
 export interface LiveMatchEvent {
@@ -279,11 +284,34 @@ export interface LiveMatchOpponentPlayer {
   isStarter: boolean;
 }
 
+/** Added 2026-08-29 — mirrors bright-academy-os's PublicMomentumBucket. See
+ *  that repo's lib/data/public-site.ts for exactly what this is and isn't
+ *  (an event-based approximation, not real shot/possession data). */
+export interface LiveMatchMomentumBucket {
+  bucketStart: number;
+  us: number;
+  opponent: number;
+}
+
+/** Added 2026-08-29 — mirrors bright-academy-os's PublicFanVoteTally. */
+export interface LiveMatchFanVote {
+  playerId: string;
+  name: string;
+  photoUrl: string | null;
+  votes: number;
+  pct: number;
+}
+
 export interface LiveMatch {
   found: boolean;
   teamName: string;
   opponentName: string;
   opponentLogoUrl: string | null;
+  /** Added 2026-08-29 for the Sofascore-style header — mirrors
+   *  bright-academy-os's PublicLiveMatch.ourCrestUrl. */
+  ourCrestUrl: string | null;
+  matchType: string | null;
+  tournamentName: string | null;
   isHome: boolean;
   venue: string | null;
   matchDate: string;
@@ -296,6 +324,10 @@ export interface LiveMatch {
   secondHalfStoppage: number;
   lineup: LiveLineupPlayer[];
   events: LiveMatchEvent[];
+  playerOfMatch: { name: string; photoUrl: string | null } | null;
+  fanVotes: LiveMatchFanVote[];
+  totalFanVotes: number;
+  momentum: LiveMatchMomentumBucket[];
   namesShown: boolean;
   /** Added 2026-08-29, Patrick's ask right after fixtures became clickable:
    *  "here the link to the youtube video of our first team last game" —

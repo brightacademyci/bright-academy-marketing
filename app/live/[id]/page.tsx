@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { PitchDiagram } from "@/components/PitchDiagram";
 import { LiveAutoRefresh } from "@/components/live/live-auto-refresh";
+import { FanVoteWidget } from "@/components/live/fan-vote-widget";
 import { computeLiveClock } from "@/lib/live-match-clock";
 import { getLiveMatch } from "@/lib/api";
-import { SITE_URL } from "@/lib/content";
+import { APP_URL, SITE_URL } from "@/lib/content";
 
 // Public, branded live-match page — added 2026-08-27 directly in response
 // to Patrick's ask: "I should be allowed to click on it and then see...
@@ -18,6 +20,11 @@ import { SITE_URL } from "@/lib/content";
 // prints), but themed with this site's navy/orange tokens, Header/Footer,
 // and PitchDiagram motif so it reads as part of brightacademyci.com rather
 // than a jump to a different app.
+//
+// Restyled 2026-08-29 to follow Sofascore's match page layout (Patrick's
+// explicit ask, screenshot attached: crest header card, goal-scorer
+// ticker, Match Momentum chart, Player of the Match with a fan vote) —
+// again mirroring the OS app's own /live/[id] page exactly, just themed.
 //
 // force-dynamic + a 15s ISR window on the underlying fetch (see
 // lib/api.ts's getLiveMatch) is the same "always check, cache briefly"
@@ -32,11 +39,6 @@ interface PageProps {
 
 const STRINGS = {
   en: {
-    // Renamed from "Live Match" (2026-08-29) — this page now doubles as
-    // the general match-detail page for every fixture (played or
-    // upcoming), not just ones currently in progress. Route path stays
-    // /live/[id] (existing links, the OS app's own share link) — only the
-    // copy changed.
     title: "Match — Bright Academy",
     notFound: "This match isn't available right now.",
     backHome: "Back to homepage",
@@ -53,6 +55,22 @@ const STRINGS = {
     highlights: "Highlights",
     opponentLabel: "Opponent",
     opponentLineup: "Opponent Lineup",
+    goals: "Goals",
+    momentum: "Match Momentum",
+    momentumCaption: "An indicator built from logged match events (goals, corners, free kicks) — not shot or possession data.",
+    playerOfMatch: "Player of the Match",
+    coachPick: "Coach's Pick",
+    fanChoice: "Fan Vote",
+    noPotmYet: "Not picked yet",
+    noVotesYet: "No votes yet",
+    votePrompt: "Choose a player…",
+    voteButton: "Vote",
+    voted: "Thanks for voting for",
+    voteError: "Couldn't record your vote — please try again.",
+    matchTypeFriendly: "Friendly",
+    matchTypeInternal: "Internal",
+    matchTypeExternal: "vs. another club",
+    matchTypeTournament: "Tournament",
   },
   fr: {
     title: "Match — Bright Academy",
@@ -71,6 +89,22 @@ const STRINGS = {
     highlights: "Temps forts",
     opponentLabel: "Adversaire",
     opponentLineup: "Composition adverse",
+    goals: "Buts",
+    momentum: "Momentum du match",
+    momentumCaption: "Un indicateur basé sur les événements enregistrés (buts, corners, coups francs) — pas des données de tirs ou de possession.",
+    playerOfMatch: "Joueur du match",
+    coachPick: "Choix du coach",
+    fanChoice: "Vote des fans",
+    noPotmYet: "Pas encore désigné",
+    noVotesYet: "Aucun vote pour le moment",
+    votePrompt: "Choisissez un joueur…",
+    voteButton: "Voter",
+    voted: "Merci d'avoir voté pour",
+    voteError: "Impossible d'enregistrer votre vote — réessayez.",
+    matchTypeFriendly: "Amical",
+    matchTypeInternal: "Interne",
+    matchTypeExternal: "contre un autre club",
+    matchTypeTournament: "Tournoi",
   },
 };
 
@@ -117,6 +151,140 @@ function eventLabel(type: string, lang: "en" | "fr"): string {
   return labels[type]?.[lang] ?? type;
 }
 
+function competitionLine(matchType: string | null, tournamentName: string | null, t: (typeof STRINGS)["en"]): string | null {
+  if (tournamentName) return tournamentName;
+  switch (matchType) {
+    case "friendly":
+      return t.matchTypeFriendly;
+    case "internal":
+      return t.matchTypeInternal;
+    case "external":
+      return t.matchTypeExternal;
+    case "tournament":
+      return t.matchTypeTournament;
+    default:
+      return null;
+  }
+}
+
+function Crest({ url, name }: { url: string | null; name: string }) {
+  if (url) {
+    // External/signed Storage URLs — next/image's static optimizer doesn't help here.
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={url} alt={name} className="h-12 w-12 shrink-0 rounded-full bg-white/10 object-contain sm:h-16 sm:w-16" />;
+  }
+  return (
+    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg font-bold sm:h-16 sm:w-16">
+      {name.charAt(0)}
+    </span>
+  );
+}
+
+/** Two-column goal ticker, most-recent-first per side — mirrors the OS
+ *  app's own GoalTicker exactly, just themed. Only rendered once at least
+ *  one goal has been logged. */
+function GoalTicker({
+  events,
+  teamName,
+  opponentName,
+}: {
+  events: { eventType: string; minute: number | null; playerName: string | null; isOpponent: boolean }[];
+  teamName: string;
+  opponentName: string;
+}) {
+  const goals = events.filter((e) => e.eventType === "goal");
+  if (goals.length === 0) return null;
+  const ours = goals.filter((g) => !g.isOpponent).sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0));
+  const theirs = goals.filter((g) => g.isOpponent).sort((a, b) => (b.minute ?? 0) - (a.minute ?? 0));
+
+  const Row = ({ g, align }: { g: (typeof goals)[number]; align: "left" | "right" }) => {
+    const name = g.playerName ?? (align === "left" ? teamName : opponentName);
+    const icon = <span className="shrink-0">⚽</span>;
+    const text = (
+      <span className="truncate">
+        {name} {g.minute !== null ? `${g.minute}'` : ""}
+      </span>
+    );
+    return (
+      <div className={"flex items-center gap-1.5 text-[12px] " + (align === "left" ? "justify-end text-right" : "justify-start text-left")}>
+        {align === "left" ? (
+          <>
+            {text}
+            {icon}
+          </>
+        ) : (
+          <>
+            {icon}
+            {text}
+          </>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="mb-10 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:p-5">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+        {Array.from({ length: Math.max(ours.length, theirs.length) }).map((_, i) => (
+          <Fragment key={i}>
+            <div>{ours[i] && <Row g={ours[i]} align="left" />}</div>
+            <div>{theirs[i] && <Row g={theirs[i]} align="right" />}</div>
+          </Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const MOMENTUM_BUCKET_SIZE = 5;
+
+/** Mirrored bar chart, drawn server-side as plain SVG — mirrors the OS
+ *  app's own MomentumChart exactly. See LiveMatchMomentumBucket's doc
+ *  comment in lib/api.ts for exactly what this is/isn't measuring. */
+function MomentumChart({ momentum, t }: { momentum: { bucketStart: number; us: number; opponent: number }[]; t: (typeof STRINGS)["en"] }) {
+  if (momentum.length === 0) return null;
+  const maxMinute = Math.max(90, ...momentum.map((b) => b.bucketStart + MOMENTUM_BUCKET_SIZE));
+  const bucketCount = Math.ceil(maxMinute / MOMENTUM_BUCKET_SIZE);
+  const maxVal = Math.max(1, ...momentum.map((b) => Math.max(b.us, b.opponent)));
+  const width = 100;
+  const height = 48;
+  const half = height / 2;
+  const barWidth = width / bucketCount;
+
+  return (
+    <section className="mb-10">
+      <h2 className="mb-1 text-[11px] font-bold uppercase tracking-wide text-orange">{t.momentum}</h2>
+      <p className="mb-2.5 text-[11px] italic text-white/40">{t.momentumCaption}</p>
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-24 w-full sm:h-28" preserveAspectRatio="none">
+        <line x1={0} y1={half} x2={width} y2={half} stroke="rgba(255,255,255,0.15)" strokeWidth={0.5} />
+        <line
+          x1={(45 / maxMinute) * width}
+          y1={0}
+          x2={(45 / maxMinute) * width}
+          y2={height}
+          stroke="rgba(255,255,255,0.15)"
+          strokeWidth={0.5}
+          strokeDasharray="2,2"
+        />
+        {Array.from({ length: bucketCount }).map((_, i) => {
+          const bucketStart = i * MOMENTUM_BUCKET_SIZE;
+          const b = momentum.find((m) => m.bucketStart === bucketStart);
+          if (!b) return null;
+          const usH = (b.us / maxVal) * half;
+          const oppH = (b.opponent / maxVal) * half;
+          const x = i * barWidth;
+          return (
+            <g key={bucketStart}>
+              {usH > 0 && <rect x={x + barWidth * 0.15} y={half - usH} width={barWidth * 0.7} height={usH} fill="#f97316" opacity={0.9} />}
+              {oppH > 0 && <rect x={x + barWidth * 0.15} y={half} width={barWidth * 0.7} height={oppH} fill="#60a5fa" opacity={0.85} />}
+            </g>
+          );
+        })}
+      </svg>
+    </section>
+  );
+}
+
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const sp = await searchParams;
@@ -156,7 +324,7 @@ export default async function PublicLiveMatchPage({ params, searchParams }: Page
               </Link>
             </div>
           ) : (
-            <LiveMatchBody match={match} t={t} lang={lang} />
+            <LiveMatchBody match={match} t={t} lang={lang} fixtureId={id} />
           )}
         </div>
       </section>
@@ -170,48 +338,62 @@ function LiveMatchBody({
   match,
   t,
   lang,
+  fixtureId,
 }: {
   match: NonNullable<Awaited<ReturnType<typeof getLiveMatch>>>;
   t: (typeof STRINGS)["en"];
   lang: "en" | "fr";
+  fixtureId: string;
 }) {
   const clock = computeLiveClock(match.livePhase, match.halfStartedAt, match.firstHalfStoppage, match.secondHalfStoppage);
   const starters = match.lineup.filter((p) => p.isStarter);
   const subs = match.lineup.filter((p) => !p.isStarter);
+  const competition = competitionLine(match.matchType, match.tournamentName, t);
+  const votablePlayers = match.lineup.filter((p) => p.playerId).map((p) => ({ id: p.playerId as string, name: p.displayName }));
 
   return (
     <>
       {clock.isLive && <LiveAutoRefresh intervalMs={20000} />}
 
       <div className="mx-auto max-w-2xl">
-        <div className="mb-10 text-center">
-          {clock.label && (
-            <span
-              className={
-                "mb-4 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-bold tracking-wide " +
-                (clock.isLive ? "bg-orange/20 text-orange ring-1 ring-orange/40" : "bg-white/10 text-white/60")
-              }
-            >
-              {clock.isLive && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange" />}
-              {clock.isFinished ? t.finished : clock.isLive ? `${t.live} · ${clock.label}` : clock.label}
-            </span>
-          )}
-          {!match.livePhase && <p className="mb-4 text-[12px] text-white/40">{t.upcoming}</p>}
+        {/* Header card — restyled 2026-08-29 to follow Sofascore's match
+         *  page layout, per Patrick's ask: crests, competition line, big
+         *  score, status pill, all in one card. */}
+        <div className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-8">
+          {competition && <p className="mb-4 text-center text-[11px] font-semibold uppercase tracking-wide text-white/40">🏆 {competition}</p>}
 
-          <div className="flex items-center justify-center gap-6 sm:gap-12">
-            <div className="flex-1 text-right">
-              <p className="font-display text-lg font-bold sm:text-2xl">{match.teamName}</p>
-              <p className="mt-1 text-[11px] text-white/40">{match.isHome ? t.home : t.away}</p>
+          <div className="flex items-center justify-center gap-4 sm:gap-10">
+            <div className="flex flex-1 flex-col items-center gap-2 text-center">
+              <Crest url={null} name={match.teamName} />
+              <p className="font-display text-sm font-bold sm:text-xl">{match.teamName}</p>
+              <p className="text-[10px] text-white/40">{match.isHome ? t.home : t.away}</p>
             </div>
-            <div className="shrink-0 font-display text-4xl font-bold tabular-nums sm:text-5xl">
-              {match.ourScore ?? 0}–{match.opponentScore ?? 0}
+            <div className="shrink-0 text-center">
+              <div className="font-display text-3xl font-bold tabular-nums sm:text-5xl">
+                {match.ourScore ?? 0}–{match.opponentScore ?? 0}
+              </div>
+              {clock.label && (
+                <span
+                  className={
+                    "mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold tracking-wide " +
+                    (clock.isLive ? "bg-orange/20 text-orange ring-1 ring-orange/40" : "bg-white/10 text-white/60")
+                  }
+                >
+                  {clock.isLive && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange" />}
+                  {clock.isFinished ? t.finished : clock.isLive ? `${t.live} · ${clock.label}` : clock.label}
+                </span>
+              )}
+              {!match.livePhase && <p className="mt-2 text-[11px] text-white/40">{t.upcoming}</p>}
             </div>
-            <div className="flex-1 text-left">
-              <p className="font-display text-lg font-bold sm:text-2xl">{match.opponentName}</p>
-              <p className="mt-1 text-[11px] text-white/40">{match.isHome ? t.away : t.home}</p>
+            <div className="flex flex-1 flex-col items-center gap-2 text-center">
+              <Crest url={match.opponentLogoUrl} name={match.opponentName} />
+              <p className="font-display text-sm font-bold sm:text-xl">{match.opponentName}</p>
+              <p className="text-[10px] text-white/40">{match.isHome ? t.away : t.home}</p>
             </div>
           </div>
         </div>
+
+        <GoalTicker events={match.events} teamName={match.teamName} opponentName={match.opponentName} />
 
         {match.lineup.length > 0 && (
           <div className="mb-10 grid grid-cols-1 gap-6 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:grid-cols-2 sm:p-7">
@@ -295,6 +477,60 @@ function LiveMatchBody({
                   )}
                 </div>
               ))}
+            </div>
+          </section>
+        )}
+
+        <MomentumChart momentum={match.momentum} t={t} />
+
+        {votablePlayers.length > 0 && (
+          <section className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-7">
+            <h2 className="mb-3.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.playerOfMatch}</h2>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="text-center">
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-white/40">{t.coachPick}</p>
+                {match.playerOfMatch ? (
+                  <>
+                    <div className="mx-auto w-fit">
+                      <Crest url={match.playerOfMatch.photoUrl} name={match.playerOfMatch.name} />
+                    </div>
+                    <p className="mt-2 font-display text-sm font-semibold">{match.playerOfMatch.name}</p>
+                  </>
+                ) : (
+                  <p className="text-[12px] text-white/40">{t.noPotmYet}</p>
+                )}
+              </div>
+              <div className="text-center">
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-white/40">{t.fanChoice}</p>
+                {match.fanVotes[0] ? (
+                  <>
+                    <div className="mx-auto w-fit">
+                      <Crest url={match.fanVotes[0].photoUrl} name={match.fanVotes[0].name} />
+                    </div>
+                    <p className="mt-2 font-display text-sm font-semibold">{match.fanVotes[0].name}</p>
+                    <p className="text-[11px] text-white/40">
+                      {match.fanVotes[0].pct}% · {match.totalFanVotes}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-[12px] text-white/40">{t.noVotesYet}</p>
+                )}
+              </div>
+            </div>
+
+            {match.fanVotes.length > 1 && (
+              <ul className="mt-5 space-y-1.5 border-t border-white/10 pt-4">
+                {match.fanVotes.slice(1).map((v) => (
+                  <li key={v.playerId} className="flex items-center justify-between text-[12px] text-white/60">
+                    <span>{v.name}</span>
+                    <span>{v.pct}%</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <div className="mt-5 border-t border-white/10 pt-4">
+              <FanVoteWidget fixtureId={fixtureId} apiBase={APP_URL} players={votablePlayers} t={t} />
             </div>
           </section>
         )}
