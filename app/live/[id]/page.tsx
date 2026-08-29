@@ -198,10 +198,16 @@ function Crest({ url, name }: { url: string | null; name: string }) {
   if (url) {
     // External/signed Storage URLs — next/image's static optimizer doesn't help here.
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={url} alt={name} className="h-12 w-12 shrink-0 rounded-full bg-white/10 object-contain sm:h-16 sm:w-16" />;
+    return (
+      <img
+        src={url}
+        alt={name}
+        className="h-12 w-12 shrink-0 rounded-full bg-white/10 object-contain shadow-md ring-1 ring-white/10 sm:h-16 sm:w-16"
+      />
+    );
   }
   return (
-    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg font-bold sm:h-16 sm:w-16">
+    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg font-bold shadow-md ring-1 ring-white/10 sm:h-16 sm:w-16">
       {name.charAt(0)}
     </span>
   );
@@ -239,7 +245,15 @@ function LineupPitch({
   return (
     <section className="mb-10">
       <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.startingXi}</h2>
-      <div className="relative w-full overflow-hidden rounded-2xl bg-[#175c3c] ring-1 ring-white/10" style={{ aspectRatio: "300 / 400" }}>
+      <div
+        className="relative w-full overflow-hidden rounded-2xl shadow-lg ring-1 ring-white/10"
+        style={{
+          aspectRatio: "300 / 400",
+          // Alternating mowed-grass bands instead of a flat fill — mirrors
+          // the OS app's own polish pass on this component.
+          background: "repeating-linear-gradient(180deg, #1a6b47 0px, #1a6b47 34px, #175c3c 34px, #175c3c 68px)",
+        }}
+      >
         <svg viewBox="0 0 300 400" className="absolute inset-0 h-full w-full" preserveAspectRatio="none" aria-hidden="true">
           <rect x="6" y="6" width="288" height="388" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
           <line x1="6" y1="200" x2="294" y2="200" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
@@ -247,8 +261,13 @@ function LineupPitch({
           <circle cx="150" cy="200" r="2.5" fill="rgba(255,255,255,0.35)" />
           <rect x="72" y="316" width="156" height="78" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
           <rect x="112" y="366" width="76" height="28" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <circle cx="150" cy="354" r="2" fill="rgba(255,255,255,0.35)" />
           <rect x="72" y="6" width="156" height="78" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
           <rect x="112" y="6" width="76" height="28" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
+          <path d="M 6 20 A 14 14 0 0 1 20 6" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <path d="M 280 6 A 14 14 0 0 1 294 20" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <path d="M 6 380 A 14 14 0 0 0 20 394" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <path d="M 280 394 A 14 14 0 0 1 294 380" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
         </svg>
 
         {PITCH_ROWS.map(({ group, yPct }) =>
@@ -260,10 +279,13 @@ function LineupPitch({
                 className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5"
                 style={{ left: `${xPct}%`, top: `${yPct}%` }}
               >
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange text-[10px] font-bold text-navy-deep ring-2 ring-white/40 sm:h-7 sm:w-7 sm:text-[11px]">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange text-[10px] font-bold text-navy-deep shadow-md ring-2 ring-white/40 sm:h-7 sm:w-7 sm:text-[11px]">
                   {p.jerseyNumber ?? "–"}
                 </span>
-                <span className="max-w-[52px] truncate text-center text-[8px] font-medium text-white/90 sm:max-w-[68px] sm:text-[9px]" title={p.displayName}>
+                <span
+                  className="max-w-[52px] truncate rounded text-center text-[8px] font-medium text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.6)] sm:max-w-[68px] sm:text-[9px]"
+                  title={p.displayName}
+                >
                   {p.displayName}
                 </span>
               </div>
@@ -337,7 +359,17 @@ function GoalTicker({
  *  Bar is split proportional to the two raw values, not out of a fixed
  *  max — Possession is the one row where that's also literally "the"
  *  percentage since the two sides sum to 100. */
-function MatchStatsPanel({ stats, t }: { stats: LiveMatchTeamStats; t: (typeof STRINGS)["en"] }) {
+function MatchStatsPanel({
+  stats,
+  teamName,
+  opponentName,
+  t,
+}: {
+  stats: LiveMatchTeamStats;
+  teamName: string;
+  opponentName: string;
+  t: (typeof STRINGS)["en"];
+}) {
   const rows: { label: string; us: number | null; opponent: number | null; suffix?: string }[] = [
     { label: t.statPossession, us: stats.usPossessionPct, opponent: stats.opponentPossessionPct, suffix: "%" },
     { label: t.statShots, us: stats.usShots, opponent: stats.opponentShots },
@@ -358,26 +390,40 @@ function MatchStatsPanel({ stats, t }: { stats: LiveMatchTeamStats; t: (typeof S
   return (
     <section className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-7">
       <h2 className="mb-4 text-[11px] font-bold uppercase tracking-wide text-orange">{t.matchStats}</h2>
+      {/* Color legend — mirrors the OS app's own addition so the
+       *  orange/blue split still reads correctly on its own. */}
+      <div className="mb-5 flex items-center justify-between text-[11px] font-semibold text-white/70">
+        <span className="flex items-center gap-1.5 truncate">
+          <span className="h-2 w-2 shrink-0 rounded-full bg-orange" />
+          <span className="truncate">{teamName}</span>
+        </span>
+        <span className="flex items-center gap-1.5 truncate">
+          <span className="truncate">{opponentName}</span>
+          <span className="h-2 w-2 shrink-0 rounded-full bg-blue-400" />
+        </span>
+      </div>
       <div className="space-y-3.5">
         {rows.map((r) => {
           const us = r.us as number;
           const opponent = r.opponent as number;
           const total = us + opponent || 1;
           const usPct = (us / total) * 100;
+          const usLeads = us > opponent;
+          const opponentLeads = opponent > us;
           return (
             <div key={r.label}>
               <div className="mb-1 flex items-center justify-between text-[12px]">
-                <span className="w-10 font-semibold tabular-nums">
+                <span className={"w-10 tabular-nums " + (usLeads ? "font-bold text-white" : "font-semibold text-white/70")}>
                   {us}
                   {r.suffix ?? ""}
                 </span>
                 <span className="text-white/50">{r.label}</span>
-                <span className="w-10 text-right font-semibold tabular-nums">
+                <span className={"w-10 text-right tabular-nums " + (opponentLeads ? "font-bold text-white" : "font-semibold text-white/70")}>
                   {opponent}
                   {r.suffix ?? ""}
                 </span>
               </div>
-              <div className="flex h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className="flex h-2 overflow-hidden rounded-full bg-white/10">
                 <div className="bg-orange" style={{ width: `${usPct}%` }} />
                 <div className="bg-blue-400" style={{ width: `${100 - usPct}%` }} />
               </div>
@@ -531,7 +577,7 @@ function LiveMatchBody({
 
           <div className="flex items-center justify-center gap-4 sm:gap-10">
             <div className="flex flex-1 flex-col items-center gap-2 text-center">
-              <Crest url={null} name={match.teamName} />
+              <Crest url={match.ourCrestUrl} name={match.teamName} />
               <p className="font-display text-sm font-bold sm:text-xl">{match.teamName}</p>
               <p className="text-[10px] text-white/40">{match.isHome ? t.home : t.away}</p>
             </div>
@@ -635,7 +681,7 @@ function LiveMatchBody({
           </section>
         )}
 
-        {match.teamStats && <MatchStatsPanel stats={match.teamStats} t={t} />}
+        {match.teamStats && <MatchStatsPanel stats={match.teamStats} teamName={match.teamName} opponentName={match.opponentName} t={t} />}
 
         <MomentumChart momentum={momentum} t={t} />
 
