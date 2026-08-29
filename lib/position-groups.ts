@@ -16,6 +16,12 @@ const GK_TOKENS = new Set(["gk", "goalkeeper", "keeper", "gardien", "gb"]);
 const DEF_TOKENS = new Set([
   "cb", "fb", "rb", "lb", "sw", "def", "defender", "back",
   "defenseur", "défenseur", "arriere", "arrière", "libero",
+  // "latéral" (fullback) was missing on both sides — found 2026-08-29 in
+  // the OS app's own lib/position-groups.ts building the lineup pitch
+  // diagram; real lineup data uses "Latéral gauche"/"Latéral droit" for
+  // fullbacks, and neither token nor the substring fallback below matched
+  // it, so both fell into "other" instead of "def". Mirrored here too.
+  "lateral", "latéral",
 ]);
 const MID_TOKENS = new Set([
   "dm", "cm", "am", "mf", "mid", "midfielder", "milieu", "mc",

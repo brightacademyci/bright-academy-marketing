@@ -9,6 +9,7 @@ import { LiveAutoRefresh } from "@/components/live/live-auto-refresh";
 import { FanVoteWidget } from "@/components/live/fan-vote-widget";
 import { computeLiveClock } from "@/lib/live-match-clock";
 import { getLiveMatch, type LiveMatchTeamStats } from "@/lib/api";
+import { classifyPosition } from "@/lib/position-groups";
 import { APP_URL, SITE_URL } from "@/lib/content";
 
 // Public, branded live-match page — added 2026-08-27 directly in response
@@ -203,6 +204,74 @@ function Crest({ url, name }: { url: string | null; name: string }) {
     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg font-bold sm:h-16 sm:w-16">
       {name.charAt(0)}
     </span>
+  );
+}
+
+/** Row (top-to-bottom on the pitch) each classifyPosition() group renders
+ *  in — mirrors the OS app's own PITCH_ROWS exactly. "other" folds into
+ *  the midfield row rather than getting a 5th row or being dropped. */
+const PITCH_ROWS: { group: "fwd" | "mid" | "def" | "gk"; yPct: number }[] = [
+  { group: "fwd", yPct: 34 },
+  { group: "mid", yPct: 54 },
+  { group: "def", yPct: 74 },
+  { group: "gk", yPct: 92 },
+];
+
+/** Starting XI drawn on a pitch — mirrors the OS app's own LineupPitch
+ *  exactly, just themed orange instead of green. See that component's
+ *  doc comment for why only our own XI is drawn (opponent_lineups has no
+ *  position data, so a formation shape for them would be invented). */
+function LineupPitch({
+  starters,
+  t,
+}: {
+  starters: { displayName: string; jerseyNumber: number | null; position: string | null }[];
+  t: (typeof STRINGS)["en"];
+}) {
+  if (starters.length === 0) return null;
+
+  const rows: Record<"gk" | "def" | "mid" | "fwd", typeof starters> = { gk: [], def: [], mid: [], fwd: [] };
+  for (const p of starters) {
+    const group = classifyPosition(p.position);
+    rows[group === "other" ? "mid" : group].push(p);
+  }
+
+  return (
+    <section className="mb-10">
+      <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.startingXi}</h2>
+      <div className="relative w-full overflow-hidden rounded-2xl bg-[#175c3c] ring-1 ring-white/10" style={{ aspectRatio: "300 / 400" }}>
+        <svg viewBox="0 0 300 400" className="absolute inset-0 h-full w-full" preserveAspectRatio="none" aria-hidden="true">
+          <rect x="6" y="6" width="288" height="388" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <line x1="6" y1="200" x2="294" y2="200" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <circle cx="150" cy="200" r="38" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <circle cx="150" cy="200" r="2.5" fill="rgba(255,255,255,0.35)" />
+          <rect x="72" y="316" width="156" height="78" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <rect x="112" y="366" width="76" height="28" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+          <rect x="72" y="6" width="156" height="78" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
+          <rect x="112" y="6" width="76" height="28" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
+        </svg>
+
+        {PITCH_ROWS.map(({ group, yPct }) =>
+          rows[group].map((p, i, arr) => {
+            const xPct = arr.length === 1 ? 50 : 14 + ((i + 0.5) / arr.length) * 72;
+            return (
+              <div
+                key={`${group}-${i}`}
+                className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5"
+                style={{ left: `${xPct}%`, top: `${yPct}%` }}
+              >
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange text-[10px] font-bold text-navy-deep ring-2 ring-white/40 sm:h-7 sm:w-7 sm:text-[11px]">
+                  {p.jerseyNumber ?? "–"}
+                </span>
+                <span className="max-w-[52px] truncate text-center text-[8px] font-medium text-white/90 sm:max-w-[68px] sm:text-[9px]" title={p.displayName}>
+                  {p.displayName}
+                </span>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -494,25 +563,12 @@ function LiveMatchBody({
         <GoalTicker events={events} teamName={match.teamName} opponentName={match.opponentName} />
 
         {lineup.length > 0 && (
-          <div className="mb-10 grid grid-cols-1 gap-6 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:grid-cols-2 sm:p-7">
-            <section>
-              <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.startingXi}</h2>
-              <ul className="space-y-1.5">
-                {starters.map((p, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-[13px]">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-[11px] font-semibold">
-                      {p.jerseyNumber ?? "–"}
-                    </span>
-                    <span className="text-white/90">{p.displayName}</span>
-                    {p.position && <span className="text-[11px] text-white/30">{p.position}</span>}
-                  </li>
-                ))}
-              </ul>
-            </section>
+          <>
+            <LineupPitch starters={starters} t={t} />
             {subs.length > 0 && (
-              <section>
+              <section className="mb-10">
                 <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.substitutes}</h2>
-                <ul className="space-y-1.5">
+                <ul className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
                   {subs.map((p, i) => (
                     <li key={i} className="flex items-center gap-2.5 text-[13px]">
                       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-[11px] font-semibold text-white/60">
@@ -524,8 +580,8 @@ function LiveMatchBody({
                 </ul>
               </section>
             )}
-            {!match.namesShown && <p className="text-[11px] italic text-white/30 sm:col-span-2">{t.namesWithheld}</p>}
-          </div>
+            {!match.namesShown && <p className="mb-10 text-[11px] italic text-white/30">{t.namesWithheld}</p>}
+          </>
         )}
 
         {opponentLineup.length > 0 && (
