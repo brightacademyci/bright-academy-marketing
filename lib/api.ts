@@ -228,7 +228,36 @@ const EMPTY_FIRST_TEAM: FirstTeam = {
 
 export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {
   const data = await safeFetchJson<FirstTeam>(`${PUBLIC_API_BASE}/first-team?lang=${lang}`, FIRST_TEAM_REVALIDATE_SECONDS);
-  return data ?? EMPTY_FIRST_TEAM;
+  if (!data) return EMPTY_FIRST_TEAM;
+  /** Per-field defensive fallbacks — added 2026-08-29, same crash-risk
+   *  class already fixed once for getLiveMatch()'s consumer (see
+   *  app/live/[id]/page.tsx's LiveMatchBody, "Cannot read properties of
+   *  undefined" after a response landed mid-rollout missing a field). This
+   *  is the same cross-origin fetch from the OS app's public API
+   *  (safeFetchJson above only guards the whole response being missing,
+   *  not an individual field within it), and FirstTeamSection.tsx assumes
+   *  every array field is a real array (team.players.length, team.staff
+   *  .map, etc.) and every string field is a real string. Unlike the live-
+   *  match fix, this normalizes at the fetch boundary itself rather than
+   *  at each call site, so every consumer of getFirstTeam() gets the
+   *  guarantee for free. */
+  return {
+    teamName: data.teamName ?? EMPTY_FIRST_TEAM.teamName,
+    shortName: data.shortName ?? EMPTY_FIRST_TEAM.shortName,
+    division: data.division ?? null,
+    about: data.about ?? null,
+    crestImageUrl: data.crestImageUrl ?? null,
+    coverImageUrl: data.coverImageUrl ?? null,
+    seasonLabel: data.seasonLabel ?? null,
+    players: data.players ?? [],
+    staff: data.staff ?? [],
+    gallery: data.gallery ?? [],
+    videos: data.videos ?? [],
+    standings: data.standings ?? [],
+    nextFixture: data.nextFixture ?? null,
+    fixtures: data.fixtures ?? [],
+    results: data.results ?? [],
+  };
 }
 
 // --- Live match (added 2026-08-27) -----------------------------------------

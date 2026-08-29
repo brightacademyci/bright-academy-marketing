@@ -453,7 +453,7 @@ function MomentumChart({ momentum, t }: { momentum: { bucketStart: number; us: n
   return (
     <section className="mb-10">
       <h2 className="mb-1 text-[11px] font-bold uppercase tracking-wide text-orange">{t.momentum}</h2>
-      <p className="mb-2.5 text-[11px] italic text-white/40">{t.momentumCaption}</p>
+      <p className="mb-2.5 text-[11px] italic text-white/60">{t.momentumCaption}</p>
       <svg viewBox={`0 0 ${width} ${height}`} className="h-24 w-full sm:h-28" preserveAspectRatio="none">
         <line x1={0} y1={half} x2={width} y2={half} stroke="rgba(255,255,255,0.15)" strokeWidth={0.5} />
         <line
@@ -569,11 +569,21 @@ function LiveMatchBody({
       {clock.isLive && <LiveAutoRefresh intervalMs={20000} />}
 
       <div className="mx-auto max-w-2xl">
+        {/* Added 2026-08-29 — this page had no <h1> at all; the visible
+         *  team-name/score card below reads as one visually, but is built
+         *  from several separate <p> elements, none of them a heading. A
+         *  visible duplicate here would fight the Sofascore-style header
+         *  card's own layout, so this is sr-only: present in the DOM for
+         *  accessibility/SEO, invisible on screen. */}
+        <h1 className="sr-only">
+          {match.teamName} vs {match.opponentName}
+        </h1>
+
         {/* Header card — restyled 2026-08-29 to follow Sofascore's match
          *  page layout, per Patrick's ask: crests, competition line, big
          *  score, status pill, all in one card. */}
         <div className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-8">
-          {competition && <p className="mb-4 text-center text-[11px] font-semibold uppercase tracking-wide text-white/40">🏆 {competition}</p>}
+          {competition && <p className="mb-4 text-center text-[11px] font-semibold uppercase tracking-wide text-white/60">🏆 {competition}</p>}
 
           <div className="flex items-center justify-center gap-4 sm:gap-10">
             <div className="flex flex-1 flex-col items-center gap-2 text-center">
@@ -590,7 +600,7 @@ function LiveMatchBody({
                *  never one of these app-local paths itself. */}
               <Crest url={match.ourCrestUrl ?? "/logo/crest.png"} name={match.teamName} />
               <p className="font-display text-sm font-bold sm:text-xl">{match.teamName}</p>
-              <p className="text-[10px] text-white/40">{match.isHome ? t.home : t.away}</p>
+              <p className="text-[10px] text-white/60">{match.isHome ? t.home : t.away}</p>
             </div>
             <div className="shrink-0 text-center">
               <div className="font-display text-3xl font-bold tabular-nums sm:text-5xl">
@@ -607,12 +617,12 @@ function LiveMatchBody({
                   {clock.isFinished ? t.finished : clock.isLive ? `${t.live} · ${clock.label}` : clock.label}
                 </span>
               )}
-              {!match.livePhase && <p className="mt-2 text-[11px] text-white/40">{t.upcoming}</p>}
+              {!match.livePhase && <p className="mt-2 text-[11px] text-white/60">{t.upcoming}</p>}
             </div>
             <div className="flex flex-1 flex-col items-center gap-2 text-center">
               <Crest url={match.opponentLogoUrl} name={match.opponentName} />
               <p className="font-display text-sm font-bold sm:text-xl">{match.opponentName}</p>
-              <p className="text-[10px] text-white/40">{match.isHome ? t.away : t.home}</p>
+              <p className="text-[10px] text-white/60">{match.isHome ? t.away : t.home}</p>
             </div>
           </div>
         </div>
@@ -637,7 +647,7 @@ function LiveMatchBody({
                 </ul>
               </section>
             )}
-            {!match.namesShown && <p className="mb-10 text-[11px] italic text-white/30">{t.namesWithheld}</p>}
+            {!match.namesShown && <p className="mb-10 text-[11px] italic text-white/60">{t.namesWithheld}</p>}
           </>
         )}
 
@@ -701,7 +711,7 @@ function LiveMatchBody({
             <h2 className="mb-3.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.playerOfMatch}</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="text-center">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-white/40">{t.coachPick}</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-white/60">{t.coachPick}</p>
                 {match.playerOfMatch ? (
                   <>
                     <div className="mx-auto w-fit">
@@ -710,23 +720,23 @@ function LiveMatchBody({
                     <p className="mt-2 font-display text-sm font-semibold">{match.playerOfMatch.name}</p>
                   </>
                 ) : (
-                  <p className="text-[12px] text-white/40">{t.noPotmYet}</p>
+                  <p className="text-[12px] text-white/60">{t.noPotmYet}</p>
                 )}
               </div>
               <div className="text-center">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-white/40">{t.fanChoice}</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-white/60">{t.fanChoice}</p>
                 {fanVotes[0] ? (
                   <>
                     <div className="mx-auto w-fit">
                       <Crest url={fanVotes[0].photoUrl} name={fanVotes[0].name} />
                     </div>
                     <p className="mt-2 font-display text-sm font-semibold">{fanVotes[0].name}</p>
-                    <p className="text-[11px] text-white/40">
+                    <p className="text-[11px] text-white/60">
                       {fanVotes[0].pct}% · {match.totalFanVotes}
                     </p>
                   </>
                 ) : (
-                  <p className="text-[12px] text-white/40">{t.noVotesYet}</p>
+                  <p className="text-[12px] text-white/60">{t.noVotesYet}</p>
                 )}
               </div>
             </div>
@@ -751,12 +761,12 @@ function LiveMatchBody({
         <section>
           <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.events}</h2>
           {events.length === 0 ? (
-            <p className="text-[13px] text-white/40">{t.noEvents}</p>
+            <p className="text-[13px] text-white/60">{t.noEvents}</p>
           ) : (
             <ul className="space-y-2">
               {events.map((e, i) => (
                 <li key={i} className="flex items-center gap-3 border-b border-white/5 pb-2 text-[13px]">
-                  <span className="w-9 shrink-0 text-right tabular-nums text-white/40">{e.minute !== null ? `${e.minute}'` : ""}</span>
+                  <span className="w-9 shrink-0 text-right tabular-nums text-white/60">{e.minute !== null ? `${e.minute}'` : ""}</span>
                   <span className="shrink-0">{EVENT_ICON[e.eventType] ?? "•"}</span>
                   <span className="text-white/90">{eventLabel(e.eventType, lang)}</span>
                   {e.playerName ? (

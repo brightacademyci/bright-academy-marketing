@@ -3,6 +3,25 @@
 import { useState, type FormEvent } from "react";
 import { useLanguage } from "./LanguageProvider";
 import { APP_URL } from "@/lib/content";
+import { HONEYPOT_FIELD_NAME, HONEYPOT_WRAPPER_CLASS, isHoneypotFilled } from "@/lib/honeypot";
+
+/** True for a well-formed http(s) URL, false for anything else (including
+ *  empty/whitespace). Added 2026-08-29, audit fix — resumeUrl used to be
+ *  forwarded to the OS app's careers endpoint completely unvalidated;
+ *  low-risk today, but a stored non-http(s) value (a `javascript:` URI, a
+ *  bare string) becomes a stored-XSS vector the moment anyone renders it
+ *  as a clickable link on the staff side. This is the boundary check
+ *  available within this repo — the OS app's own endpoint re-validates
+ *  every field server-side too (see this file's own top comment), and
+ *  should reject the same shapes there for defense-in-depth. */
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 // Accessibility pass 2026-08-13 (Priority 11): focus:outline-none used to
 // remove the browser's focus ring with only a subtle border-color change
@@ -28,17 +47,31 @@ export function CareersForm() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = new FormData(e.currentTarget);
+
+    // Honeypot check (see lib/honeypot.ts) — a real visitor never sees or
+    // fills this field, so a filled one means a bot. Bail out before any
+    // state change or network call, silently, so nothing on screen tells
+    // it why.
+    if (isHoneypotFilled(form.get(HONEYPOT_FIELD_NAME))) return;
+
+    const resumeUrl = String(form.get("resumeUrl") ?? "").trim() || undefined;
+    if (resumeUrl && !isValidHttpUrl(resumeUrl)) {
+      setError(t.careers.form.resumeUrlInvalid);
+      setStatus("error");
+      return;
+    }
+
     setStatus("submitting");
     setError(null);
 
-    const form = new FormData(e.currentTarget);
     const payload = {
       fullName: String(form.get("fullName") ?? "").trim(),
       email: String(form.get("email") ?? "").trim(),
       phone: String(form.get("phone") ?? "").trim() || undefined,
       positionInterest: String(form.get("positionInterest") ?? "").trim() || undefined,
       message: String(form.get("message") ?? "").trim() || undefined,
-      resumeUrl: String(form.get("resumeUrl") ?? "").trim() || undefined,
+      resumeUrl,
     };
 
     try {
@@ -71,6 +104,14 @@ export function CareersForm() {
   return (
     <form onSubmit={handleSubmit} className="grid gap-4 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10 sm:grid-cols-2">
       <h3 className="font-display text-[16px] font-semibold text-white sm:col-span-2">{t.careers.form.title}</h3>
+
+      {/* Honeypot field — see lib/honeypot.ts. Invisible and unreachable
+       *  for a real visitor (off-screen, aria-hidden, unfocusable); a bot
+       *  that fills it gets silently ignored in handleSubmit above. */}
+      <div aria-hidden="true" className={HONEYPOT_WRAPPER_CLASS}>
+        <label htmlFor="careers-website">Website</label>
+        <input id="careers-website" name={HONEYPOT_FIELD_NAME} type="text" tabIndex={-1} autoComplete="off" />
+      </div>
 
       {/* Priority 11: every <label> here was visually adjacent to its
        *  field but not programmatically associated (no htmlFor/id pair) —

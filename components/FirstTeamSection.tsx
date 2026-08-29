@@ -138,8 +138,13 @@ function FixtureRow({ fx, team, lang, t }: { fx: FirstTeamNextFixture; team: Fir
       ) : (
         <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
           {fx.isLive && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-orange px-3 py-1.5 text-[11px] font-bold text-white">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+            // text-white here was ~2.8:1 against bg-orange — a WCAG AA
+            // failure for text this small (needs 4.5:1). text-navy-deep
+            // fixes it (~7:1) and matches the dark-on-orange pairing this
+            // site already uses elsewhere (e.g. the jersey-number badge in
+            // PlayerCard above) rather than introducing a new color.
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-orange px-3 py-1.5 text-[11px] font-bold text-navy-deep">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-navy-deep" />
               {t.nextFixture.live}
             </span>
           )}

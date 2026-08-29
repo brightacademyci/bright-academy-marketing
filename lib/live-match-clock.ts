@@ -12,8 +12,13 @@ export type LivePhase = "first_half" | "half_time" | "second_half" | "full_time"
 export interface LiveClock {
   /** Display string: "34'", "45+2'", "HT", "90+1'", "FT", or "" pre-kickoff. */
   label: string;
-  /** True from kickoff through full-time (inclusive of half-time) — the
-   *  window in which this site should show a "LIVE" badge. */
+  /** True from kickoff up to (but not including) full-time — first half,
+   *  half-time, and second half all count, but a "full_time" livePhase
+   *  returns false here (see isFinished below instead) — the window in
+   *  which this site should show a "LIVE" badge. Corrected 2026-08-29: this
+   *  used to say "through full-time (inclusive...)", which read as isLive
+   *  staying true once the match ends — it doesn't, per the
+   *  livePhase === "full_time" branch below. */
   isLive: boolean;
   /** True only once live_phase is "full_time". */
   isFinished: boolean;

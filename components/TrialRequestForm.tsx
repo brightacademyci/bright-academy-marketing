@@ -6,6 +6,7 @@ import { useLanguage } from "./LanguageProvider";
 import { APP_URL, content } from "@/lib/content";
 import { buildTrialWhatsAppUrl } from "@/lib/whatsapp";
 import { getProgramPricing } from "@/lib/pricing";
+import { HONEYPOT_FIELD_NAME, HONEYPOT_WRAPPER_CLASS, isHoneypotFilled } from "@/lib/honeypot";
 
 const inputClass =
   "w-full rounded-xl border border-white/15 bg-white/5 px-3.5 py-2.5 text-[13px] text-white placeholder:text-white/40 focus:border-orange/60 focus:outline-none focus:ring-2 focus:ring-orange/50";
@@ -39,10 +40,17 @@ export function TrialRequestForm() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = new FormData(e.currentTarget);
+
+    // Honeypot check (see lib/honeypot.ts) — a real visitor never sees or
+    // fills this field, so a filled one means a bot. Bail out before any
+    // state change or network call, silently, so nothing on screen tells
+    // it why.
+    if (isHoneypotFilled(form.get(HONEYPOT_FIELD_NAME))) return;
+
     setStatus("submitting");
     setError(null);
 
-    const form = new FormData(e.currentTarget);
     const payload = {
       guardianName: String(form.get("guardianName") ?? "").trim(),
       guardianPhone: String(form.get("guardianPhone") ?? "").trim(),
@@ -89,6 +97,14 @@ export function TrialRequestForm() {
     <div className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
       <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
         <h3 className="font-display text-[16px] font-semibold text-white sm:col-span-2">{t.trialRequest.form.title}</h3>
+
+        {/* Honeypot field — see lib/honeypot.ts. Invisible and unreachable
+         *  for a real visitor (off-screen, aria-hidden, unfocusable); a
+         *  bot that fills it gets silently ignored in handleSubmit above. */}
+        <div aria-hidden="true" className={HONEYPOT_WRAPPER_CLASS}>
+          <label htmlFor="trial-website">Website</label>
+          <input id="trial-website" name={HONEYPOT_FIELD_NAME} type="text" tabIndex={-1} autoComplete="off" />
+        </div>
 
         <div>
           <label htmlFor="trial-guardianName" className={labelClass}>{t.trialRequest.form.guardianName}</label>

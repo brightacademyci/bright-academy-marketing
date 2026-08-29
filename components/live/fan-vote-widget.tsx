@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { HONEYPOT_FIELD_NAME, HONEYPOT_WRAPPER_CLASS, isHoneypotFilled } from "@/lib/honeypot";
 
 /** Player of the Match "Fan Vote" — added 2026-08-29, Patrick's ask to
  *  follow Sofascore's match page layout. Mirrors bright-academy-os's own
@@ -26,6 +27,10 @@ export function FanVoteWidget({
   const [selected, setSelected] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Honeypot — see lib/honeypot.ts. No <form> here (just a select + a
+  // button), so unlike the other two forms this reads the hidden field via
+  // a ref rather than FormData.
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
@@ -46,6 +51,9 @@ export function FanVoteWidget({
 
   async function castVote() {
     if (!selected) return;
+    // A filled honeypot means this wasn't a real visitor — bail out
+    // silently before any state change or network call.
+    if (isHoneypotFilled(honeypotRef.current?.value)) return;
     setPending(true);
     setError(null);
     try {
@@ -84,6 +92,20 @@ export function FanVoteWidget({
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      {/* Honeypot field — see lib/honeypot.ts. Invisible and unreachable
+       *  for a real visitor (off-screen, aria-hidden, unfocusable); a bot
+       *  that fills it gets silently ignored in castVote above. */}
+      <div aria-hidden="true" className={HONEYPOT_WRAPPER_CLASS}>
+        <label htmlFor={`fan-vote-website-${fixtureId}`}>Website</label>
+        <input
+          id={`fan-vote-website-${fixtureId}`}
+          name={HONEYPOT_FIELD_NAME}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          ref={honeypotRef}
+        />
+      </div>
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}

@@ -70,7 +70,10 @@ export const content = {
       careers: "Careers",
       firstTeam: "First Team",
       faq: "FAQ",
-      contact: "Contact",
+      // "contact" (nav) removed 2026-08-29 — audit-confirmed unused: no
+      // header/footer component ever referenced t.nav.contact, and there's
+      // no #contact section on the page for it to link to. Same removal
+      // for footer.contact just below.
       // Was "Parent / Staff Login" — dropped "/ Staff" 2026-08-13, Patrick's
       // explicit instruction: staff shouldn't be advertised a login path on
       // the public site at all, they get their own direct access link
@@ -388,6 +391,9 @@ export const content = {
     videos: {
       eyebrow: "Videos",
       title: "Watch Bright Academy",
+      // Added 2026-08-29 alongside the /videos empty-state fix (see
+      // Videos.tsx) — mirrors ourCoaches.none/news.none's own wording.
+      none: "Videos are being added — check back soon.",
     },
     ourCoaches: {
       eyebrow: "Our Coaches",
@@ -466,6 +472,10 @@ export const content = {
         messagePlaceholder: "Tell us a bit about yourself and your experience…",
         resumeUrl: "Link to your résumé/CV (optional)",
         resumeUrlPlaceholder: "https://…",
+        // Added 2026-08-29, audit fix — shown when resumeUrl is filled in
+        // but isn't a well-formed http(s) URL (see CareersForm.tsx's
+        // isValidHttpUrl).
+        resumeUrlInvalid: "Please enter a valid link starting with http:// or https://, or leave this field empty.",
         submit: "Submit application",
         submitting: "Submitting…",
         success: "Thank you — your application has been received. We'll be in touch if a role fits.",
@@ -616,7 +626,7 @@ export const content = {
     footer: {
       tagline: "More Than Football. Building Players, Shaping Futures.",
       quickLinks: "Quick Links",
-      contact: "Contact",
+      // "contact" removed 2026-08-29 — see nav.contact's removal note above.
       whatsapp: "WhatsApp",
       social: "Follow Us",
       // Added 2026-08-13, site improvement pass, Priority 13 — every linked
@@ -650,7 +660,6 @@ export const content = {
       careers: "Carrières",
       firstTeam: "Équipe première",
       faq: "FAQ",
-      contact: "Contact",
       login: "Connexion parent",
       enroll: "Inscrire mon enfant",
     },
@@ -876,6 +885,7 @@ export const content = {
     videos: {
       eyebrow: "Vidéos",
       title: "Regardez Bright Academy",
+      none: "Les vidéos sont en cours d'ajout — revenez bientôt.",
     },
     ourCoaches: {
       eyebrow: "Nos entraîneurs",
@@ -944,6 +954,7 @@ export const content = {
         messagePlaceholder: "Parlez-nous un peu de vous et de votre expérience…",
         resumeUrl: "Lien vers votre CV (optionnel)",
         resumeUrlPlaceholder: "https://…",
+        resumeUrlInvalid: "Veuillez saisir un lien valide commençant par http:// ou https://, ou laisser ce champ vide.",
         submit: "Envoyer la candidature",
         submitting: "Envoi…",
         success: "Merci — votre candidature a bien été reçue. Nous vous recontacterons si un poste correspond.",
@@ -1051,7 +1062,6 @@ export const content = {
     footer: {
       tagline: "Plus que du football. Former des joueurs, façonner des avenirs.",
       quickLinks: "Liens rapides",
-      contact: "Contact",
       whatsapp: "WhatsApp",
       social: "Suivez-nous",
       legal: "Mentions légales",

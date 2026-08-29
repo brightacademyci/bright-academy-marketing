@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
+// Added 2026-08-29 alongside the paths cap below — a generous ceiling for
+// any real caller (a single publish action never touches more than a
+// handful of routes) while ruling out a single call revalidating hundreds
+// of paths at once.
+const MAX_REVALIDATE_PATHS = 50;
+
 /**
  * On-demand ISR revalidation, called by the OS app right after a Content
  * Manager publishes a photo to the gallery (lib/actions/gallery.ts's
@@ -31,7 +37,14 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as unknown;
     const requested = (body as { paths?: unknown } | null)?.paths;
     if (Array.isArray(requested) && requested.every((p) => typeof p === "string") && requested.length > 0) {
-      paths = requested as string[];
+      // Capped 2026-08-29 — this route is bearer-token protected, but the
+      // token is shared with the OS app's server, not scoped per-call, so
+      // nothing previously stopped one authenticated call from requesting
+      // an unbounded `paths` array and forcing excessive revalidation load.
+      // Truncating (not rejecting outright) keeps a legitimate multi-path
+      // call working while capping the blast radius of a misbehaving or
+      // malicious one.
+      paths = (requested as string[]).slice(0, MAX_REVALIDATE_PATHS);
     }
   } catch {
     // No body, or not JSON — fall back to revalidating "/" (the gallery's

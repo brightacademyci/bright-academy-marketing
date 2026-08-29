@@ -20,8 +20,13 @@ export function LiveMatchBanner({ fixture }: { fixture: FirstTeamNextFixture | n
       href={`/live/${fixture.id}`}
       className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 bg-orange px-4 py-2.5 text-center text-[13px] font-semibold text-white transition hover:bg-orange/90"
     >
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-0.5 text-[11px] font-bold tracking-wide">
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+      {/* bg-white/20 + inherited text-white was ~2.3:1 against the orange
+       *  banner — a WCAG AA failure. Solid bg-white with text-navy-deep
+       *  keeps the same "light pill on the orange banner" look at a
+       *  passing contrast (~19:1); the pulse dot switches to navy-deep too
+       *  so it stays visible against the now-solid white pill. */}
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-navy-deep">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-navy-deep" />
         {t.liveBanner.badge}
       </span>
       <span>

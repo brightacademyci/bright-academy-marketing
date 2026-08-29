@@ -22,6 +22,13 @@ import { LEGAL_SLUGS } from "@/lib/legal-content";
 //     real coach bios or a news post.
 //   - /news/[id] is dynamic and has no published posts to enumerate yet.
 //
+// /videos added 2026-08-29 (audit fix — it had been live and populated
+// since the 2026-08-25 Videos launch with no sitemap entry and no comment
+// explaining the omission, unlike every other excluded route above).
+// Priority/changeFrequency mirror /gallery: same short-revalidate-window
+// "meant to feel live" content (see lib/api.ts's VIDEOS_REVALIDATE_SECONDS,
+// same 60s window as the gallery's own).
+//
 // /legal/* pages added 2026-08-17 — they carried real drafts-awaiting-
 // review content and were marked noindex/omitted here until then; now that
 // lib/legal-content.ts has real content and generateMetadata no longer
@@ -37,6 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // /gallery and /faq added 2026-08-13 (Priority 6) — real, populated
     // pages now that the homepage sections link out to them.
     { url: `${SITE_URL}/gallery`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
+    { url: `${SITE_URL}/videos`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
     { url: `${SITE_URL}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/careers`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
     ...LEGAL_SLUGS.map((slug) => ({
