@@ -19,13 +19,21 @@ const nextConfig = {
   async headers() {
     const SUPABASE_ORIGIN = "https://zutonntnlroxiftvusnl.supabase.co";
     const OSM_TILES = "https://*.tile.openstreetmap.org";
+    // 2026-08-29 platform audit: connect-src never allow-listed this —
+    // lib/content.ts's APP_URL, which the trial-request, careers, and fan
+    // vote widgets all fetch() to (see fan-vote-widget.tsx, the live match
+    // page comment above). Under this enforced CSP the browser silently
+    // blocks those requests client-side (no visible error to the visitor,
+    // the submission just never leaves), so those three forms have likely
+    // been failing in production since the CSP was added 2026-08-20.
+    const PORTAL_ORIGIN = "https://portal.brightacademyci.com";
     const CSP = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       `img-src 'self' data: ${SUPABASE_ORIGIN} ${OSM_TILES}`,
       "font-src 'self' data:",
-      `connect-src 'self' ${SUPABASE_ORIGIN} ${OSM_TILES}`,
+      `connect-src 'self' ${SUPABASE_ORIGIN} ${OSM_TILES} ${PORTAL_ORIGIN}`,
       // Added 2026-08-25 for the Videos section/tab (components/Videos.tsx,
       // FirstTeamSection.tsx's Videos tab) — with no frame-src set,
       // browsers fall back to default-src 'self' for embedded iframes
