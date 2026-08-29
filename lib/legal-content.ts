@@ -251,7 +251,7 @@ export const LEGAL_CONTENT: Record<LegalSlug, Record<Lang, LegalPageContent>> = 
   "enrollment-terms": {
     en: {
       title: "Enrollment Terms",
-      intro: "Terms specific to enrolling a child at Bright Academy — referenced today in our FAQ's cancellation-policy answer.",
+      intro: "Terms specific to enrolling a child at Bright Academy — already referenced in our FAQ's cancellation-policy answer.",
       sections: [
         {
           heading: "What's already published elsewhere on the site",

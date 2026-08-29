@@ -5,6 +5,7 @@ import { EnrollCta } from "@/components/EnrollCta";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { getCoaches } from "@/lib/api";
+import { buildPageMetadata } from "@/lib/metadata";
 
 // French default 2026-08-13 (Priority 8) — see careers/page.tsx's note.
 // CORRECTED 2026-08-16 (audit-corrections pass, Priority 14) — two fixes:
@@ -19,13 +20,17 @@ import { getCoaches } from "@/lib/api";
 // this pass (see sitemap.ts's own note on why these two routes are
 // deliberately omitted from the sitemap) — so both are now explicitly
 // noindexed until real content is published, rather than letting Google
-// index a thin/placeholder page.
-export const metadata: Metadata = {
+// index a thin/placeholder page. No hreflang/Open Graph block here (unlike
+// the other pages) since a noindexed, empty-state page isn't a link worth
+// optimizing for sharing yet.
+export const metadata: Metadata = buildPageMetadata({
+  path: "/our-coaches",
   title: "Nos entraîneurs — Bright Academy",
   description: "Découvrez le staff de Bright Academy, sur nos sites d'entraînement à Abidjan et Grand-Bassam.",
-  alternates: { canonical: "/our-coaches" },
-  robots: { index: false, follow: true },
-};
+  noindex: true,
+  languages: false,
+  openGraph: false,
+});
 
 export default async function OurCoachesPage() {
   const [coachesEn, coachesFr] = await Promise.all([getCoaches("en"), getCoaches("fr")]);

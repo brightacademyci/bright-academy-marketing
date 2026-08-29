@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { LegalPageContent } from "@/components/LegalPageContent";
 import { LEGAL_SLUGS, LEGAL_CONTENT, type LegalSlug } from "@/lib/legal-content";
-import { SITE_URL } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/metadata";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -34,31 +34,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // flagged. generateMetadata can't see the client-side language toggle
   // (there's no per-language URL), so it matches the same French-default
   // convention already applied to every other route's metadata in this
-  // pass (see app/layout.tsx and the other app/**/page.tsx generateMetadata
-  // fixes).
+  // pass (see app/layout.tsx and the other app/**/page.tsx metadata).
   const title = `${LEGAL_CONTENT[slug].fr.title} — Bright Academy`;
-  return {
-    title,
-    alternates: {
-      canonical: `/legal/${slug}`,
-      // Self-referencing hreflang, added 2026-08-21 -- matches app/layout.tsx's
-      // homepage stub and the same reasoning: this is a client-side language
-      // toggle with no per-URL routing, so there's no distinct French/English
-      // URL to point hreflang at. Real per-language alternates need the kind
-      // of URL-based locale routing flagged as out of scope for this pass --
-      // this stub is strictly better than omitting hreflang entirely, not a
-      // substitute for real routing.
-      languages: { fr: `/legal/${slug}`, en: `/legal/${slug}`, "x-default": `/legal/${slug}` },
-    },
-    // Added 2026-08-20 -- see app/first-team/page.tsx's comment on why
-    // every page needs its own openGraph block.
-    openGraph: {
-      title,
-      url: `${SITE_URL}/legal/${slug}`,
-      images: [{ url: "/images/og/social-share.jpg", width: 1200, height: 630 }],
-      type: "website",
-    },
-  };
+  return buildPageMetadata({ path: `/legal/${slug}`, title });
 }
 
 export default async function LegalPage({ params }: PageProps) {
