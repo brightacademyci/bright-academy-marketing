@@ -346,10 +346,24 @@ function LiveMatchBody({
   fixtureId: string;
 }) {
   const clock = computeLiveClock(match.livePhase, match.halfStartedAt, match.firstHalfStoppage, match.secondHalfStoppage);
-  const starters = match.lineup.filter((p) => p.isStarter);
-  const subs = match.lineup.filter((p) => !p.isStarter);
+  /** Defensive fallbacks — added 2026-08-29 after a runtime error
+   *  ("Cannot read properties of undefined (reading 'length')") showed up
+   *  on this route right at deploy time: this page fetches match JSON
+   *  cross-origin from portal.brightacademyci.com (see lib/api.ts), and a
+   *  request that lands mid-rollout (or any future API response missing a
+   *  field) shouldn't be able to crash the whole page. Every array field
+   *  gets a `?? []` fallback here so the rest of the component can keep
+   *  assuming arrays, same as before. */
+  const lineup = match.lineup ?? [];
+  const opponentLineup = match.opponentLineup ?? [];
+  const videos = match.videos ?? [];
+  const events = match.events ?? [];
+  const momentum = match.momentum ?? [];
+  const fanVotes = match.fanVotes ?? [];
+  const starters = lineup.filter((p) => p.isStarter);
+  const subs = lineup.filter((p) => !p.isStarter);
   const competition = competitionLine(match.matchType, match.tournamentName, t);
-  const votablePlayers = match.lineup.filter((p) => p.playerId).map((p) => ({ id: p.playerId as string, name: p.displayName }));
+  const votablePlayers = lineup.filter((p) => p.playerId).map((p) => ({ id: p.playerId as string, name: p.displayName }));
 
   return (
     <>
@@ -393,9 +407,9 @@ function LiveMatchBody({
           </div>
         </div>
 
-        <GoalTicker events={match.events} teamName={match.teamName} opponentName={match.opponentName} />
+        <GoalTicker events={events} teamName={match.teamName} opponentName={match.opponentName} />
 
-        {match.lineup.length > 0 && (
+        {lineup.length > 0 && (
           <div className="mb-10 grid grid-cols-1 gap-6 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:grid-cols-2 sm:p-7">
             <section>
               <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.startingXi}</h2>
@@ -430,13 +444,13 @@ function LiveMatchBody({
           </div>
         )}
 
-        {match.opponentLineup.length > 0 && (
+        {opponentLineup.length > 0 && (
           <div className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-7">
             <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">
               {t.opponentLineup} — {match.opponentName}
             </h2>
             <ul className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
-              {match.opponentLineup.map((p, i) => (
+              {opponentLineup.map((p, i) => (
                 <li key={i} className="flex items-center gap-2.5 text-[13px]">
                   <span
                     className={
@@ -453,11 +467,11 @@ function LiveMatchBody({
           </div>
         )}
 
-        {match.videos.length > 0 && (
+        {videos.length > 0 && (
           <section className="mb-10">
             <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.highlights}</h2>
             <div className="space-y-5">
-              {match.videos.map((v) => (
+              {videos.map((v) => (
                 <div key={v.id} className="overflow-hidden rounded-2xl ring-1 ring-white/10">
                   <div className="aspect-video">
                     <iframe
@@ -481,7 +495,7 @@ function LiveMatchBody({
           </section>
         )}
 
-        <MomentumChart momentum={match.momentum} t={t} />
+        <MomentumChart momentum={momentum} t={t} />
 
         {votablePlayers.length > 0 && (
           <section className="mb-10 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-7">
@@ -502,14 +516,14 @@ function LiveMatchBody({
               </div>
               <div className="text-center">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-white/40">{t.fanChoice}</p>
-                {match.fanVotes[0] ? (
+                {fanVotes[0] ? (
                   <>
                     <div className="mx-auto w-fit">
-                      <Crest url={match.fanVotes[0].photoUrl} name={match.fanVotes[0].name} />
+                      <Crest url={fanVotes[0].photoUrl} name={fanVotes[0].name} />
                     </div>
-                    <p className="mt-2 font-display text-sm font-semibold">{match.fanVotes[0].name}</p>
+                    <p className="mt-2 font-display text-sm font-semibold">{fanVotes[0].name}</p>
                     <p className="text-[11px] text-white/40">
-                      {match.fanVotes[0].pct}% · {match.totalFanVotes}
+                      {fanVotes[0].pct}% · {match.totalFanVotes}
                     </p>
                   </>
                 ) : (
@@ -518,9 +532,9 @@ function LiveMatchBody({
               </div>
             </div>
 
-            {match.fanVotes.length > 1 && (
+            {fanVotes.length > 1 && (
               <ul className="mt-5 space-y-1.5 border-t border-white/10 pt-4">
-                {match.fanVotes.slice(1).map((v) => (
+                {fanVotes.slice(1).map((v) => (
                   <li key={v.playerId} className="flex items-center justify-between text-[12px] text-white/60">
                     <span>{v.name}</span>
                     <span>{v.pct}%</span>
@@ -537,11 +551,11 @@ function LiveMatchBody({
 
         <section>
           <h2 className="mb-2.5 text-[11px] font-bold uppercase tracking-wide text-orange">{t.events}</h2>
-          {match.events.length === 0 ? (
+          {events.length === 0 ? (
             <p className="text-[13px] text-white/40">{t.noEvents}</p>
           ) : (
             <ul className="space-y-2">
-              {match.events.map((e, i) => (
+              {events.map((e, i) => (
                 <li key={i} className="flex items-center gap-3 border-b border-white/5 pb-2 text-[13px]">
                   <span className="w-9 shrink-0 text-right tabular-nums text-white/40">{e.minute !== null ? `${e.minute}'` : ""}</span>
                   <span className="shrink-0">{EVENT_ICON[e.eventType] ?? "•"}</span>
