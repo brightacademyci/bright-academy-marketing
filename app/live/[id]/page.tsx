@@ -577,7 +577,18 @@ function LiveMatchBody({
 
           <div className="flex items-center justify-center gap-4 sm:gap-10">
             <div className="flex flex-1 flex-col items-center gap-2 text-center">
-              <Crest url={match.ourCrestUrl} name={match.teamName} />
+              {/* Falls back to this site's own static academy badge (same
+               *  one Header.tsx uses) rather than the plain "B" initial —
+               *  first_team_info.crest_image_url is still empty (nobody's
+               *  uploaded a dedicated First Team crest yet), and the real
+               *  Bright Academy badge should show here regardless. Note
+               *  this is a *different* local path than the OS app's own
+               *  fallback ("/logo.png") — the two apps keep this static
+               *  asset at different paths in their own /public, and
+               *  match.ourCrestUrl (when it IS set) already comes through
+               *  as an absolute/full URL from first_team_info, so it's
+               *  never one of these app-local paths itself. */}
+              <Crest url={match.ourCrestUrl ?? "/logo/crest.png"} name={match.teamName} />
               <p className="font-display text-sm font-bold sm:text-xl">{match.teamName}</p>
               <p className="text-[10px] text-white/40">{match.isHome ? t.home : t.away}</p>
             </div>
