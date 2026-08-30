@@ -8,7 +8,7 @@ import { PitchDiagram } from "./PitchDiagram";
 import { Lightbox } from "./Lightbox";
 import { FIRST_TEAM_SOCIAL } from "@/lib/content";
 import { classifyPosition, POSITION_GROUP_ORDER, type PositionGroup } from "@/lib/position-groups";
-import type { FirstTeam, FirstTeamNextFixture, FirstTeamPlayer } from "@/lib/api";
+import type { FirstTeam, FirstTeamNextFixture, FirstTeamPlayer, FirstTeamStanding } from "@/lib/api";
 
 // Same server-fetch-both-languages, pick-on-the-client pattern as
 // OurCoachesSection/NewsListSection — see that component's own comment for
@@ -48,6 +48,58 @@ function formatFixtureDateTime(iso: string, lang: "en" | "fr") {
   } catch {
     return iso;
   }
+}
+
+/** English/French ordinal for the hero's league-position badge below
+ *  ("3rd" / "3e") — added 2026-08-30. No French ordinal beyond 1er/1ère
+ *  distinguishes gender the way English distinguishes 1st/21st/etc., so
+ *  this only needs the two language-specific suffix rules, not a full
+ *  i18n library for something this narrow. */
+function ordinal(n: number, lang: "en" | "fr"): string {
+  if (lang === "fr") return n === 1 ? "1er" : `${n}e`;
+  const rem100 = n % 100;
+  if (rem100 >= 11 && rem100 <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1:
+      return `${n}st`;
+    case 2:
+      return `${n}nd`;
+    case 3:
+      return `${n}rd`;
+    default:
+      return `${n}th`;
+  }
+}
+
+/** Shared win/draw/loss classification for a played fixture — factored out
+ *  2026-08-30 so the new recent-form strip in the hero (below) and
+ *  FixtureRow's own score pill (further down) can't drift apart on what
+ *  counts as a win. Returns null for anything not yet final. */
+function matchOutcome(fx: FirstTeamNextFixture): "win" | "draw" | "loss" | null {
+  if (fx.status !== "final" || fx.ourScore === null || fx.opponentScore === null) return null;
+  if (fx.ourScore > fx.opponentScore) return "win";
+  if (fx.ourScore < fx.opponentScore) return "loss";
+  return "draw";
+}
+
+/** A short window of the table centered on our own row — added 2026-08-30,
+ *  Patrick's own reference (a Google sports card showing Chelsea's
+ *  8th-place row with two clubs either side) for a table that's readable
+ *  at a glance instead of needing a scroll through every division team.
+ *  Only used when the full table is long enough that a window is actually
+ *  shorter than showing everything (see the "no need to peek" check at the
+ *  call site) — a 5- or 6-team division just shows the whole thing. Clamps
+ *  at either end of the table instead of centering exactly, so a
+ *  near-the-top or near-the-bottom team still gets a full-length window
+ *  rather than a lopsided one. */
+function peekWindow(standings: FirstTeamStanding[], windowSize = 5): FirstTeamStanding[] {
+  const ownIndex = standings.findIndex((s) => s.isOwnTeam);
+  if (ownIndex === -1) return standings.slice(0, windowSize);
+  const half = Math.floor(windowSize / 2);
+  let start = Math.max(0, ownIndex - half);
+  const end = Math.min(standings.length, start + windowSize);
+  start = Math.max(0, end - windowSize);
+  return standings.slice(start, end);
 }
 
 function PlayerCard({ player }: { player: FirstTeamPlayer }) {
@@ -92,8 +144,8 @@ interface FixtureRowDict {
  *  accent (subtle tint, not a loud red/green — matching Patrick's "soft,
  *  high-end, friendly" brief). */
 function FixtureRow({ fx, team, lang, t }: { fx: FirstTeamNextFixture; team: FirstTeam; lang: "en" | "fr"; t: FixtureRowDict }) {
-  const isFinal = fx.status === "final" && fx.ourScore !== null && fx.opponentScore !== null;
-  const outcome = isFinal ? (fx.ourScore! > fx.opponentScore! ? "win" : fx.ourScore! < fx.opponentScore! ? "loss" : "draw") : null;
+  const outcome = matchOutcome(fx);
+  const isFinal = outcome !== null;
   const outcomeStyles: Record<string, string> = {
     win: "bg-emerald-400/15 text-emerald-300 ring-1 ring-emerald-400/30",
     draw: "bg-white/10 text-white/70 ring-1 ring-white/15",
@@ -170,10 +222,30 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
   const [openPhotoIndex, setOpenPhotoIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("squad");
   const [positionFilter, setPositionFilter] = useState<PositionGroup | "all">("all");
+  // Standings peek/expand — added 2026-08-30, see peekWindow()'s own doc
+  // comment above. Resets to collapsed on every language switch/remount is
+  // fine — it's a glance, not a preference worth persisting.
+  const [standingsExpanded, setStandingsExpanded] = useState(false);
 
   const grouped = useMemo(() => groupPlayers(team.players), [team.players]);
   const availableGroups = POSITION_GROUP_ORDER.filter((g) => grouped[g].length > 0);
   const visibleGroups = positionFilter === "all" ? availableGroups : availableGroups.filter((g) => g === positionFilter);
+
+  // Hero league-position badge + recent-form strip — added 2026-08-30,
+  // Patrick's ask after seeing Google's own sports card for Chelsea F.C.:
+  // a glanceable "where do we stand" without needing to click into the
+  // Standings tab. Both are derived from data this page already fetches
+  // (team.standings/team.results), so no backend change was needed — see
+  // matchOutcome()/peekWindow() above for the shared logic.
+  const ownStanding = useMemo(() => team.standings.find((s) => s.isOwnTeam) ?? null, [team.standings]);
+  // Oldest-to-newest, left to right (the reading order every reference site
+  // Patrick's pointed to for this page uses) — team.results itself is
+  // most-recent-first, so the last 5 are taken then reversed.
+  const recentForm = useMemo(() => team.results.slice(0, 5).reverse(), [team.results]);
+  // A window is only worth collapsing to if it's actually shorter than the
+  // full table — a 5-team division has nothing to hide.
+  const standingsNeedsPeek = team.standings.length > 5;
+  const visibleStandings = standingsExpanded || !standingsNeedsPeek ? team.standings : peekWindow(team.standings);
 
   const TABS: { key: TabKey; label: string; count: number }[] = [
     { key: "squad", label: tabs.squad, count: team.players.length },
@@ -197,6 +269,50 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
               {t.firstTeam.divisionLabel}: <span className="text-orange">{team.division}</span>
               {team.seasonLabel && <span className="text-white/50"> · {team.seasonLabel}</span>}
             </p>
+          )}
+
+          {(ownStanding || recentForm.length > 0) && (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {ownStanding && (
+                <span className="rounded-full bg-orange/15 px-3.5 py-1.5 text-[12px] font-bold text-orange ring-1 ring-orange/30">
+                  {ordinal(ownStanding.position, lang)}
+                  {team.division && (
+                    <>
+                      {" "}
+                      {t.firstTeam.positionConnector} {team.division}
+                    </>
+                  )}
+                </span>
+              )}
+              {recentForm.length > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-white/50">
+                    {t.firstTeam.recentFormLabel}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {recentForm.map((fx) => {
+                      const outcome = matchOutcome(fx);
+                      if (!outcome) return null;
+                      const styles: Record<string, string> = {
+                        win: "bg-emerald-400/20 text-emerald-300 ring-1 ring-emerald-400/30",
+                        draw: "bg-white/10 text-white/70 ring-1 ring-white/15",
+                        loss: "bg-rose-400/15 text-rose-300 ring-1 ring-rose-400/25",
+                      };
+                      return (
+                        <Link
+                          key={fx.id}
+                          href={`/live/${fx.id}`}
+                          title={`${fx.opponentShortName} ${fx.ourScore}–${fx.opponentScore}`}
+                          className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold transition hover:-translate-y-0.5 ${styles[outcome]}`}
+                        >
+                          {t.firstTeam.formOutcomes[outcome]}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </Reveal>
 
@@ -571,7 +687,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                     </tr>
                   </thead>
                   <tbody>
-                    {team.standings.map((row) => (
+                    {visibleStandings.map((row) => (
                       <tr
                         key={`${row.position}-${row.teamName}`}
                         className={`border-b border-white/5 last:border-none ${
@@ -593,6 +709,16 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                   </tbody>
                 </table>
               </div>
+            )}
+            {/* Peek/expand toggle — see peekWindow()'s doc comment above.
+                Only rendered when there's actually something to hide. */}
+            {standingsNeedsPeek && (
+              <button
+                onClick={() => setStandingsExpanded((v) => !v)}
+                className="mt-4 text-[12px] font-semibold text-orange hover:text-orange/80"
+              >
+                {standingsExpanded ? t.firstTeam.showLessTable : t.firstTeam.viewFullTable}
+              </button>
             )}
           </Reveal>
         )}

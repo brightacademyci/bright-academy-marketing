@@ -498,6 +498,19 @@ export const content = {
       title: "Bright Football Club",
       subtitle: "Our senior/first team — the pathway for our most advanced players.",
       divisionLabel: "Division",
+      // Added 2026-08-30 for the hero's league-position badge and the
+      // recent-form strip (components/FirstTeamSection.tsx) — both built
+      // from data this page already fetches (standings, results), no new
+      // backend query needed. positionConnector composes with a
+      // code-computed ordinal ("3rd" + "in" + division) rather than a
+      // single template string, since the ordinal itself is language-
+      // dependent (3rd vs 3e) and easier to get right in code than to bake
+      // into translated copy.
+      positionConnector: "in",
+      recentFormLabel: "Recent form",
+      formOutcomes: { win: "W", draw: "D", loss: "L" },
+      viewFullTable: "View full table",
+      showLessTable: "Show less",
       tabs: { squad: "Squad", staff: "Staff", fixtures: "Fixtures", gallery: "Gallery", videos: "Videos", standings: "Standings" },
       squadTitle: "Squad",
       provisionalBadge: "Provisional squad — subject to change",
@@ -972,6 +985,11 @@ export const content = {
       title: "Bright Football Club",
       subtitle: "Notre équipe première — le débouché pour nos joueurs les plus avancés.",
       divisionLabel: "Division",
+      positionConnector: "de",
+      recentFormLabel: "Forme récente",
+      formOutcomes: { win: "V", draw: "N", loss: "D" },
+      viewFullTable: "Voir le classement complet",
+      showLessTable: "Réduire",
       tabs: { squad: "Effectif", staff: "Staff", fixtures: "Calendrier", gallery: "Galerie", videos: "Vidéos", standings: "Classement" },
       squadTitle: "Effectif",
       provisionalBadge: "Effectif provisoire — susceptible d'évoluer",
