@@ -2,8 +2,7 @@ import { Header } from "@/components/Header";
 import { LiveMatchBanner } from "@/components/LiveMatchBanner";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
-import { Founder } from "@/components/Founder";
-import { Philosophy } from "@/components/Philosophy";
+import { FounderTeaser } from "@/components/FounderTeaser";
 import { Approach } from "@/components/Approach";
 import { SafetySection } from "@/components/SafetySection";
 import { Achievements } from "@/components/Achievements";
@@ -42,6 +41,29 @@ import { getFirstTeam, getGalleryItems, getNewsPosts, getVideos } from "@/lib/ap
 // programme content it's adjacent to; news right before Programs, and it
 // already renders nothing at all when there's no post published, same as
 // the old order).
+//
+// Reworked again 2026-08-30, homepage-length audit fix (Patrick: "fix what
+// need to be fixed... the goal is a professional site"). The audit
+// (measured against the real live-equivalent build, ~11,500px/~13 screens)
+// found two real problems, not a "too much content overall" problem —
+// Programs/Sites/Approach/Safety/Achievements are all fine as-is:
+//   1. Founder's full bio + a separate standalone Philosophy pull-quote sat
+//      back-to-back, two large, visually near-identical blocks. Philosophy
+//      is now folded into the end of Founder's own section (see
+//      Founder.tsx) instead of being its own section, and the full bio
+//      moved off the homepage entirely to /founder (see
+//      app/founder/page.tsx). <Philosophy /> is gone from this page;
+//      <Founder /> is replaced below by <FounderTeaser />, a short
+//      photo+intro+link version — same teaser-plus-dedicated-page pattern
+//      already used for Gallery/Videos/News.
+//   2. A parent scrolling the homepage hit five sections of trust-building
+//      content (About → Founder → Philosophy → Approach → Safety) before
+//      ever reaching Programs or Sites — "what do you actually offer,
+//      where". Kit/News/Programs/Sites now move up to sit right after
+//      About (preserving their prior relative order/adjacency reasoning
+//      from the 2026-08-13 pass above), with Approach/Safety/the Founder
+//      teaser/Achievements — deeper trust content — following before
+//      Gallery/Videos/FAQ/the final CTA.
 export default async function HomePage() {
   // getFirstTeam's nextFixture/isLive fields aren't lang-dependent (they
   // come straight from the fixtures/opponents tables, not lib/content.ts),
@@ -61,14 +83,13 @@ export default async function HomePage() {
       <LiveMatchBanner fixture={team.nextFixture} />
       <Hero />
       <About />
-      <Founder />
-      <Philosophy />
-      <Approach />
-      <SafetySection />
       <KitShowcase />
       <LatestNewsSection postsEn={newsEn} postsFr={newsFr} />
       <Programs />
       <Sites />
+      <Approach />
+      <SafetySection />
+      <FounderTeaser />
       <Achievements />
       <Gallery liveItems={liveGalleryItems} limit={8} />
       <Videos items={videos} limit={4} />

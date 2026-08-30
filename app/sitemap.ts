@@ -51,6 +51,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // page (see PartnersSection.tsx), same "real page, add it" bar as
     // every other route here.
     { url: `${SITE_URL}/partners`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    // /founder added 2026-08-30, homepage-length audit fix — the founder's
+    // full bio moved off the homepage to this dedicated route (see
+    // app/founder/page.tsx). changeFrequency/priority mirror /careers:
+    // real, populated, but not high-turnover content.
+    { url: `${SITE_URL}/founder`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
     ...LEGAL_SLUGS.map((slug) => ({
       url: `${SITE_URL}/legal/${slug}`,
       lastModified: new Date(),

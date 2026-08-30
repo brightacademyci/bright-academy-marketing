@@ -172,6 +172,10 @@ export const content = {
       quote:
         "Football is the vehicle. Development is the mission. Our goal is to help every child discover their potential, on the pitch and in life.",
       quoteAttribution: "Patrick Asaiah Asseu, Founder & President, Bright Academy",
+      // Added 2026-08-30 for the new homepage teaser (see FounderTeaser.tsx)
+      // — the full bio moved to its own /founder page as part of the
+      // homepage-length audit fix.
+      teaserCta: "Read Patrick's full story",
     },
     philosophy: {
       eyebrow: "Our Philosophy",
@@ -918,6 +922,7 @@ export const content = {
       quote:
         "Le football est le véhicule. Le développement est la mission. Notre objectif est d'aider chaque enfant à découvrir son potentiel, sur le terrain comme dans la vie.",
       quoteAttribution: "Patrick Asaiah Asseu, Fondateur & Président, Bright Academy",
+      teaserCta: "Lire l'histoire complète de Patrick",
     },
     philosophy: {
       eyebrow: "Notre philosophie",

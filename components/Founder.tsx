@@ -10,6 +10,20 @@ import { BrandDiagram } from "./BrandDiagram";
 // About.tsx's photo+text grid pattern, with a Philosophy.tsx-style pull
 // quote underneath for the closing line. Content lives in lib/content.ts
 // (t.founder) so EN/FR stay in sync with the rest of the site's copy.
+//
+// MOVED off the homepage 2026-08-30, homepage-length audit fix — this full
+// bio used to render directly on the homepage, immediately followed by a
+// separate standalone Philosophy section: two large, visually near-identical
+// pull-quote blocks back-to-back, which is what the audit flagged as the
+// homepage's real redundancy (an ~11,500px/~13-screen page). This component
+// (full bio) now lives only on the dedicated /founder page (see
+// app/founder/page.tsx); the homepage instead shows a short teaser (see
+// FounderTeaser.tsx) that links here — same teaser-plus-dedicated-page
+// pattern already used for Gallery/Videos/News. The former standalone
+// Philosophy.tsx section is folded into the end of THIS section as a
+// secondary, visually distinct "Our Philosophy" note (see the second Reveal
+// block below) rather than being deleted or left as its own homepage
+// moment — Philosophy.tsx itself is now unused and was removed.
 export function Founder() {
   const { t } = useLanguage();
 
@@ -47,6 +61,20 @@ export function Founder() {
           </p>
           <div className="mx-auto mt-5 h-1 w-12 rounded-full bg-orange" />
           <p className="mt-4 text-[13px] font-medium text-white/60">{t.founder.quoteAttribution}</p>
+        </Reveal>
+
+        {/* Folded in from the former standalone Philosophy.tsx section (see
+         *  the file-header comment above). Deliberately smaller and quieter
+         *  than the founder quote above it — same content depth, but styled
+         *  as a closing note rather than a second identical pull-quote, so
+         *  the two don't read as redundant back-to-back blocks the way they
+         *  did as separate homepage sections. */}
+        <Reveal delay={100} className="mx-auto mt-10 max-w-xl border-t border-white/10 pt-10 text-center">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-orange/80">{t.philosophy.eyebrow}</span>
+          <p className="mt-3 font-display text-lg font-semibold leading-snug text-white/90 md:text-xl">
+            &ldquo;{t.philosophy.quote}&rdquo;
+          </p>
+          <p className="mt-3 text-[13px] leading-relaxed text-white/60">{t.philosophy.subtitle}</p>
         </Reveal>
       </div>
     </section>
