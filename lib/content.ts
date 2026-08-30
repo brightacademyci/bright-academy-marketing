@@ -511,6 +511,12 @@ export const content = {
       formOutcomes: { win: "W", draw: "D", loss: "L" },
       viewFullTable: "View full table",
       showLessTable: "Show less",
+      // Added 2026-08-30 alongside FirstTeamPlayer.age (PlayerCard) and
+      // FirstTeam.topScorers (hero chip) — see lib/api.ts for both fields'
+      // own doc comments on why this is a computed age, never a birthdate.
+      ageSuffix: "yrs",
+      topScorerLabel: "Top scorer",
+      topScorersLabel: "Top scorers",
       tabs: { squad: "Squad", staff: "Staff", fixtures: "Fixtures", gallery: "Gallery", videos: "Videos", standings: "Standings" },
       squadTitle: "Squad",
       provisionalBadge: "Provisional squad — subject to change",
@@ -990,6 +996,9 @@ export const content = {
       formOutcomes: { win: "V", draw: "N", loss: "D" },
       viewFullTable: "Voir le classement complet",
       showLessTable: "Réduire",
+      ageSuffix: "ans",
+      topScorerLabel: "Meilleur buteur",
+      topScorersLabel: "Meilleurs buteurs",
       tabs: { squad: "Effectif", staff: "Staff", fixtures: "Calendrier", gallery: "Galerie", videos: "Vidéos", standings: "Classement" },
       squadTitle: "Effectif",
       provisionalBadge: "Effectif provisoire — susceptible d'évoluer",

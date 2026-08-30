@@ -124,6 +124,19 @@ export interface FirstTeamPlayer {
   jerseyNumber: number | null;
   position: string | null;
   photoUrl: string | null;
+  /** Added 2026-08-30, mirrors PublicFirstTeamPlayer.age in
+   *  bright-academy-os — a computed age, never the raw birthdate. See that
+   *  repo's lib/data/public-site.ts for why the date itself stays private. */
+  age: number | null;
+}
+
+/** Added 2026-08-30, mirrors PublicTopScorer in bright-academy-os. */
+export interface FirstTeamTopScorer {
+  id: string;
+  fullName: string;
+  jerseyNumber: number | null;
+  photoUrl: string | null;
+  goals: number;
 }
 
 export interface FirstTeamStaffMember {
@@ -206,6 +219,10 @@ export interface FirstTeam {
    *  matches with a final score, most recent first, capped at 10. Feeds the
    *  Results section of the same Fixtures tab. */
   results: FirstTeamNextFixture[];
+  /** Added 2026-08-30, mirrors PublicFirstTeam.topScorers in
+   *  bright-academy-os — every player currently tied for the team's goal
+   *  lead, empty when nobody's scored yet. */
+  topScorers: FirstTeamTopScorer[];
 }
 
 const EMPTY_FIRST_TEAM: FirstTeam = {
@@ -224,6 +241,7 @@ const EMPTY_FIRST_TEAM: FirstTeam = {
   nextFixture: null,
   fixtures: [],
   results: [],
+  topScorers: [],
 };
 
 export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {
@@ -257,6 +275,7 @@ export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {
     nextFixture: data.nextFixture ?? null,
     fixtures: data.fixtures ?? [],
     results: data.results ?? [],
+    topScorers: data.topScorers ?? [],
   };
 }
 

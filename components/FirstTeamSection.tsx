@@ -102,7 +102,11 @@ function peekWindow(standings: FirstTeamStanding[], windowSize = 5): FirstTeamSt
   return standings.slice(start, end);
 }
 
-function PlayerCard({ player }: { player: FirstTeamPlayer }) {
+/** ageSuffix added 2026-08-30 alongside FirstTeamPlayer.age — kept as a
+ *  plain prop rather than threading the whole dict through, since this is
+ *  the only new string PlayerCard needs. */
+function PlayerCard({ player, ageSuffix }: { player: FirstTeamPlayer; ageSuffix: string }) {
+  const meta = [player.position, player.age !== null ? `${player.age} ${ageSuffix}` : null].filter(Boolean).join(" · ");
   return (
     <div className="flex h-full items-center gap-3.5 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/10 hover:ring-orange/30">
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-orange/40">
@@ -122,7 +126,7 @@ function PlayerCard({ player }: { player: FirstTeamPlayer }) {
       </div>
       <div>
         <h3 className="font-display text-[14px] font-semibold text-white">{player.fullName}</h3>
-        {player.position && <p className="text-[12px] text-white/60">{player.position}</p>}
+        {meta && <p className="text-[12px] text-white/60">{meta}</p>}
       </div>
     </div>
   );
@@ -271,7 +275,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
             </p>
           )}
 
-          {(ownStanding || recentForm.length > 0) && (
+          {(ownStanding || recentForm.length > 0 || team.topScorers.length > 0) && (
             <div className="mt-4 flex flex-wrap items-center gap-3">
               {ownStanding && (
                 <span className="rounded-full bg-orange/15 px-3.5 py-1.5 text-[12px] font-bold text-orange ring-1 ring-orange/30">
@@ -282,6 +286,14 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                       {t.firstTeam.positionConnector} {team.division}
                     </>
                   )}
+                </span>
+              )}
+              {team.topScorers.length > 0 && (
+                <span className="rounded-full bg-white/10 px-3.5 py-1.5 text-[12px] font-semibold text-white/80 ring-1 ring-white/15">
+                  {team.topScorers.length === 1 ? t.firstTeam.topScorerLabel : t.firstTeam.topScorersLabel}
+                  {": "}
+                  <span className="text-orange">{team.topScorers.map((s) => s.fullName).join(", ")}</span>
+                  {` · ${team.topScorers[0].goals}`}
                 </span>
               )}
               {recentForm.length > 0 && (
@@ -494,7 +506,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {grouped[g].map((player, i) => (
                           <Reveal key={player.id} delay={i * 40}>
-                            <PlayerCard player={player} />
+                            <PlayerCard player={player} ageSuffix={t.firstTeam.ageSuffix} />
                           </Reveal>
                         ))}
                       </div>
