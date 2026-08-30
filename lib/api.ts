@@ -279,6 +279,81 @@ export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {
   };
 }
 
+// --- Player profile (added 2026-08-30) --------------------------------------
+// Backs app/first-team/players/[id]/page.tsx — mirrors bright-academy-os's
+// PublicPlayerProfile/getPublicPlayerProfile() exactly (see that repo's
+// lib/data/public-site.ts). Unlike getFirstTeam()/getLiveMatch(), nothing on
+// this type is language-dependent (names, numbers, dates) — the page reads
+// UI copy from the language dict the same way every other component does,
+// so this is a single fetch, not the en/fr pair pattern getNewsPost() uses.
+export interface PlayerProfileAppearance {
+  fixtureId: string;
+  matchDate: string;
+  isHome: boolean;
+  opponentName: string;
+  opponentShortName: string;
+  opponentLogoUrl: string | null;
+  ourScore: number | null;
+  opponentScore: number | null;
+  isStarter: boolean;
+  minutesPlayed: number | null;
+  goals: number;
+}
+
+export interface PlayerProfile {
+  found: boolean;
+  id: string;
+  fullName: string;
+  jerseyNumber: number | null;
+  position: string | null;
+  photoUrl: string | null;
+  age: number | null;
+  /** Mirrors PublicPlayerProfile.heightCm in bright-academy-os — see that
+   *  field's own doc comment for why height ships here but preferredFoot
+   *  doesn't. */
+  heightCm: number | null;
+  appearances: number;
+  goals: number;
+  recentAppearances: PlayerProfileAppearance[];
+}
+
+const NOT_FOUND_PROFILE: PlayerProfile = {
+  found: false,
+  id: "",
+  fullName: "",
+  jerseyNumber: null,
+  position: null,
+  photoUrl: null,
+  age: null,
+  heightCm: null,
+  appearances: 0,
+  goals: 0,
+  recentAppearances: [],
+};
+
+export async function getPlayerProfile(id: string): Promise<PlayerProfile> {
+  const data = await safeFetchJson<PlayerProfile>(
+    `${PUBLIC_API_BASE}/first-team/player/${encodeURIComponent(id)}`,
+    FIRST_TEAM_REVALIDATE_SECONDS
+  );
+  if (!data || !data.found) return NOT_FOUND_PROFILE;
+  // Same per-field defensive fallback as getFirstTeam() above — a response
+  // landing mid-rollout missing a field shouldn't crash the page.
+  return {
+    found: true,
+    id: data.id ?? "",
+    fullName: data.fullName ?? "",
+    jerseyNumber: data.jerseyNumber ?? null,
+    position: data.position ?? null,
+    photoUrl: data.photoUrl ?? null,
+    age: data.age ?? null,
+    heightCm: data.heightCm ?? null,
+    appearances: data.appearances ?? 0,
+    goals: data.goals ?? 0,
+    recentAppearances: data.recentAppearances ?? [],
+  };
+}
+
 // --- Live match (added 2026-08-27) -----------------------------------------
 // Backs app/live/[id]/page.tsx — Patrick's ask for the platform's live
 // match-day console (kickoff/goals/half-time/stoppage/full-time, entered by

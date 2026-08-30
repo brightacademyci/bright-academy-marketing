@@ -554,6 +554,24 @@ export const content = {
       fullTime: "FT",
       followTitle: "Follow the club",
     },
+    // Added 2026-08-30 for the new clickable player-profile page
+    // (components/PlayerProfileSection.tsx, app/first-team/players/[id]) —
+    // mirrors bright-academy-os's getPublicPlayerProfile(). ageSuffix on
+    // purpose isn't repeated here — PlayerProfileSection reuses
+    // firstTeam.ageSuffix, same single-source-of-truth reasoning as
+    // PlayerCard's own prop.
+    playerProfile: {
+      backToSquad: "Back to squad",
+      notFound: "This player isn't available right now.",
+      appearancesLabel: "Appearances",
+      goalsLabel: "Goals",
+      heightLabel: "Height",
+      recentFormLabel: "Recent appearances",
+      noAppearances: "No completed-match appearances logged yet.",
+      starterLabel: "Started",
+      subLabel: "Sub",
+      minutesSuffix: "'",
+    },
     // Every answer here restates a fact already published elsewhere on the
     // site (age range, sites, languages, curriculum, enrollment flow,
     // tournament results, pricing, trial sessions, cancellation policy).
@@ -1029,6 +1047,18 @@ export const content = {
       noResults: "Aucun résultat cette saison pour le moment — revenez après le premier match.",
       fullTime: "Fin",
       followTitle: "Suivez le club",
+    },
+    playerProfile: {
+      backToSquad: "Retour à l'effectif",
+      notFound: "Ce joueur n'est pas disponible pour le moment.",
+      appearancesLabel: "Apparitions",
+      goalsLabel: "Buts",
+      heightLabel: "Taille",
+      recentFormLabel: "Dernières apparitions",
+      noAppearances: "Aucune apparition en match terminé enregistrée pour le moment.",
+      starterLabel: "Titulaire",
+      subLabel: "Remplaçant",
+      minutesSuffix: "'",
     },
     faq: {
       eyebrow: "FAQ",

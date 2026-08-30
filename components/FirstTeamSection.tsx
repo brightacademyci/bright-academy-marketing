@@ -104,11 +104,18 @@ function peekWindow(standings: FirstTeamStanding[], windowSize = 5): FirstTeamSt
 
 /** ageSuffix added 2026-08-30 alongside FirstTeamPlayer.age — kept as a
  *  plain prop rather than threading the whole dict through, since this is
- *  the only new string PlayerCard needs. */
+ *  the only new string PlayerCard needs.
+ *
+ *  Made clickable the same day, linking to the new player-profile page
+ *  (app/first-team/players/[id]/page.tsx) — same crest-vs-crest Link
+ *  pattern FixtureRow already uses for /live/[id] below. */
 function PlayerCard({ player, ageSuffix }: { player: FirstTeamPlayer; ageSuffix: string }) {
   const meta = [player.position, player.age !== null ? `${player.age} ${ageSuffix}` : null].filter(Boolean).join(" · ");
   return (
-    <div className="flex h-full items-center gap-3.5 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/10 hover:ring-orange/30">
+    <Link
+      href={`/first-team/players/${player.id}`}
+      className="flex h-full items-center gap-3.5 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/10 hover:ring-orange/30"
+    >
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-orange/40">
         {player.photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -128,7 +135,7 @@ function PlayerCard({ player, ageSuffix }: { player: FirstTeamPlayer; ageSuffix:
         <h3 className="font-display text-[14px] font-semibold text-white">{player.fullName}</h3>
         {meta && <p className="text-[12px] text-white/60">{meta}</p>}
       </div>
-    </div>
+    </Link>
   );
 }
 
