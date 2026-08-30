@@ -105,7 +105,7 @@ export const content = {
       ctaTrial: "Book a Trial Session",
       stats: [
         { value: "600+", label: "Active players" },
-        { value: "5", label: "Training sites" },
+        { value: "4", label: "Training sites" },
         { value: "7", label: "Age programs" },
         // CHANGED 2026-08-14, second site improvement pass, Priority 2/9 —
         // this used to be a "1:15 coach-to-player ratio" stat (added
@@ -140,7 +140,7 @@ export const content = {
       // (see the Approach section, which explicitly states every player is
       // evaluated across four pillars — that one IS a verified claim).
       highlights: [
-        { title: "5 training sites across Abidjan & Grand-Bassam" },
+        { title: "4 training sites across Abidjan & Grand-Bassam" },
         { title: "A four-pillar curriculum, evaluated by age" },
         { title: "Purely educational, play-based learning" },
       ],
@@ -385,14 +385,24 @@ export const content = {
     },
     sites: {
       eyebrow: "Our Sites",
-      title: "Five training sites across Abidjan & Grand-Bassam",
+      title: "Four training sites across Abidjan & Grand-Bassam",
       subtitle: "Find the location closest to your family.",
       directions: "Get Directions",
+      // Weekly schedule, added 2026-08-30 alongside lib/schedule.ts — see
+      // that file's header for sourcing. "newSeason" references
+      // SCHEDULE_EFFECTIVE_DATE from the same file.
+      schedule: {
+        heading: "Weekly schedule",
+        newSeason: "New for the 2026–2027 season, effective September 1",
+        training: "Training",
+        futsal: "Futsal",
+        noSchedule: "Schedule not yet published for this site — contact us for times.",
+        days: { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" },
+      },
       list: [
         { name: "Angré Château", area: "Angré", lat: 5.409762, lng: -3.9800891, mapsUrl: "https://maps.app.goo.gl/FgCkyAng6u51p9F37" },
         { name: "Arena Bassam", area: "Mockey, Grand-Bassam", lat: 5.218917, lng: -3.750877, mapsUrl: "https://maps.app.goo.gl/urHCHE8xGc2puHqP6" },
         { name: "Complexe Sportif de Biafra", area: "Treichville", lat: 5.312437, lng: -4.00648, mapsUrl: "https://maps.app.goo.gl/sS5KBZsMiTbhFNJ19" },
-        { name: "Elite Club", area: "Marcory", lat: 5.298617, lng: -3.988997, mapsUrl: "https://maps.app.goo.gl/AUKmNsCHxvoLGXJdA" },
         { name: "Palais des Sports de Treichville", area: "Treichville", lat: 5.298087, lng: -4.005465, mapsUrl: "https://maps.app.goo.gl/JBqzgTx7jr6RmZ1i9" },
       ],
     },
@@ -473,7 +483,7 @@ export const content = {
       whyJoinTitle: "Why work with us",
       whyJoin: [
         "Real methodology — Horst Wein's Funino and Formino frameworks, not improvised drills.",
-        "Five training sites across Abidjan and Grand-Bassam.",
+        "Four training sites across Abidjan and Grand-Bassam.",
         "A structured, four-pillar curriculum with real player evaluation.",
         "A club that competes — and wins — on the international stage.",
       ],
@@ -886,7 +896,7 @@ export const content = {
       ctaTrial: "Réserver une séance d'essai",
       stats: [
         { value: "600+", label: "Joueurs actifs" },
-        { value: "5", label: "Sites d'entraînement" },
+        { value: "4", label: "Sites d'entraînement" },
         { value: "7", label: "Programmes par âge" },
         // Voir la note en anglais ci-dessus (même bloc, section "en") pour
         // la justification complète de ce changement.
@@ -901,7 +911,7 @@ export const content = {
         "Nous misons sur l'apprentissage par le jeu : motricité, technique et compétences sociales se construisent ensemble, séance après séance. Notre objectif est simple — offrir à chaque enfant les meilleures bases possibles, un caractère fort, une vraie confiance en soi, et surtout, du plaisir à chaque entraînement.",
       ],
       highlights: [
-        { title: "5 sites d'entraînement à Abidjan et Grand-Bassam" },
+        { title: "4 sites d'entraînement à Abidjan et Grand-Bassam" },
         { title: "Un curriculum en quatre piliers, évalué selon l'âge" },
         { title: "Un apprentissage par le jeu, purement éducatif" },
       ],
@@ -1082,14 +1092,21 @@ export const content = {
     },
     sites: {
       eyebrow: "Nos sites",
-      title: "Cinq sites d'entraînement à Abidjan et Grand-Bassam",
+      title: "Quatre sites d'entraînement à Abidjan et Grand-Bassam",
       subtitle: "Trouvez le site le plus proche de chez vous.",
       directions: "Itinéraire",
+      schedule: {
+        heading: "Programme hebdomadaire",
+        newSeason: "Nouveau pour la saison 2026–2027, à partir du 1er septembre",
+        training: "Entraînement",
+        futsal: "Futsal",
+        noSchedule: "Programme pas encore publié pour ce site — contactez-nous pour les horaires.",
+        days: { mon: "Lun", tue: "Mar", wed: "Mer", thu: "Jeu", fri: "Ven", sat: "Sam", sun: "Dim" },
+      },
       list: [
         { name: "Angré Château", area: "Angré", lat: 5.409762, lng: -3.9800891, mapsUrl: "https://maps.app.goo.gl/FgCkyAng6u51p9F37" },
         { name: "Arena Bassam", area: "Mockey, Grand-Bassam", lat: 5.218917, lng: -3.750877, mapsUrl: "https://maps.app.goo.gl/urHCHE8xGc2puHqP6" },
         { name: "Complexe Sportif de Biafra", area: "Treichville", lat: 5.312437, lng: -4.00648, mapsUrl: "https://maps.app.goo.gl/sS5KBZsMiTbhFNJ19" },
-        { name: "Elite Club", area: "Marcory", lat: 5.298617, lng: -3.988997, mapsUrl: "https://maps.app.goo.gl/AUKmNsCHxvoLGXJdA" },
         { name: "Palais des Sports de Treichville", area: "Treichville", lat: 5.298087, lng: -4.005465, mapsUrl: "https://maps.app.goo.gl/JBqzgTx7jr6RmZ1i9" },
       ],
     },
@@ -1154,7 +1171,7 @@ export const content = {
       whyJoinTitle: "Pourquoi nous rejoindre",
       whyJoin: [
         "Une vraie méthodologie — les cadres Funino et Formino de Horst Wein, pas des exercices improvisés.",
-        "Cinq sites d'entraînement à Abidjan et Grand-Bassam.",
+        "Quatre sites d'entraînement à Abidjan et Grand-Bassam.",
         "Un curriculum structuré en quatre piliers, avec une vraie évaluation des joueurs.",
         "Un club qui rivalise — et gagne — sur la scène internationale.",
       ],

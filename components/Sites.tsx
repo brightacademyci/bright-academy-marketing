@@ -7,6 +7,7 @@ import { Reveal } from "./Reveal";
 import { BrandDiagram } from "./BrandDiagram";
 import { TrialButton } from "./TrialButton";
 import { SITE_URL } from "@/lib/content";
+import { getSiteSchedule, type Weekday } from "@/lib/schedule";
 
 // react-leaflet touches `window` at import time, so it can only ever run in
 // the browser — ssr:false keeps it out of the server bundle entirely rather
@@ -15,6 +16,8 @@ const SiteMap = dynamic(() => import("./SiteMap"), {
   ssr: false,
   loading: () => <div className="h-full w-full animate-pulse bg-white/10" />,
 });
+
+const DAY_ORDER: Weekday[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 export function Sites() {
   const { t } = useLanguage();
@@ -133,6 +136,57 @@ export function Sites() {
             )}
           </div>
         </div>
+
+        {/* Weekly schedule for the selected site — added 2026-08-30, from
+         *  the four official site graphics Patrick confirmed for the new
+         *  2026-2027 season (lib/schedule.ts has the full sourcing note).
+         *  Any site with no confirmed schedule falls back to the same
+         *  "contact us" posture already used in ProgramComparison.tsx's
+         *  Schedule column, rather than guessing. */}
+        <Reveal className="mt-6 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 md:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-[14px] font-semibold text-white">{t.sites.schedule.heading}</h3>
+            <span className="rounded-full bg-orange/15 px-3 py-1 text-[11px] font-semibold text-orange">{t.sites.schedule.newSeason}</span>
+          </div>
+          {(() => {
+            const schedule = getSiteSchedule(t.sites.list[selected]?.name ?? "");
+            if (!schedule || schedule.blocks.length === 0) {
+              return <p className="mt-3 text-[13px] text-white/60">{t.sites.schedule.noSchedule}</p>;
+            }
+            const byDay = DAY_ORDER.map((day) => ({
+              day,
+              blocks: schedule.blocks.filter((b) => b.day === day),
+            })).filter((d) => d.blocks.length > 0);
+            return (
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {byDay.map(({ day, blocks }) => (
+                  <div key={day} className="rounded-xl bg-white/5 p-3.5 ring-1 ring-white/10">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-white/50">{t.sites.schedule.days[day]}</p>
+                    <div className="mt-2 space-y-2">
+                      {blocks.map((b, i) => (
+                        <div key={i} className="text-[13px]">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-white">
+                              {b.start}–{b.end}
+                            </span>
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                                b.type === "futsal" ? "bg-orange/20 text-orange" : "bg-white/10 text-white/70"
+                              }`}
+                            >
+                              {b.type === "futsal" ? t.sites.schedule.futsal : t.sites.schedule.training}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 text-white/60">{b.groups.join(" · ")}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </Reveal>
       </div>
     </section>
   );

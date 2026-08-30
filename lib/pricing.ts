@@ -57,6 +57,15 @@ export const CURRENCY = "XOF";
 // visible in the fee_plans/sites tables themselves.
 export const ELITE_FORMULA_SITES = ["Complexe Sportif de Biafra", "Palais des Sports de Treichville"];
 
+// Elite Club (Marcory) closed 2026-08-30 — removed from every programme's
+// `sites` below. Its Babies/Kicks/Junior players had no other site listed
+// here; Angré Château is added for those three now, since Patrick's own
+// 2026-08-30 "Site d'Angré" schedule graphic already shows Bright Babies,
+// Bright Kicks, and Bright Juniors training there (Saturday 16:00–17:00).
+// Kids/Youth/Elite/Pro already listed Complexe Sportif de Biafra and/or
+// Palais des Sports de Treichville, matching where Patrick said those
+// closed-club players are moving — no further change needed for them
+// beyond dropping Elite Club itself.
 export const PROGRAM_PRICING: ProgramPricing[] = [
   {
     key: "babies",
@@ -65,7 +74,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6000,
     classique: { monthly1x: 22000, monthly2x: 44000, quarterly1x: 60000, quarterly2x: 120000 },
     eliteFormula: null,
-    sites: ["Elite Club"],
+    sites: ["Angré Château"],
   },
   {
     key: "kicks",
@@ -74,7 +83,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6000,
     classique: { monthly1x: 22000, monthly2x: 44000, quarterly1x: 60000, quarterly2x: 120000 },
     eliteFormula: null,
-    sites: ["Elite Club"],
+    sites: ["Angré Château"],
   },
   {
     key: "junior",
@@ -83,7 +92,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6500,
     classique: { monthly1x: 26000, monthly2x: 52000, quarterly1x: 72000, quarterly2x: 144000 },
     eliteFormula: null,
-    sites: ["Elite Club", "Arena Bassam"],
+    sites: ["Arena Bassam", "Angré Château"],
   },
   {
     key: "kids",
@@ -92,7 +101,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 7000,
     classique: { monthly1x: 28000, monthly2x: 56000, quarterly1x: 72000, quarterly2x: 144000 },
     eliteFormula: { monthly: 75000, quarterly: 202000 },
-    sites: ["Elite Club", "Angré Château", "Complexe Sportif de Biafra", "Arena Bassam"],
+    sites: ["Angré Château", "Complexe Sportif de Biafra", "Arena Bassam"],
   },
   {
     key: "youth",
@@ -101,7 +110,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 8000,
     classique: { monthly1x: 32000, monthly2x: 62000, quarterly1x: 84000, quarterly2x: 168000 },
     eliteFormula: { monthly: 85000, quarterly: 230000 },
-    sites: ["Arena Bassam", "Elite Club", "Angré Château", "Complexe Sportif de Biafra", "Palais des Sports de Treichville"],
+    sites: ["Arena Bassam", "Angré Château", "Complexe Sportif de Biafra", "Palais des Sports de Treichville"],
   },
   {
     key: "elite",
@@ -110,7 +119,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 8000,
     classique: { monthly1x: 32000, monthly2x: 62000, quarterly1x: 84000, quarterly2x: 168000 },
     eliteFormula: { monthly: 85000, quarterly: 230000 },
-    sites: ["Angré Château", "Palais des Sports de Treichville", "Elite Club", "Arena Bassam", "Complexe Sportif de Biafra"],
+    sites: ["Angré Château", "Palais des Sports de Treichville", "Arena Bassam", "Complexe Sportif de Biafra"],
   },
   {
     key: "pro",
@@ -119,7 +128,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 9000,
     classique: { monthly1x: 36000, monthly2x: 72000, quarterly1x: 96000, quarterly2x: 192000 },
     eliteFormula: { monthly: 97000, quarterly: 262000 },
-    sites: ["Complexe Sportif de Biafra", "Elite Club", "Arena Bassam", "Angré Château", "Palais des Sports de Treichville"],
+    sites: ["Complexe Sportif de Biafra", "Arena Bassam", "Angré Château", "Palais des Sports de Treichville"],
   },
 ];
 
