@@ -47,6 +47,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/videos`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
     { url: `${SITE_URL}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/careers`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    // /partners added 2026-08-30 — a real, populated corporate-partnership
+    // page (see PartnersSection.tsx), same "real page, add it" bar as
+    // every other route here.
+    { url: `${SITE_URL}/partners`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     ...LEGAL_SLUGS.map((slug) => ({
       url: `${SITE_URL}/legal/${slug}`,
       lastModified: new Date(),

@@ -51,6 +51,14 @@ export function Footer() {
                   {t.nav.careers}
                 </Link>
               </li>
+              {/* Added 2026-08-30 alongside the new corporate-partnership
+               *  page — same "real page, no top-level nav billing" call
+               *  already made for careers above (see Header.tsx). */}
+              <li>
+                <Link href="/partners" className="hover:text-orange transition">
+                  {t.nav.partners}
+                </Link>
+              </li>
               <li>
                 <a href={FOOTER_SOCIAL.whatsapp} className="hover:text-orange transition">
                   {t.footer.whatsapp}: {WHATSAPP_DISPLAY}

@@ -45,6 +45,13 @@ export const WHATSAPP_LINK = "https://wa.me/2250716478625";
 // that file, same centralization convention as WHATSAPP_DISPLAY above.
 export const SAFEGUARDING_EMAIL = "brightacademyci@gmail.com";
 
+// Corporate-partnership contact — the address the sponsorship dossier
+// itself names for "Patrick Asseu — Président-Fondateur" (added 2026-08-30
+// alongside the new /partners page). Deliberately not SAFEGUARDING_EMAIL
+// above — that's the club's general/safeguarding inbox, not the founder's
+// own address the dossier points partnership inquiries to.
+export const PARTNERSHIP_EMAIL = "patrickasaiah.asseu@gmail.com";
+
 export type Lang = "en" | "fr";
 
 // CORRECTED AGAIN 2026-08-15 — Patrick sent the runners-up team photo and
@@ -81,6 +88,11 @@ export const content = {
       // this is copy-only, not an access change.
       login: "Parent Login",
       enroll: "Enroll Now",
+      // Added 2026-08-30 for the new corporate-partnership page — kept out
+      // of the primary nav for the same width reason careers was moved to
+      // the footer (see Header.tsx's own comment on that), not because
+      // this page matters less.
+      partners: "Partner With Us",
     },
     hero: {
       eyebrow: "Abidjan & Grand-Bassam, Côte d'Ivoire",
@@ -482,6 +494,166 @@ export const content = {
         errorGeneric: "Something went wrong submitting your application. Please try again, or reach us on WhatsApp.",
       },
     },
+    // Added 2026-08-30, Patrick's ask after sharing the club's corporate
+    // sponsorship dossier ("Dossier de Partenariat Corporate 2026-2027")
+    // and asking whether it belonged on the site. Adapted for the web
+    // rather than published as-is — the source document is a personalized
+    // leave-behind (blank "à l'attention de" / date fields, a "cadre
+    // réservé à l'entreprise" sign-off block) with a few fields still
+    // marked "to insert"/"to confirm"/"to complete" (hero photo, some
+    // impact indicators, a phone number), none of which belong on a live
+    // public page. Every fact/figure here is otherwise sourced straight
+    // from that dossier — nothing invented.
+    //
+    // Patrick's explicit call on the two open questions: (1) the tier
+    // table shows what each tier includes but not its FCFA amount — the
+    // dossier's own note that amounts flex (in-kind, multi-year,
+    // installments) argues against anchoring a public price anyway, so
+    // this keeps room to negotiate per company; (2) contact is email +
+    // WhatsApp only for now, the two channels already live elsewhere on
+    // this site — no dedicated phone line yet.
+    partners: {
+      eyebrow: "Corporate Partnership",
+      title: "Become a Founding Partner of the Attinguié Project",
+      subtitle: "Invest in football. Develop talent. Build opportunity.",
+      intro:
+        "Support the training, education, and future of 25 young Ivorian footballers as Bright Academy Football Club builds its residential training center in Attinguié.",
+      ctaPrimary: "Discuss a Partnership",
+      ctaWhatsapp: "Chat on WhatsApp",
+      whatsappPrefill: "Hi! I'd like to learn more about becoming a corporate partner of Bright Academy / the Attinguié project.",
+
+      statsTitle: "Bright, in numbers",
+      stats: [
+        { value: "600+", label: "youth trained" },
+        { value: "25", label: "resident players" },
+        { value: "2019", label: "founded" },
+        { value: "5 sites", label: "Abidjan + Attinguié" },
+        { value: "District Champion", label: "promoted to Regional Division" },
+        { value: "298,000+", label: "cumulative digital community" },
+      ],
+
+      projectTitle: "The Attinguié Project",
+      projectBody: [
+        "Bright Football Club is building its sporting base in Attinguié (Anyama sub-prefecture, 15km from Abidjan), on a roughly 1.11-hectare site made available under an agreement with the Attinguié community, pending finalization of the legal and administrative formalities. The land, surveyed by a licensed land surveyor, will be fully rehabilitated — pitch, drainage, irrigation, and facilities.",
+        "At the heart of the project: a residential training center where the club's 25 players live and train together.",
+      ],
+      dailyLifeTitle: "A player's day-to-day",
+      dailyLife: ["Housing in a dedicated residence", "Nutrition suited to athletic training", "Daily training", "Discipline and community living"],
+      supportTitle: "Support",
+      support: ["Academic and educational support", "Medical follow-up", "Qualified supervision", "Personal development and career preparation"],
+      investmentNote:
+        "The project's full investment program totals 126,000,000 FCFA, delivered in phases — the first phase (35,000,000 FCFA) covers pitch rehabilitation and player housing. The center's projected running budget is about 8,675,000 FCFA per month. The Club also contributes to community initiatives in Attinguié — youth, education, and local development — under its agreement with the community.",
+
+      whyNowTitle: "Why now",
+      whyNowBody:
+        "Bright is entering a new phase. After winning the district title and earning promotion to the Regional Division, the Attinguié project builds a genuine residential pathway — football, education, housing, health, discipline, and career preparation — anchored in a real community. Partners who commit this season become founding partners of the Attinguié project: their brand is associated with its beginning — the first pitch, the first residents — not a project already established. The most visible opportunities (center naming, jersey) are unique and go to the first commitment; founding partners also get priority renewal for future seasons and lasting recognition as founders.",
+
+      whatYouGetTitle: "What a partner gets",
+      categories: [
+        { title: "Visibility", items: ["Logo on match jerseys", "Pitch-side panels", "Presence on the Attinguié site", "Club communication materials"] },
+        { title: "Digital", items: ["TikTok, Facebook, Instagram", "WhatsApp channel", "Weekly video content", "298,000+ cumulative digital community"] },
+        { title: "Activation", items: ["Tournaments and youth days", "Corporate events", "Branded activations", "Speaking opportunities at events"] },
+        {
+          title: "Community",
+          items: ["Bright's youth and families", "Regular events across 5 sites + Attinguié", "The local Attinguié community", "Direct, repeated contact with your audience"],
+        },
+        { title: "CSR", items: ["Youth and education", "Sport and health", "Local development and inclusion", "A publishable annual impact report"] },
+        { title: "Exclusivity", items: ["Protected partnership categories", "Center naming: unique", "Jersey: limited placements", "Official kit supplier status"] },
+      ],
+
+      audienceTitle: "Digital audience",
+      audienceIntro:
+        "Bright's cumulative digital community is over 298,000 — a rare reach at this level of competition, built on content published every week (training, matches, tournaments, behind the scenes).",
+      audienceHeaders: { account: "Account", platform: "Platform", audience: "Audience" },
+      audienceRows: [
+        { account: "Bright Academy (@brightacademy.ci)", platform: "TikTok", audience: "176,600+" },
+        { account: "Bright Academy", platform: "Facebook", audience: "77,000+" },
+        { account: "Bright Football Club (@bright.football.club)", platform: "TikTok", audience: "16,100+" },
+        { account: "Bright Academy (@brightacademy_ci)", platform: "Instagram", audience: "12,000+" },
+        { account: "Bright Football Club", platform: "Facebook", audience: "7,600+" },
+        { account: "Bright WhatsApp Channel", platform: "WhatsApp", audience: "9,000+" },
+      ],
+      audienceTotal: "Cumulative digital community",
+      audienceGrandTotal: "298,000+",
+      audienceNote:
+        "Partner logos and activations live inside this content, seen by a young, local, family audience. The WhatsApp channel is a direct, algorithm-free line — every message reaches the community.",
+
+      tiersTitle: "Partnership tiers",
+      tiersIntro:
+        "Three circles of partners, clear tiers, defined benefits. Amounts flex to fit your policy — in-kind, multi-year, or installment contributions are welcome.",
+      tiers: [
+        {
+          tierKey: "founding",
+          circle: "Founding Partner",
+          name: "Center Naming",
+          benefits: "The Attinguié training center carries your name; maximum visibility on-site and across all communications; founding-partner status.",
+        },
+        {
+          tierKey: "founding",
+          circle: "Founding Partner",
+          name: "Official Jersey Sponsor",
+          benefits: "Logo on the front of match jerseys; pitch-side panels; press and social mentions; founding-partner status.",
+        },
+        {
+          tierKey: "official",
+          circle: "Official Partner",
+          name: "Shorts / Sleeve Sponsor",
+          benefits: "Logo on the kit; pitch-side panels; social media.",
+        },
+        {
+          tierKey: "official",
+          circle: "Official Partner",
+          name: "“One Jersey, One Brick”",
+          benefits: "Fund supporter-jersey production; the campaign supports pitch renovation; your logo on the solidarity jersey.",
+        },
+        {
+          tierKey: "community",
+          circle: "Community Partner",
+          name: "Sponsor a Player",
+          benefits: "Fund one player's full program — housing, food, coaching, sporting follow-up — with a yearly report and meeting.",
+        },
+        {
+          tierKey: "community",
+          circle: "Community Partner",
+          name: "Equipment Partner",
+          benefits: "In-kind contribution — jerseys, balls, medical or sports equipment; official supplier status.",
+        },
+        {
+          tierKey: "community",
+          circle: "Community Partner",
+          name: "Event Partner",
+          benefits: "A tournament, company day, or branded event on the Attinguié site.",
+        },
+      ],
+      tiersAmountNote: "Contact us for exact terms",
+      tiersLegalNote:
+        "No partnership — including player sponsorship — grants any right over a player, their contract, transfer, economic rights, or sporting decisions, nor any share of transfer revenue. Partnerships are simple sponsorship or patronage agreements, for one renewable season, with no equity stake.",
+
+      transparencyTitle: "Transparency and impact",
+      transparencyItems: [
+        "A dedicated project account — expenses committed by quote and paid against invoice",
+        "Works jointly accepted with the Attinguié community",
+        "Budget disclosed by phase — 35M / 23M / 68M FCFA, 126M FCFA total",
+        "Projected running budget of about 8,675,000 FCFA per month",
+        "An annual impact report — outcomes, results, and community initiatives",
+      ],
+      transparencyHighlight: "Every partner receives an accounting of how their contribution was used and what it funded.",
+
+      communityTitle: "An impact beyond the pitch",
+      communityItems: [
+        "Local jobs — security, maintenance, catering, and site upkeep offered first, at equal qualification, to Attinguié residents",
+        "Sports facilities that also benefit the village's own youth (supervised access to the pitch)",
+        "Community initiatives — tournaments, activities, and an annual gala for the village",
+        "The Club's contribution to community initiatives in Attinguié (youth, education, local development), under its agreement with the community",
+      ],
+
+      ctaTitle: "Become a Founding Partner",
+      ctaSubtitle:
+        "We're looking for a small circle of partners who want to link their brand to a sporting, educational, and social project built for Ivorian youth. Let's set up a 30-minute call to walk through the project, the budget, and the partnership options.",
+      contactName: "Patrick Asseu — Founder & President",
+      contactOrg: "Bright Academy Football Club",
+      emailLabel: "Email",
+    },
     // Homepage live-match banner — added 2026-08-27 alongside the live
     // match-day feature (see components/LiveMatchBanner.tsx). Only rendered
     // when the First Team's next fixture is currently live — this is the
@@ -699,6 +871,7 @@ export const content = {
       faq: "FAQ",
       login: "Connexion parent",
       enroll: "Inscrire mon enfant",
+      partners: "Devenir partenaire",
     },
     hero: {
       eyebrow: "Abidjan & Grand-Bassam, Côte d'Ivoire",
@@ -997,6 +1170,148 @@ export const content = {
         success: "Merci — votre candidature a bien été reçue. Nous vous recontacterons si un poste correspond.",
         errorGeneric: "Une erreur est survenue lors de l'envoi de votre candidature. Veuillez réessayer, ou contactez-nous sur WhatsApp.",
       },
+    },
+    partners: {
+      eyebrow: "Partenariat Entreprise",
+      title: "Devenez partenaire fondateur du projet Attinguié",
+      subtitle: "Investir dans le football. Former des talents. Construire des opportunités.",
+      intro:
+        "Accompagnez la formation, l'éducation et l'avenir de 25 jeunes footballeurs ivoiriens, alors que Bright Academy Football Club construit son centre de formation résidentiel à Attinguié.",
+      ctaPrimary: "Discuter d'un partenariat",
+      ctaWhatsapp: "Discuter sur WhatsApp",
+      whatsappPrefill: "Bonjour ! J'aimerais en savoir plus sur un partenariat entreprise avec Bright Academy / le projet Attinguié.",
+
+      statsTitle: "Bright en chiffres",
+      stats: [
+        { value: "+600", label: "jeunes encadrés" },
+        { value: "25", label: "joueurs en résidence" },
+        { value: "2019", label: "année de fondation" },
+        { value: "5 sites", label: "à Abidjan + Attinguié" },
+        { value: "Champion de district", label: "promu en Division Régionale" },
+        { value: "+298 000", label: "communauté digitale cumulée" },
+      ],
+
+      projectTitle: "Le projet Attinguié",
+      projectBody: [
+        "Le club installe sa base sportive à Attinguié (sous-préfecture d'Anyama, à 15 km d'Abidjan), sur un terrain d'environ 1,11 hectare mis à disposition dans le cadre d'une convention avec la communauté d'Attinguié, sous réserve de la finalisation des formalités juridiques et administratives. Le terrain, borné par géomètre-expert, sera entièrement réhabilité : mise à niveau, drainage, pelouse, irrigation, équipements.",
+        "Au cœur du projet : un centre de formation résidentiel où les 25 joueurs du club vivent et progressent ensemble.",
+      ],
+      dailyLifeTitle: "Le quotidien du joueur",
+      dailyLife: ["Hébergement en villa dédiée", "Alimentation adaptée à la pratique sportive", "Entraînement quotidien", "Discipline et vie collective"],
+      supportTitle: "L'accompagnement",
+      support: ["Accompagnement scolaire et éducatif", "Suivi médical", "Encadrement qualifié", "Développement humain et préparation à la carrière"],
+      investmentNote:
+        "Le programme d'investissement du projet s'élève à 126 000 000 FCFA, engagé par phases — la première phase (35 000 000 FCFA) couvre la réhabilitation du terrain et l'installation des joueurs. Le budget prévisionnel de fonctionnement du centre est d'environ 8 675 000 FCFA par mois. Le Club contribue également au financement d'actions communautaires à Attinguié — jeunesse, éducation, développement local — conformément à la convention conclue avec la communauté.",
+
+      whyNowTitle: "Pourquoi maintenant",
+      whyNowBody:
+        "Bright entre dans une nouvelle phase. Après le titre de champion de district et la montée en Division Régionale, le projet Attinguié structure un véritable parcours résidentiel : football, éducation, hébergement, santé, discipline et préparation à la carrière, ancré dans une communauté réelle. Les partenaires qui s'engagent cette saison deviennent les partenaires fondateurs du projet Attinguié : leur marque est associée à sa naissance — au premier coup de pelle, à la première pelouse, à la première génération de résidents — et non à un projet déjà établi. Les emplacements les plus visibles (naming du centre, maillot) sont uniques et attribués au premier engagement ; les partenaires fondateurs bénéficient aussi d'une priorité de renouvellement et d'une reconnaissance durable comme fondateurs.",
+
+      whatYouGetTitle: "Ce que le partenaire obtient",
+      categories: [
+        { title: "Visibilité", items: ["Logo sur les maillots de match", "Panneaux au bord du terrain", "Présence sur le site d'Attinguié", "Supports de communication du club"] },
+        { title: "Digital", items: ["TikTok, Facebook, Instagram", "Chaîne WhatsApp", "Contenus vidéo hebdomadaires", "Communauté digitale cumulée de +298 000"] },
+        { title: "Activation", items: ["Tournois et plateaux", "Événements et journées entreprise", "Animations à vos couleurs", "Prise de parole aux événements"] },
+        {
+          title: "Communauté",
+          items: ["Jeunes et familles de l'écosystème Bright", "Événements réguliers sur 5 sites + Attinguié", "La communauté locale d'Attinguié", "Contact direct et répété avec votre cible"],
+        },
+        { title: "RSE", items: ["Jeunesse et éducation", "Sport et santé", "Insertion et développement local", "Un rapport d'impact annuel publiable"] },
+        { title: "Exclusivité", items: ["Catégories de partenariat protégées", "Naming du centre : unique", "Maillot : emplacements limités", "Statut de fournisseur officiel"] },
+      ],
+
+      audienceTitle: "Audience digitale",
+      audienceIntro:
+        "La communauté digitale cumulée de Bright dépasse 298 000 — une présence rare à ce niveau de compétition, alimentée par des contenus publiés chaque semaine (entraînements, matchs, tournois, coulisses).",
+      audienceHeaders: { account: "Compte", platform: "Plateforme", audience: "Audience" },
+      audienceRows: [
+        { account: "Bright Academy (@brightacademy.ci)", platform: "TikTok", audience: "+176 600" },
+        { account: "Bright Academy", platform: "Facebook", audience: "+77 000" },
+        { account: "Bright Football Club (@bright.football.club)", platform: "TikTok", audience: "+16 100" },
+        { account: "Bright Academy (@brightacademy_ci)", platform: "Instagram", audience: "+12 000" },
+        { account: "Bright Football Club", platform: "Facebook", audience: "+7 600" },
+        { account: "Chaîne WhatsApp Bright", platform: "WhatsApp", audience: "+9 000" },
+      ],
+      audienceTotal: "Communauté digitale cumulée",
+      audienceGrandTotal: "+298 000",
+      audienceNote:
+        "Le logo et les activations de nos partenaires vivent dans ces contenus, vus par une audience jeune, locale et familiale. La chaîne WhatsApp offre en outre un canal direct, sans algorithme : chaque communication y atteint la communauté.",
+
+      tiersTitle: "Formules de partenariat",
+      tiersIntro:
+        "Trois cercles de partenaires, des contreparties définies. Les montants s'adaptent à votre politique : contributions en nature, pluriannuelles ou payables en plusieurs échéances bienvenues.",
+      tiers: [
+        {
+          tierKey: "founding",
+          circle: "Partenaire Fondateur",
+          name: "Naming du centre",
+          benefits: "Le centre d'entraînement d'Attinguié porte votre nom ; visibilité maximale sur site et dans toute la communication ; statut de partenaire fondateur.",
+        },
+        {
+          tierKey: "founding",
+          circle: "Partenaire Fondateur",
+          name: "Sponsor Officiel Maillot",
+          benefits: "Logo face avant des maillots de match ; panneaux ; mentions presse et réseaux ; statut de partenaire fondateur.",
+        },
+        {
+          tierKey: "official",
+          circle: "Partenaire Officiel",
+          name: "Sponsor Short / Manche",
+          benefits: "Logo sur l'équipement ; panneaux ; réseaux sociaux.",
+        },
+        {
+          tierKey: "official",
+          circle: "Partenaire Officiel",
+          name: "« Un maillot, une brique »",
+          benefits: "Vous financez la production des maillots supporters ; l'opération contribue à la rénovation du terrain ; votre logo sur le maillot solidaire.",
+        },
+        {
+          tierKey: "community",
+          circle: "Partenaire Communauté",
+          name: "Parrain d'un joueur",
+          benefits: "Vous financez le programme d'accompagnement d'un joueur — hébergement, alimentation, encadrement, accompagnement sportif — avec suivi et rencontre annuelle.",
+        },
+        {
+          tierKey: "community",
+          circle: "Partenaire Communauté",
+          name: "Partenaire Équipement",
+          benefits: "Contribution en nature — maillots, ballons, matériel médical ou sportif ; statut de fournisseur officiel.",
+        },
+        {
+          tierKey: "community",
+          circle: "Partenaire Communauté",
+          name: "Partenaire Événement",
+          benefits: "Un tournoi, une journée entreprise ou un événement à votre marque sur le site d'Attinguié.",
+        },
+      ],
+      tiersAmountNote: "Contactez-nous pour les modalités",
+      tiersLegalNote:
+        "Aucun partenariat, y compris le parrainage d'un joueur, ne confère au partenaire de droit sur un joueur, son contrat, son transfert, ses droits économiques ou ses décisions sportives, ni de participation aux revenus de transfert du club. Les partenariats sont des contrats de sponsoring ou de mécénat simples, d'une saison renouvelable, sans prise de participation.",
+
+      transparencyTitle: "Transparence et impact",
+      transparencyItems: [
+        "Un compte dédié au projet — dépenses engagées sur devis et payées sur factures",
+        "Réception contradictoire des travaux avec la communauté d'Attinguié",
+        "Budget publié par phase — 35 M / 23 M / 68 M FCFA, 126 M FCFA au total",
+        "Budget prévisionnel de fonctionnement d'environ 8 675 000 FCFA par mois",
+        "Un rapport d'impact annuel — réalisations, résultats sportifs, actions communautaires",
+      ],
+      transparencyHighlight: "Chaque partenaire reçoit un bilan de l'utilisation de sa contribution et des réalisations financées.",
+
+      communityTitle: "Un impact qui dépasse le terrain",
+      communityItems: [
+        "Emplois locaux — gardiennage, entretien, restauration et intendance proposés en priorité, à compétence égale, aux habitants d'Attinguié",
+        "Des infrastructures sportives dont bénéficie aussi la jeunesse du village (accès encadré au terrain)",
+        "Des actions communautaires — tournois, animations et une journée de gala annuelle au profit du village",
+        "La contribution du Club au financement d'actions communautaires à Attinguié (jeunesse, éducation, développement local), conformément à la convention conclue avec la communauté",
+      ],
+
+      ctaTitle: "Devenez partenaire fondateur",
+      ctaSubtitle:
+        "Nous recherchons un cercle restreint de partenaires souhaitant associer leur marque à un projet sportif, éducatif et social pour la jeunesse ivoirienne. Organisons une rencontre de 30 minutes pour vous présenter le projet, le budget et les possibilités de partenariat.",
+      contactName: "Patrick Asseu — Président-Fondateur",
+      contactOrg: "Bright Academy Football Club",
+      emailLabel: "E-mail",
     },
     liveBanner: {
       badge: "EN DIRECT",
