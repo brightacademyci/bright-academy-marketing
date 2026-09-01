@@ -29,6 +29,12 @@
 // Group names match lib/pricing.ts's ProgramPricing.name exactly (both
 // languages share the same string) so callers can cross-reference pricing
 // for any group named in a schedule block.
+//
+// Added 2026-09-01: a fifth site, "Sporting Club Abidjan" (Biétry), from
+// Patrick's "PROGRAMME D'ENTRAÎNEMENT — NOUVELLE SAISON 2026–2027" graphic
+// for "Sporting Club Biétry" (Petite Enfance, 14 mois → U5). Same sourcing
+// standard as the four graphics above — read directly off the graphic, not
+// estimated.
 
 export type Weekday = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 export type SessionType = "training" | "futsal";
@@ -95,6 +101,17 @@ export const SITE_SCHEDULES: SiteSchedule[] = [
       { day: "sat", start: "10:30", end: "11:30", type: "training", groups: ["Bright Kids"] },
       { day: "sat", start: "11:30", end: "12:30", type: "training", groups: ["Bright Youth"] },
       { day: "sat", start: "13:00", end: "15:00", type: "training", groups: ["Bright Elite", "Bright Pro"] },
+    ],
+  },
+  {
+    siteName: "Sporting Club Abidjan",
+    blocks: [
+      { day: "tue", start: "16:00", end: "17:30", type: "training", groups: ["Bright Babies"] },
+      { day: "tue", start: "16:00", end: "17:00", type: "training", groups: ["Bright Junior"] },
+      { day: "tue", start: "16:30", end: "17:10", type: "training", groups: ["Bright Kicks"] },
+      { day: "thu", start: "16:00", end: "17:30", type: "training", groups: ["Bright Babies"] },
+      { day: "thu", start: "16:00", end: "17:00", type: "training", groups: ["Bright Junior"] },
+      { day: "thu", start: "16:30", end: "17:10", type: "training", groups: ["Bright Kicks"] },
     ],
   },
 ];

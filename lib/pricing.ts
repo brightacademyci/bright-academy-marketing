@@ -66,6 +66,17 @@ export const ELITE_FORMULA_SITES = ["Complexe Sportif de Biafra", "Palais des Sp
 // Palais des Sports de Treichville, matching where Patrick said those
 // closed-club players are moving — no further change needed for them
 // beyond dropping Elite Club itself.
+//
+// Added 2026-09-01: "Sporting Club Abidjan" (Biétry) is a new site, added
+// to Babies/Kicks/Junior the same way Angré Château was above — Patrick's
+// "PROGRAMME D'ENTRAÎNEMENT — NOUVELLE SAISON 2026–2027" graphic for
+// "Sporting Club Biétry" shows exactly these three programmes training
+// there (Tue/Thu). NOTE: that graphic marks the Bright Babies slot "★
+// SÉANCE GRATUITE" (free trial) — unlike the standard rule documented above
+// (trialSessionPrice = singleSessionXOF, never free, see trialRequest copy
+// in lib/content.ts). Left singleSessionXOF unchanged pending Patrick
+// confirming whether that's a permanent Babies-at-this-site rule or a
+// launch-only promotion — flagged back to him rather than guessed at.
 export const PROGRAM_PRICING: ProgramPricing[] = [
   {
     key: "babies",
@@ -74,7 +85,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6000,
     classique: { monthly1x: 22000, monthly2x: 44000, quarterly1x: 60000, quarterly2x: 120000 },
     eliteFormula: null,
-    sites: ["Angré Château"],
+    sites: ["Angré Château", "Sporting Club Abidjan"],
   },
   {
     key: "kicks",
@@ -83,7 +94,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6000,
     classique: { monthly1x: 22000, monthly2x: 44000, quarterly1x: 60000, quarterly2x: 120000 },
     eliteFormula: null,
-    sites: ["Angré Château"],
+    sites: ["Angré Château", "Sporting Club Abidjan"],
   },
   {
     key: "junior",
@@ -92,7 +103,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6500,
     classique: { monthly1x: 26000, monthly2x: 52000, quarterly1x: 72000, quarterly2x: 144000 },
     eliteFormula: null,
-    sites: ["Arena Bassam", "Angré Château"],
+    sites: ["Arena Bassam", "Angré Château", "Sporting Club Abidjan"],
   },
   {
     key: "kids",
