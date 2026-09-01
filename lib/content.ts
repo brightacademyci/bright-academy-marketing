@@ -367,6 +367,11 @@ export const content = {
       colTrial: "Trial session",
       colAction: "Registration",
       contactUs: "Contact us",
+      // Added 2026-09-01 — shown instead of an amount in the Monthly/
+      // Quarterly/Trial columns for any programme with pricing.free true
+      // (currently just Bright Babies). See lib/pricing.ts's ProgramPricing
+      // .free doc comment.
+      free: "Free",
       // RENAMED 2026-08-16 (audit-corrections pass, Priority 4) — was
       // "the Elite formula" / "Elite formula", easily confused with the
       // unrelated "Bright Elite" age programme (U12-U14). Per Patrick's
@@ -462,6 +467,13 @@ export const content = {
       subtitle:
         "Tell us about your child and your preferred site — a member of our team will confirm the price, schedule, and availability by phone or WhatsApp.",
       paidNotice: "Trial sessions are paid, at the same price as a single regular session for the programme you join — never free.",
+      // Added 2026-09-01 — the one confirmed exception to the "never free"
+      // rule above: Patrick's explicit instruction that Bright Babies is a
+      // free programme at both sites it runs at (Angré Château and
+      // Sporting Club Abidjan). Kept as a separate sentence rather than
+      // rewritten into the rule itself, so the rule still reads correctly
+      // for every other programme.
+      paidNoticeBabiesException: "Bright Babies (14–23 months) is the one exception — every session in that programme is free, at every site.",
       form: {
         title: "Your details",
         guardianName: "Your full name",
@@ -1088,6 +1100,7 @@ export const content = {
       colTrial: "Séance d'essai",
       colAction: "Inscription",
       contactUs: "Nous contacter",
+      free: "Gratuit",
       // RENAMED 2026-08-16 (Priority 4) — see the English column's
       // comment above for the full rationale.
       sessionsRange: "1 à 2, ou 4 avec la formule 4 séances par semaine",
@@ -1153,6 +1166,7 @@ export const content = {
       subtitle:
         "Parlez-nous de votre enfant et du site souhaité — un membre de notre équipe vous confirmera le tarif, l'horaire et la disponibilité par téléphone ou WhatsApp.",
       paidNotice: "Les séances d'essai sont payantes, au même tarif qu'une séance individuelle du programme choisi — jamais gratuites.",
+      paidNoticeBabiesException: "Bright Babies (14–23 mois) est la seule exception — toutes les séances de ce programme sont gratuites, sur tous les sites.",
       form: {
         title: "Vos informations",
         guardianName: "Votre nom complet",

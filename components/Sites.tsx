@@ -8,6 +8,7 @@ import { BrandDiagram } from "./BrandDiagram";
 import { TrialButton } from "./TrialButton";
 import { SITE_URL } from "@/lib/content";
 import { getSiteSchedule, type Weekday } from "@/lib/schedule";
+import { getProgramPricing } from "@/lib/pricing";
 
 // react-leaflet touches `window` at import time, so it can only ever run in
 // the browser — ssr:false keeps it out of the server bundle entirely rather
@@ -177,7 +178,26 @@ export function Sites() {
                               {b.type === "futsal" ? t.sites.schedule.futsal : t.sites.schedule.training}
                             </span>
                           </div>
-                          <p className="mt-0.5 text-white/60">{b.groups.join(" · ")}</p>
+                          {/* Per-group "Free" tag added 2026-09-01 — mirrors
+                           *  the "★ SÉANCE GRATUITE" badge on Patrick's own
+                           *  site graphics for a programme with
+                           *  pricing.free true (currently only Bright
+                           *  Babies), even when it shares a block with a
+                           *  paid programme (e.g. Angré Château's combined
+                           *  Sat 16:00–17:00 slot). */}
+                          <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-white/60">
+                            {b.groups.map((g, gi) => (
+                              <span key={g} className="inline-flex items-center gap-1">
+                                {gi > 0 && <span className="text-white/30">·</span>}
+                                <span>{g}</span>
+                                {getProgramPricing(g)?.free && (
+                                  <span className="rounded-full bg-emerald-400/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-300">
+                                    {t.comparison.free}
+                                  </span>
+                                )}
+                              </span>
+                            ))}
+                          </p>
                         </div>
                       ))}
                     </div>

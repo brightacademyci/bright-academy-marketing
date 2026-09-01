@@ -120,13 +120,21 @@ export function ProgramComparison() {
                 </td>
                 <td className="px-4 py-3 text-white/60">{t.comparison.contactUs}</td>
                 <td className="whitespace-nowrap px-4 py-3">
-                  {row.pricing ? `${formatPrice(row.pricing.classique.monthly1x, lang)}${t.comparison.perMonth}` : t.comparison.contactUs}
+                  {row.pricing?.free
+                    ? t.comparison.free
+                    : row.pricing
+                      ? `${formatPrice(row.pricing.classique.monthly1x, lang)}${t.comparison.perMonth}`
+                      : t.comparison.contactUs}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
-                  {row.pricing ? `${formatPrice(row.pricing.classique.quarterly1x, lang)}${t.comparison.perQuarter}` : t.comparison.contactUs}
+                  {row.pricing?.free
+                    ? t.comparison.free
+                    : row.pricing
+                      ? `${formatPrice(row.pricing.classique.quarterly1x, lang)}${t.comparison.perQuarter}`
+                      : t.comparison.contactUs}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
-                  {row.pricing ? formatPrice(row.pricing.singleSessionXOF, lang) : t.trial.priceUnconfirmed}
+                  {row.pricing?.free ? t.comparison.free : row.pricing ? formatPrice(row.pricing.singleSessionXOF, lang) : t.trial.priceUnconfirmed}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3">
                   <div className="flex items-center gap-3">

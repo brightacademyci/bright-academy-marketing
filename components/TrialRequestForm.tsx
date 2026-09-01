@@ -83,7 +83,12 @@ export function TrialRequestForm() {
   }
 
   const pricing = initialProgram ? getProgramPricing(initialProgram) : undefined;
-  const whatsappHref = buildTrialWhatsAppUrl({ lang, programName: initialProgram || undefined, priceXOF: pricing?.singleSessionXOF });
+  const whatsappHref = buildTrialWhatsAppUrl({
+    lang,
+    programName: initialProgram || undefined,
+    priceXOF: pricing?.singleSessionXOF,
+    free: pricing?.free,
+  });
 
   if (status === "success") {
     return (

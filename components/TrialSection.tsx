@@ -22,6 +22,10 @@ export function TrialSection() {
           <p className="mt-3 text-[14px] leading-relaxed text-white/75">{t.trialRequest.subtitle}</p>
           <p className="mt-4 rounded-xl bg-orange/10 px-4 py-3 text-[12.5px] text-orange/90 ring-1 ring-orange/20">
             {t.trialRequest.paidNotice}
+            {/* Added 2026-09-01 — Bright Babies free-programme exception,
+             *  see lib/pricing.ts's ProgramPricing.free doc comment. */}
+            {" "}
+            {t.trialRequest.paidNoticeBabiesException}
           </p>
         </Reveal>
 

@@ -16,6 +16,13 @@
 // construction (see lib/pricing.ts); there is no separately-editable trial
 // price anywhere in this codebase, so a fee_plans price change there
 // automatically flows through here without a second edit.
+//
+// EXCEPTION added 2026-09-01: Bright Babies is a free programme (see
+// lib/pricing.ts's ProgramPricing.free) — the messages below would
+// otherwise say "paid trial session ... at 0 XOF", which is both wrong
+// wording and a confusing number. Pass `free: true` (from
+// getProgramPricing(programName)?.free) to get the correct free-programme
+// wording instead.
 import { WHATSAPP_LINK } from "./content";
 import type { Lang } from "./content";
 import { CURRENCY } from "./pricing";
@@ -35,9 +42,17 @@ interface TrialMessageArgs {
   programName?: string;
   /** The confirmed single-session price for that programme, in XOF — omit only if genuinely unconfirmed. */
   priceXOF?: number;
+  /** True for a free programme (currently only Bright Babies) — see the EXCEPTION comment above. Ignored if `programName` is omitted. */
+  free?: boolean;
 }
 
-export function buildTrialMessage({ lang, programName, priceXOF }: TrialMessageArgs): string {
+export function buildTrialMessage({ lang, programName, priceXOF, free }: TrialMessageArgs): string {
+  if (programName && free) {
+    return lang === "fr"
+      ? `Bonjour Bright Academy, je souhaite réserver une séance pour mon enfant dans le programme ${programName}, qui est gratuit. Pouvez-vous me confirmer le site et les horaires disponibles ?`
+      : `Hello Bright Academy, I would like to book a session for my child in the ${programName} programme, which is free. Could you confirm the available location and schedule?`;
+  }
+
   if (!programName) {
     // CORRECTED 2026-08-16 (audit-corrections pass, Priority 5) — this
     // generic (no programme picked yet) message never mentioned the trial

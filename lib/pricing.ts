@@ -47,6 +47,19 @@ export interface ProgramPricing {
   eliteFormula: { monthly: number; quarterly: number } | null;
   /** Site names (must match lib/content.ts sites.list[].name) currently linked to this programme's team(s) in the OS app, confirmed 2026-08-13. */
   sites: string[];
+  /**
+   * True when this programme is free at every site it currently runs at
+   * (see `sites` above) — as opposed to the site-wide "trial session" being
+   * free, which never happens (see trialRequest.paidNotice in
+   * lib/content.ts, and lib/whatsapp.ts's CONFIRMED PAID TRIAL POLICY
+   * comment). When true, singleSessionXOF/classique/eliteFormula are 0/null
+   * and UI should render "Free"/"Gratuit" (t.comparison.free) instead of an
+   * amount. Added 2026-09-01, Patrick's explicit instruction that Bright
+   * Babies is free at both Angré Château and Sporting Club Abidjan — the
+   * only two sites it's offered at, per `sites` below, so the whole
+   * programme is free, not a per-site exception UI needs to branch on.
+   */
+  free?: boolean;
 }
 
 export const CURRENCY = "XOF";
@@ -71,21 +84,26 @@ export const ELITE_FORMULA_SITES = ["Complexe Sportif de Biafra", "Palais des Sp
 // to Babies/Kicks/Junior the same way Angré Château was above — Patrick's
 // "PROGRAMME D'ENTRAÎNEMENT — NOUVELLE SAISON 2026–2027" graphic for
 // "Sporting Club Biétry" shows exactly these three programmes training
-// there (Tue/Thu). NOTE: that graphic marks the Bright Babies slot "★
-// SÉANCE GRATUITE" (free trial) — unlike the standard rule documented above
-// (trialSessionPrice = singleSessionXOF, never free, see trialRequest copy
-// in lib/content.ts). Left singleSessionXOF unchanged pending Patrick
-// confirming whether that's a permanent Babies-at-this-site rule or a
-// launch-only promotion — flagged back to him rather than guessed at.
+// there (Tue/Thu).
+//
+// That graphic marked the Bright Babies slot "★ SÉANCE GRATUITE." Patrick
+// confirmed the same day that Bright Babies is free at Angré Château too —
+// i.e. free at both sites it's offered at, so `free: true` below on the
+// babies entry, not a per-site UI exception. This is a real exception to
+// the "trial sessions are never free" policy documented in
+// lib/content.ts's trialRequest.paidNotice and lib/whatsapp.ts's CONFIRMED
+// PAID TRIAL POLICY comment — both updated alongside this to name Bright
+// Babies as the one exception, rather than silently contradicting it.
 export const PROGRAM_PRICING: ProgramPricing[] = [
   {
     key: "babies",
     name: "Bright Babies",
     ageBand: "U1-U3",
-    singleSessionXOF: 6000,
-    classique: { monthly1x: 22000, monthly2x: 44000, quarterly1x: 60000, quarterly2x: 120000 },
+    singleSessionXOF: 0,
+    classique: { monthly1x: 0, monthly2x: 0, quarterly1x: 0, quarterly2x: 0 },
     eliteFormula: null,
     sites: ["Angré Château", "Sporting Club Abidjan"],
+    free: true,
   },
   {
     key: "kicks",
