@@ -8,6 +8,7 @@ import { Reveal } from "./Reveal";
 import { TrophyDiagram, WhistleDiagram, GoalNetDiagram, WreathDiagram, CornerFlagDiagram } from "./ProgramIcons";
 import { TrialButton } from "./TrialButton";
 import { ProgramComparison } from "./ProgramComparison";
+import { getProgramPricing } from "@/lib/pricing";
 
 // Category badges — added 2026-08-13, Patrick's follow-up: he circled six
 // of the seven Programs cards on a live screenshot asking for each "Bright"
@@ -108,7 +109,19 @@ export function Programs() {
                         )}
                         <div className="flex flex-1 items-baseline justify-between gap-2">
                           <h4 className="font-badge text-[16px] font-semibold tracking-wide text-white">{c.name}</h4>
-                          <span className="whitespace-nowrap text-[11px] font-semibold text-orange">{c.range}</span>
+                          <span className="flex items-center gap-1.5">
+                            <span className="whitespace-nowrap text-[11px] font-semibold text-orange">{c.range}</span>
+                            {/* Added 2026-09-01, Patrick's ask — the free
+                             *  Bright Babies programme should be visible
+                             *  here too, not just the schedule/comparison
+                             *  table. Same tag styling as Sites.tsx and
+                             *  ProgramComparison.tsx use for pricing.free. */}
+                            {getProgramPricing(c.name)?.free && (
+                              <span className="whitespace-nowrap rounded-full bg-emerald-400/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-300">
+                                {t.comparison.free}
+                              </span>
+                            )}
+                          </span>
                         </div>
                       </div>
                       <p className="relative mt-2 text-[13px] leading-relaxed text-white/70">{c.note}</p>
