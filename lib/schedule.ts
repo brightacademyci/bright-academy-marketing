@@ -104,12 +104,16 @@ export const SITE_SCHEDULES: SiteSchedule[] = [
     ],
   },
   {
+    // Bright Babies is a 30-min free session at this site (see "★ SÉANCE
+    // GRATUITE" legend on the graphic, tagged specifically to Bright
+    // Babies) — flagged to Patrick separately since the pricing model
+    // doesn't yet represent a site-specific free programme.
     siteName: "Sporting Club Abidjan",
     blocks: [
-      { day: "tue", start: "16:00", end: "17:30", type: "training", groups: ["Bright Babies"] },
+      { day: "tue", start: "16:00", end: "16:30", type: "training", groups: ["Bright Babies"] },
       { day: "tue", start: "16:00", end: "17:00", type: "training", groups: ["Bright Junior"] },
       { day: "tue", start: "16:30", end: "17:10", type: "training", groups: ["Bright Kicks"] },
-      { day: "thu", start: "16:00", end: "17:30", type: "training", groups: ["Bright Babies"] },
+      { day: "thu", start: "16:00", end: "16:30", type: "training", groups: ["Bright Babies"] },
       { day: "thu", start: "16:00", end: "17:00", type: "training", groups: ["Bright Junior"] },
       { day: "thu", start: "16:30", end: "17:10", type: "training", groups: ["Bright Kicks"] },
     ],
