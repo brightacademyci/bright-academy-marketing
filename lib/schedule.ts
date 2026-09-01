@@ -88,7 +88,16 @@ export const SITE_SCHEDULES: SiteSchedule[] = [
       { day: "sat", start: "10:00", end: "11:30", type: "training", groups: ["Bright Kids", "Bright Youth"] },
       { day: "sat", start: "13:00", end: "14:30", type: "training", groups: ["Bright Pro"] },
       { day: "sat", start: "14:30", end: "16:00", type: "training", groups: ["Bright Elite"] },
-      { day: "sat", start: "16:00", end: "17:00", type: "training", groups: ["Bright Junior", "Bright Kicks", "Bright Babies"] },
+      // Split into per-group blocks 2026-09-01, from Patrick's own
+      // "PROGRAMME DES SÉANCES — SITE D'ANGRÉ" graphic: common 16:00 start,
+      // different end times per group ("départ commun, fins différentes")
+      // — was one merged 16:00–17:00 block, which overstated Kicks' and
+      // Babies' actual session length. Bright Babies is free here too (see
+      // lib/pricing.ts's ProgramPricing.free) — same site, same rule as
+      // Sporting Club Abidjan.
+      { day: "sat", start: "16:00", end: "17:00", type: "training", groups: ["Bright Junior"] },
+      { day: "sat", start: "16:00", end: "16:40", type: "training", groups: ["Bright Kicks"] },
+      { day: "sat", start: "16:00", end: "16:30", type: "training", groups: ["Bright Babies"] },
       { day: "sun", start: "14:00", end: "15:30", type: "training", groups: ["Bright Elite"] },
       { day: "sun", start: "15:30", end: "17:00", type: "training", groups: ["Bright Pro"] },
     ],
