@@ -25,10 +25,21 @@ const DEF_TOKENS = new Set([
 ]);
 const MID_TOKENS = new Set([
   "dm", "cm", "am", "mf", "mid", "midfielder", "milieu", "mc",
+  // "lm"/"rm" (Left/Right Midfielder) — added 2026-09-03, matchday hotfix,
+  // mirroring the OS app's lib/position-groups.ts (same-day fix there):
+  // the Starting XI position selector uses these exact short codes, and
+  // neither matched here nor the free-text fallback below on its own, so
+  // both silently fell into "other" (folded into the mid row on this
+  // page, but wrongly excluded from the fwd row it should visually sit
+  // in — found live during the Bright FC vs FC CHADS matchday hotfix).
+  "lm", "rm",
 ]);
 const FWD_TOKENS = new Set([
   "w", "st", "fw", "cf", "forward", "striker", "winger",
   "attaquant", "ailier", "buteur", "avant", "bu",
+  // "lw"/"rw" (Left/Right Winger) — same matchday-hotfix addition as
+  // "lm"/"rm" above, same reason, mirroring the OS app's copy.
+  "lw", "rw",
 ]);
 
 /** Splits "CM/AM", "ST, CF" or "Milieu - Défenseur" into individual tokens
