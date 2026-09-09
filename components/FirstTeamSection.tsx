@@ -231,6 +231,11 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
   const tabs = t.firstTeam.tabs;
   const posLabels = t.firstTeam.positionFilters;
   const [openPhotoIndex, setOpenPhotoIndex] = useState<number | null>(null);
+  // ADDED 2026-09-09 -- which album's photos are currently showing on the
+  // Gallery tab, null meaning "show the album picker" (see galleryAlbums
+  // grouping below). Reset whenever the tab is left so coming back to
+  // Gallery always starts at the album picker, not wherever they last were.
+  const [openAlbumId, setOpenAlbumId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("squad");
   const [positionFilter, setPositionFilter] = useState<PositionGroup | "all">("all");
   // Standings peek/expand — added 2026-08-30, see peekWindow()'s own doc
@@ -253,6 +258,9 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
   // Patrick's pointed to for this page uses) — team.results itself is
   // most-recent-first, so the last 5 are taken then reversed.
   const recentForm = useMemo(() => team.results.slice(0, 5).reverse(), [team.results]);
+  // ADDED 2026-09-09 -- the album currently open on the Gallery tab, or
+  // null to show the album picker. See openAlbumId's own comment above.
+  const openAlbum = useMemo(() => team.galleryAlbums.find((a) => a.id === openAlbumId) ?? null, [team.galleryAlbums, openAlbumId]);
   // A window is only worth collapsing to if it's actually shorter than the
   // full table — a 5-team division has nothing to hide.
   const standingsNeedsPeek = team.standings.length > 5;
@@ -454,7 +462,14 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
             {TABS.map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  // Leaving (or re-entering) Gallery always starts back at
+                  // the album picker / top of the flat grid, not wherever
+                  // they last were.
+                  setOpenAlbumId(null);
+                  setOpenPhotoIndex(null);
+                }}
                 className={`shrink-0 border-b-2 px-4 py-3.5 text-[13px] font-semibold uppercase tracking-wide transition ${
                   activeTab === tab.key
                     ? "border-orange text-orange"
@@ -607,42 +622,92 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
           </Reveal>
         )}
 
-        {/* Gallery */}
+        {/* Gallery -- REWORKED 2026-09-09 to group by album (see
+            FirstTeamGalleryAlbum in lib/api.ts and openAlbumId/openAlbum
+            above). An org with real albums gets a picker (cover + title +
+            count) that opens into that album's own photo grid; an org with
+            no albums yet (only pre-album/legacy photos, galleryAlbums
+            empty) falls straight back to the old flat grid over `gallery`
+            unchanged, so this never regresses an org mid-migration. */}
         {activeTab === "gallery" && (
           <Reveal className="mt-8">
             <h2 className="font-display text-xl font-bold text-white">{t.firstTeam.galleryTitle}</h2>
-            {team.gallery.length === 0 ? (
+            {team.galleryAlbums.length === 0 && team.gallery.length === 0 ? (
               <p className="mt-4 text-[13px] text-white/60">{t.firstTeam.noGallery}</p>
-            ) : (
-              <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-                {team.gallery.map((photo, i) => (
+            ) : team.galleryAlbums.length > 0 && !openAlbum ? (
+              <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+                {team.galleryAlbums.map((album) => (
                   <button
-                    key={photo.id}
-                    onClick={() => setOpenPhotoIndex(i)}
-                    className="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-white/10"
-                    aria-label={`Open photo${photo.caption ? `: ${photo.caption}` : ""}`}
+                    key={album.id}
+                    onClick={() => setOpenAlbumId(album.id)}
+                    className="group text-left"
+                    aria-label={`Open album: ${album.title}`}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={photo.photoUrl}
-                      alt={photo.caption ?? team.teamName}
-                      loading={i < 4 ? "eager" : "lazy"}
-                      className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                    />
-                    <span className="absolute inset-0 bg-navy-deep/0 transition group-hover:bg-navy-deep/20" />
+                    <div className="relative aspect-square overflow-hidden rounded-xl ring-1 ring-white/10">
+                      {album.coverPhotoUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={album.coverPhotoUrl}
+                          alt={album.title}
+                          loading="lazy"
+                          className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-white/5" />
+                      )}
+                      <span className="absolute inset-0 bg-navy-deep/0 transition group-hover:bg-navy-deep/20" />
+                    </div>
+                    <p className="mt-2 truncate text-sm font-semibold text-white">{album.title}</p>
+                    <p className="text-[12px] text-white/50">{t.firstTeam.albumPhotoCount.replace("{count}", String(album.photos.length))}</p>
                   </button>
                 ))}
               </div>
-            )}
+            ) : (
+              <>
+                {openAlbum && (
+                  <div className="mt-4 flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        setOpenAlbumId(null);
+                        setOpenPhotoIndex(null);
+                      }}
+                      className="text-[13px] text-white/60 transition hover:text-white"
+                    >
+                      {t.firstTeam.backToAlbums}
+                    </button>
+                    <p className="text-sm font-semibold text-white">{openAlbum.title}</p>
+                  </div>
+                )}
+                <div className={`grid grid-cols-2 gap-3 md:grid-cols-4 ${openAlbum ? "mt-4" : "mt-6"}`}>
+                  {(openAlbum ? openAlbum.photos : team.gallery).map((photo, i) => (
+                    <button
+                      key={photo.id}
+                      onClick={() => setOpenPhotoIndex(i)}
+                      className="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-white/10"
+                      aria-label={`Open photo${photo.caption ? `: ${photo.caption}` : ""}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={photo.photoUrl}
+                        alt={photo.caption ?? team.teamName}
+                        loading={i < 4 ? "eager" : "lazy"}
+                        className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      />
+                      <span className="absolute inset-0 bg-navy-deep/0 transition group-hover:bg-navy-deep/20" />
+                    </button>
+                  ))}
+                </div>
 
-            {openPhotoIndex !== null && (
-              <Lightbox
-                images={team.gallery.map((p) => p.photoUrl)}
-                alts={team.gallery.map((p) => p.caption ?? team.teamName)}
-                index={openPhotoIndex}
-                onClose={() => setOpenPhotoIndex(null)}
-                onNavigate={setOpenPhotoIndex}
-              />
+                {openPhotoIndex !== null && (
+                  <Lightbox
+                    images={(openAlbum ? openAlbum.photos : team.gallery).map((p) => p.photoUrl)}
+                    alts={(openAlbum ? openAlbum.photos : team.gallery).map((p) => p.caption ?? team.teamName)}
+                    index={openPhotoIndex}
+                    onClose={() => setOpenPhotoIndex(null)}
+                    onNavigate={setOpenPhotoIndex}
+                  />
+                )}
+              </>
             )}
           </Reveal>
         )}

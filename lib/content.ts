@@ -732,6 +732,11 @@ export const content = {
       noStaff: "The coaching staff will be posted here soon.",
       galleryTitle: "Gallery",
       noGallery: "Photos from the First Team will be posted here soon.",
+      // Added 2026-09-09 for album grouping (FirstTeamSection.tsx) — photos
+      // are organized into real albums (one per shoot/session) instead of
+      // one flat, unordered-looking grid.
+      backToAlbums: "← Back to albums",
+      albumPhotoCount: "{count} photos",
       // Added 2026-08-25, mirrors galleryTitle/noGallery — see the Videos
       // tab in FirstTeamSection.tsx.
       videosTitle: "Videos",
@@ -1388,6 +1393,8 @@ export const content = {
       noStaff: "Le staff technique sera bientôt publié ici.",
       galleryTitle: "Galerie",
       noGallery: "Les photos de l'équipe première seront bientôt publiées ici.",
+      backToAlbums: "← Retour aux albums",
+      albumPhotoCount: "{count} photos",
       videosTitle: "Vidéos",
       noVideos: "Les vidéos de l'équipe première seront bientôt publiées ici.",
       standingsTitle: "Classement",

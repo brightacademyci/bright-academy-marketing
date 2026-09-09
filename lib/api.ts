@@ -152,6 +152,19 @@ export interface FirstTeamGalleryPhoto {
   caption: string | null;
 }
 
+// ADDED 2026-09-09, mirrors PublicFirstTeamGalleryAlbum in bright-academy-os
+// (lib/data/public-site.ts) -- see that type's own doc comment. Real albums
+// (one per shoot/session), newest first, each with its own photos --
+// FirstTeamSection.tsx's Gallery tab groups by this instead of rendering
+// every photo from every session in one flat, unordered-looking grid.
+export interface FirstTeamGalleryAlbum {
+  id: string;
+  title: string;
+  coverPhotoUrl: string | null;
+  photos: FirstTeamGalleryPhoto[];
+  createdAt: string;
+}
+
 export interface FirstTeamStanding {
   position: number;
   teamName: string;
@@ -205,7 +218,13 @@ export interface FirstTeam {
   seasonLabel: string | null;
   players: FirstTeamPlayer[];
   staff: FirstTeamStaffMember[];
+  /** All photos, flat -- kept for a total count. galleryAlbums below is
+   *  the grouped view FirstTeamSection.tsx actually renders. */
   gallery: FirstTeamGalleryPhoto[];
+  /** Real albums only, newest first -- empty for an org with no albums yet
+   *  (only pre-album/legacy photos), in which case `gallery` above is the
+   *  fallback. */
+  galleryAlbums: FirstTeamGalleryAlbum[];
   /** Mirrors PublicFirstTeam.videos in bright-academy-os (2026-08-25). */
   videos: PublicVideo[];
   standings: FirstTeamStanding[];
@@ -236,6 +255,7 @@ const EMPTY_FIRST_TEAM: FirstTeam = {
   players: [],
   staff: [],
   gallery: [],
+  galleryAlbums: [],
   videos: [],
   standings: [],
   nextFixture: null,
@@ -270,6 +290,7 @@ export async function getFirstTeam(lang: Lang): Promise<FirstTeam> {
     players: data.players ?? [],
     staff: data.staff ?? [],
     gallery: data.gallery ?? [],
+    galleryAlbums: data.galleryAlbums ?? [],
     videos: data.videos ?? [],
     standings: data.standings ?? [],
     nextFixture: data.nextFixture ?? null,
