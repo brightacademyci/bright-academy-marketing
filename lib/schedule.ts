@@ -71,8 +71,14 @@ export const SITE_SCHEDULES: SiteSchedule[] = [
     blocks: [
       // U6-U11 futsal — printed on the "Complexe Biafra" graphic but
       // tagged Lieu: Palais des Sports there.
-      { day: "wed", start: "16:00", end: "18:00", type: "futsal", groups: ["Bright Kids", "Bright Youth"] },
-      { day: "sat", start: "10:00", end: "12:00", type: "futsal", groups: ["Bright Kids", "Bright Youth"] },
+      // Bright Youth removed 2026-09-21 (program/location display
+      // correction, requested by Patrick): Bright Youth's own location
+      // list on the Programs page no longer includes Palais des Sports de
+      // Treichville. Bright Kids still trains this site and keeps its own
+      // slot here unchanged; the block/time itself is untouched since it
+      // is not exclusive to the removed program.
+      { day: "wed", start: "16:00", end: "18:00", type: "futsal", groups: ["Bright Kids"] },
+      { day: "sat", start: "10:00", end: "12:00", type: "futsal", groups: ["Bright Kids"] },
       // U12-U17 Elite/Pro program, all four days at this site.
       { day: "tue", start: "18:00", end: "20:00", type: "futsal", groups: ["Bright Elite", "Bright Pro"] },
       { day: "wed", start: "16:00", end: "18:00", type: "training", groups: ["Bright Elite", "Bright Pro"] },

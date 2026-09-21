@@ -102,7 +102,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 0,
     classique: { monthly1x: 0, monthly2x: 0, quarterly1x: 0, quarterly2x: 0 },
     eliteFormula: null,
-    sites: ["Angré Château", "Sporting Club Abidjan"],
+    sites: ["Sporting Club Abidjan"],
     free: true,
   },
   {
@@ -112,7 +112,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6000,
     classique: { monthly1x: 22000, monthly2x: 44000, quarterly1x: 60000, quarterly2x: 120000 },
     eliteFormula: null,
-    sites: ["Angré Château", "Sporting Club Abidjan"],
+    sites: ["Sporting Club Abidjan"],
   },
   {
     key: "junior",
@@ -121,7 +121,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 6500,
     classique: { monthly1x: 26000, monthly2x: 52000, quarterly1x: 72000, quarterly2x: 144000 },
     eliteFormula: null,
-    sites: ["Arena Bassam", "Angré Château", "Sporting Club Abidjan"],
+    sites: ["Arena Bassam", "Sporting Club Abidjan"],
   },
   {
     key: "kids",
@@ -139,7 +139,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 8000,
     classique: { monthly1x: 32000, monthly2x: 62000, quarterly1x: 84000, quarterly2x: 168000 },
     eliteFormula: { monthly: 85000, quarterly: 230000 },
-    sites: ["Arena Bassam", "Angré Château", "Complexe Sportif de Biafra", "Palais des Sports de Treichville"],
+    sites: ["Arena Bassam", "Angré Château", "Complexe Sportif de Biafra"],
   },
   {
     key: "elite",
@@ -148,7 +148,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 8000,
     classique: { monthly1x: 32000, monthly2x: 62000, quarterly1x: 84000, quarterly2x: 168000 },
     eliteFormula: { monthly: 85000, quarterly: 230000 },
-    sites: ["Angré Château", "Palais des Sports de Treichville", "Arena Bassam", "Complexe Sportif de Biafra"],
+    sites: ["Angré Château", "Palais des Sports de Treichville", "Arena Bassam"],
   },
   {
     key: "pro",
@@ -157,7 +157,7 @@ export const PROGRAM_PRICING: ProgramPricing[] = [
     singleSessionXOF: 9000,
     classique: { monthly1x: 36000, monthly2x: 72000, quarterly1x: 96000, quarterly2x: 192000 },
     eliteFormula: { monthly: 97000, quarterly: 262000 },
-    sites: ["Complexe Sportif de Biafra", "Arena Bassam", "Angré Château", "Palais des Sports de Treichville"],
+    sites: ["Arena Bassam", "Angré Château", "Palais des Sports de Treichville"],
   },
 ];
 
