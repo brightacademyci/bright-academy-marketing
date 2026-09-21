@@ -88,18 +88,19 @@ export const SITE_SCHEDULES: SiteSchedule[] = [
       { day: "sat", start: "10:00", end: "11:30", type: "training", groups: ["Bright Kids", "Bright Youth"] },
       { day: "sat", start: "13:00", end: "14:30", type: "training", groups: ["Bright Pro"] },
       { day: "sat", start: "14:30", end: "16:00", type: "training", groups: ["Bright Elite"] },
-      // Split into per-group blocks 2026-09-01, from Patrick's own
-      // "PROGRAMME DES SÉANCES — SITE D'ANGRÉ" graphic: common 16:00 start,
-      // different end times per group ("départ commun, fins différentes")
-      // — was one merged 16:00–17:00 block, which overstated Kicks' and
-      // Babies' actual session length. Bright Babies is free here too (see
-      // lib/pricing.ts's ProgramPricing.free) — same site, same rule as
-      // Sporting Club Abidjan.
-      { day: "sat", start: "16:00", end: "17:00", type: "training", groups: ["Bright Junior"] },
-      { day: "sat", start: "16:00", end: "16:40", type: "training", groups: ["Bright Kicks"] },
-      { day: "sat", start: "16:00", end: "16:30", type: "training", groups: ["Bright Babies"] },
-      { day: "sun", start: "14:00", end: "15:30", type: "training", groups: ["Bright Elite"] },
-      { day: "sun", start: "15:30", end: "17:00", type: "training", groups: ["Bright Pro"] },
+      // REMOVED 2026-09-21 (Patrick, parent-reported): the Saturday 16:00
+      // Bright Junior/Kicks/Babies blocks that used to sit here were wrong
+      // — Angré Château has no slot for those three programs on Saturdays
+      // at all (Angré only runs U6-and-up on Saturdays; Babies/Kicks/
+      // Junior train at Sporting Club Abidjan instead, Tue/Thu — see that
+      // site's own block below). This site's real Saturday lineup is just
+      // the three blocks above (Kids/Youth, Pro, Elite).
+      //
+      // Also removed the Sunday 14:00 Bright Elite / 15:30 Bright Pro
+      // blocks that used to sit here — Angré Château has no Sunday
+      // training at all. This was location-specific, not a global Sunday
+      // removal: Palais des Sports de Treichville's own Sunday block above
+      // (Bright Elite/Pro, 08:00–10:00) is untouched.
     ],
   },
   {
