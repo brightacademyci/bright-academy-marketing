@@ -522,3 +522,63 @@ export async function getLiveMatch(id: string): Promise<LiveMatch | null> {
   const data = await safeFetchJson<LiveMatch>(`${PUBLIC_API_BASE}/live-match/${encodeURIComponent(id)}`, LIVE_MATCH_REVALIDATE_SECONDS);
   return data && data.found ? data : null;
 }
+
+// ---------------------------------------------------------------------
+// Job Openings / Careers (Master CTO Instruction, Recruitment/Careers
+// Production Launch, Phase 3) -- reads bright-academy-os's new
+// GET /api/public/openings (list) and GET /api/public/openings/[slug]
+// (detail), same admin-client-backed, CORS-open, no-credentials pattern
+// as every other helper in this file. The OS app itself already filters
+// to status='published' and an unexpired application_deadline -- this
+// site never re-implements that filter, it only ever renders what the
+// endpoint returns.
+//
+// Short revalidate window (60s, same as the gallery) since a newly
+// published or just-closed opening should show up fast -- paired with
+// bright-academy-os's job-positions.ts calling revalidateMarketingSite()
+// on every publish/unpublish/close/archive, so in practice this is
+// usually instant, not a 60s wait.
+const OPENINGS_REVALIDATE_SECONDS = 60;
+
+export interface PublicJobOpening {
+  id: string;
+  titleEn: string;
+  titleFr: string;
+  slug: string;
+  department: string | null;
+  employmentType: string | null;
+  ageGroup: string | null;
+  applicationDeadline: string | null;
+  siteName: string | null;
+  footballFormat: string | null;
+  coachingLevel: string | null;
+}
+
+export interface PublicJobOpeningDetail extends PublicJobOpening {
+  descriptionEn: string | null;
+  descriptionFr: string | null;
+  responsibilitiesEn: string | null;
+  responsibilitiesFr: string | null;
+  requiredQualificationsEn: string | null;
+  requiredQualificationsFr: string | null;
+  preferredQualificationsEn: string | null;
+  preferredQualificationsFr: string | null;
+  requiredExperienceEn: string | null;
+  requiredExperienceFr: string | null;
+  requiredSkills: string[];
+  languages: string[];
+  coachingDetails: { en?: Record<string, string>; fr?: Record<string, string> };
+}
+
+export async function getJobOpenings(): Promise<PublicJobOpening[]> {
+  const data = await safeFetchJson<{ openings: PublicJobOpening[] }>(`${PUBLIC_API_BASE}/openings`, OPENINGS_REVALIDATE_SECONDS);
+  return data?.openings ?? [];
+}
+
+export async function getJobOpening(slug: string): Promise<PublicJobOpeningDetail | null> {
+  const data = await safeFetchJson<{ opening: PublicJobOpeningDetail }>(
+    `${PUBLIC_API_BASE}/openings/${encodeURIComponent(slug)}`,
+    OPENINGS_REVALIDATE_SECONDS
+  );
+  return data?.opening ?? null;
+}

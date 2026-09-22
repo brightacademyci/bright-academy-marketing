@@ -4,12 +4,19 @@ import { useLanguage } from "./LanguageProvider";
 import { Reveal } from "./Reveal";
 import { PitchDiagram } from "./PitchDiagram";
 import { CareersForm } from "./CareersForm";
+import { OpeningsList } from "./OpeningsList";
+import type { PublicJobOpening } from "@/lib/api";
 
-// Deliberately generic/evergreen copy — no specific open positions are
-// listed here, since fabricating job postings on a live public site isn't
-// something to guess at. This is a standing "send us your application" form
-// (posts to app/api/public/careers on the OS app), reviewed by staff there.
-export function CareersSection() {
+// Master CTO Instruction, Recruitment/Careers Production Launch, Phase 3:
+// this page now shows real open positions (fetched server-side in
+// app/careers/page.tsx from bright-academy-os's public, already-filtered
+// GET /api/public/openings, and passed down as `openings`) above the
+// standing generic application form -- a candidate can apply to a
+// specific opening via its own /careers/[slug] page, or send a general
+// application here if nothing listed fits them yet. The generic form
+// itself is unchanged: still posts to app/api/public/careers with no
+// job_position_id, reviewed by staff there exactly as before.
+export function CareersSection({ openings }: { openings: PublicJobOpening[] }) {
   const { t } = useLanguage();
 
   return (
@@ -20,6 +27,10 @@ export function CareersSection() {
           <span className="text-[12px] font-semibold uppercase tracking-wide text-orange">{t.careers.eyebrow}</span>
           <h1 className="mt-2 font-display text-2xl font-bold text-white md:text-3xl">{t.careers.title}</h1>
           <p className="mt-3 text-[14px] leading-relaxed text-white/75">{t.careers.subtitle}</p>
+
+          <div className="mt-8">
+            <OpeningsList openings={openings} />
+          </div>
 
           <h2 className="mt-8 font-display text-[15px] font-semibold text-white">{t.careers.whyJoinTitle}</h2>
           <ul className="mt-4 flex flex-col gap-2.5">

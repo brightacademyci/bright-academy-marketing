@@ -33,6 +33,24 @@ const labelClass = "mb-1.5 block text-[12px] font-medium text-white/70";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
+interface CareersFormProps {
+  /**
+   * Set only on /careers/[slug] (JobOpeningSection) -- ties this
+   * application to one specific, already-published opening. Sent to
+   * bright-academy-os's careers endpoint, which re-validates it server
+   * side (must still be published, this org, deadline not passed)
+   * before ever writing job_position_id -- see that route's own
+   * comment. Left undefined on the generic /careers form, exactly the
+   * previous behavior (job_position_id stays null).
+   */
+  jobPositionId?: string;
+  /** The opening's title in the visitor's current language, shown
+   *  read-only in place of the free-text "position of interest" field
+   *  when applying to a specific opening -- there's nothing to guess
+   *  when the position is already known. */
+  presetPositionTitle?: string;
+}
+
 /**
  * Posts directly to the OS app's public, no-session careers endpoint
  * (app/api/public/careers on bright-academy-os — CORS-open specifically
@@ -40,7 +58,7 @@ type Status = "idle" | "submitting" | "success" | "error";
  * field is re-validated server-side there too; this form's own validation
  * is just for a faster, friendlier failure before the request goes out.
  */
-export function CareersForm() {
+export function CareersForm({ jobPositionId, presetPositionTitle }: CareersFormProps) {
   const { t } = useLanguage();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -69,9 +87,10 @@ export function CareersForm() {
       fullName: String(form.get("fullName") ?? "").trim(),
       email: String(form.get("email") ?? "").trim(),
       phone: String(form.get("phone") ?? "").trim() || undefined,
-      positionInterest: String(form.get("positionInterest") ?? "").trim() || undefined,
+      positionInterest: presetPositionTitle || String(form.get("positionInterest") ?? "").trim() || undefined,
       message: String(form.get("message") ?? "").trim() || undefined,
       resumeUrl,
+      jobPositionId,
     };
 
     try {
@@ -129,10 +148,17 @@ export function CareersForm() {
         <label htmlFor="careers-phone" className={labelClass}>{t.careers.form.phone}</label>
         <input id="careers-phone" name="phone" maxLength={50} className={inputClass} />
       </div>
-      <div>
-        <label htmlFor="careers-position" className={labelClass}>{t.careers.form.positionInterest}</label>
-        <input id="careers-position" name="positionInterest" maxLength={200} placeholder={t.careers.form.positionPlaceholder} className={inputClass} />
-      </div>
+      {presetPositionTitle ? (
+        <div>
+          <label htmlFor="careers-position" className={labelClass}>{t.careers.form.positionInterest}</label>
+          <input id="careers-position" name="positionInterest" value={presetPositionTitle} readOnly className={`${inputClass} cursor-not-allowed opacity-80`} />
+        </div>
+      ) : (
+        <div>
+          <label htmlFor="careers-position" className={labelClass}>{t.careers.form.positionInterest}</label>
+          <input id="careers-position" name="positionInterest" maxLength={200} placeholder={t.careers.form.positionPlaceholder} className={inputClass} />
+        </div>
+      )}
       <div className="sm:col-span-2">
         <label htmlFor="careers-message" className={labelClass}>{t.careers.form.message}</label>
         <textarea id="careers-message" name="message" rows={4} maxLength={4000} placeholder={t.careers.form.messagePlaceholder} className={inputClass} />
