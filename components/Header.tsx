@@ -43,21 +43,19 @@ const TOP_SECTIONS: { id: string; key: "programs" | "gallery" }[] = [
 // (pathname === "/"), not startsWith, since every route starts with "/".
 //
 // "our-coaches" and "news" were dropped from primary nav 2026-08-13 (site
-// improvement pass, Priority 3) — both pages currently render their empty
-// state ("Coach profiles are being added…" / "No news posted yet…"),
-// confirmed live against the OS app's public API (GET /api/public/coaches
-// and /api/public/news both return an empty array as of this pass). An
-// empty page shouldn't get top-level billing on a first-time visitor's
-// nav bar. The routes, pages, and their data-fetching (lib/api.ts) are
-// completely untouched — the moment Patrick publishes real coach bios or a
-// news post, these two routes are ready and just need re-adding here. Not
-// deleted, not gated behind a flag — simply not linked from the header.
+// improvement pass, Priority 3) — both pages then rendered their empty
+// state, and an empty page shouldn't get top-level billing on a first-time
+// visitor's nav bar. "news" was re-added 2026-09-30 now that the first
+// article (the PUMA / TIELO SPORT announcement) is published and /news
+// lists it. "our-coaches" is still not linked from the header; it just
+// needs re-adding here once real coach bios are published.
 // "careers" moved out of primary nav to the footer (see Footer.tsx) — it's
 // an evergreen "send us your application" page with no listed openings,
 // not a page a first-time parent visitor needs one click away.
-const ROUTES: { href: string; key: "home" | "firstTeam" }[] = [
+const ROUTES: { href: string; key: "home" | "firstTeam" | "news" }[] = [
   { href: "/", key: "home" },
   { href: "/first-team", key: "firstTeam" },
+  { href: "/news", key: "news" },
 ];
 
 // Split out from ROUTES so "Home" can render first in the bar (Patrick,

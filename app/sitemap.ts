@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/content";
 import { LEGAL_SLUGS } from "@/lib/legal-content";
+import { getNewsPosts } from "@/lib/api";
 
 // CORRECTED 2026-08-14 — was the apex (non-www) domain, which redirects
 // to www at the Vercel platform level (see layout.tsx's SITE_URL comment
@@ -15,12 +16,14 @@ import { LEGAL_SLUGS } from "@/lib/legal-content";
 // "/", even though /careers and /first-team have existed as real routes for
 // a while (and /our-coaches, /news, /news/[id], /legal/[slug] exist too).
 // Deliberately still NOT listing every route that exists in app/:
-//   - /our-coaches and /news are real pages but currently render their
-//     empty state (confirmed live: the OS app's public coaches/news API
-//     both return zero entries as of this pass) — thin/placeholder content
-//     doesn't belong in a sitemap. Add them back once Patrick publishes
-//     real coach bios or a news post.
-//   - /news/[id] is dynamic and has no published posts to enumerate yet.
+//   - /our-coaches is a real page but renders its empty state (the OS
+//     app's public coaches API returns zero entries) — thin/placeholder
+//     content doesn't belong in a sitemap. Add it back once Patrick
+//     publishes real coach bios.
+//   - /news and /news/[id] were left out for the same reason until
+//     2026-09-30; /news is now listed, and the published articles are
+//     enumerated below from the same public API the pages themselves read
+//     (published posts only — the API never returns drafts).
 //
 // /videos added 2026-08-29 (audit fix — it had been live and populated
 // since the 2026-08-25 Videos launch with no sitemap entry and no comment
@@ -34,7 +37,18 @@ import { LEGAL_SLUGS } from "@/lib/legal-content";
 // lib/legal-content.ts has real content and generateMetadata no longer
 // sets noindex (see app/legal/[slug]/page.tsx), they're listed here too so
 // the two mechanisms agree with each other.
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Language doesn't matter for ids/dates; getNewsPosts() never throws (an
+  // unreachable API just yields []), so the sitemap still builds without
+  // article URLs rather than failing.
+  const newsPosts = await getNewsPosts("fr");
+  const newsPostEntries: MetadataRoute.Sitemap = newsPosts.map((post) => ({
+    url: `${SITE_URL}/news/${post.id}`,
+    lastModified: new Date(post.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
   return [
     { url: SITE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/first-team`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
@@ -47,6 +61,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/videos`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
     { url: `${SITE_URL}/faq`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/careers`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    // /news added 2026-09-30 — see the note above; articles follow below.
+    { url: `${SITE_URL}/news`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.6 },
+    ...newsPostEntries,
     // /partners added 2026-08-30 — a real, populated corporate-partnership
     // page (see PartnersSection.tsx), same "real page, add it" bar as
     // every other route here.

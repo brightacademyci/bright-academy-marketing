@@ -8,19 +8,14 @@ import { getNewsPosts } from "@/lib/api";
 import { buildPageMetadata } from "@/lib/metadata";
 
 // French default 2026-08-13 (Priority 8) — see careers/page.tsx's note.
-// CORRECTED 2026-08-16 (audit-corrections pass, Priority 14) — this page
-// currently renders its empty state (the OS app's public news API returns
-// zero entries as of this pass, same as /our-coaches — see sitemap.ts's
-// own note on why both routes are deliberately omitted from the
-// sitemap), so it's now explicitly noindexed until real content exists,
-// rather than letting Google index a thin/placeholder page. Kept
-// noindexed even so a shared link still uses Open Graph, not the robots
-// meta tag.
+// Was noindexed 2026-08-16 while the OS app's public news API returned
+// zero entries (a thin/placeholder page shouldn't be indexed). Indexing
+// re-enabled 2026-09-30 now that a real article is published; the route
+// is also linked from the header and listed in sitemap.ts.
 export const metadata: Metadata = buildPageMetadata({
   path: "/news",
   title: "Actualités — Bright Academy",
   description: "Annonces, résultats et actualités de Bright Academy.",
-  noindex: true,
 });
 
 export default async function NewsPage() {
