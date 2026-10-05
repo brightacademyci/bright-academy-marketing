@@ -52,10 +52,15 @@ const TOP_SECTIONS: { id: string; key: "programs" | "gallery" }[] = [
 // "careers" moved out of primary nav to the footer (see Footer.tsx) — it's
 // an evergreen "send us your application" page with no listed openings,
 // not a page a first-time parent visitor needs one click away.
-const ROUTES: { href: string; key: "home" | "firstTeam" | "news" }[] = [
+const ROUTES: { href: string; key: "home" | "firstTeam" | "news" | "partnersNav" }[] = [
   { href: "/", key: "home" },
   { href: "/first-team", key: "firstTeam" },
   { href: "/news", key: "news" },
+  // Added with the 2026-27 partnership page so the partnership opportunity
+  // is discoverable straight from the header (it used to be reachable only
+  // from the footer). Short label "Partners" / "Partenaires" — not the
+  // longer footer wording — to keep the bar on one line.
+  { href: "/partners", key: "partnersNav" },
 ];
 
 // Split out from ROUTES so "Home" can render first in the bar (Patrick,
@@ -168,10 +173,15 @@ export function Header() {
          *  container, collapsing justify-between's gaps to zero (Home was
          *  rendering flush against the logo). Trimming the nav's internal
          *  gap restores breathing room without losing an item. */}
-        <nav className="hidden items-center gap-3 lg:flex">
+        {/* 2026-10: "Partners" joined the flat bar, which no longer fit in
+         *  French between 1024px and ~1100px (items wrapped onto two lines).
+         *  Below xl the links are 12px with a slightly tighter gap and never
+         *  wrap; from xl up (>=1280px) the original 13px / gap-3 sizing is
+         *  unchanged. */}
+        <nav className="hidden items-center gap-2.5 lg:flex xl:gap-3">
           <Link
             href={HOME_ROUTE.href}
-            className={`text-[13px] font-medium hover:text-orange ${
+            className={`whitespace-nowrap text-[12px] font-medium hover:text-orange xl:text-[13px] ${
               isRouteActive(pathname, HOME_ROUTE.href) ? "text-orange" : "text-white/80"
             }`}
           >
@@ -182,7 +192,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setAboutOpen((v) => !v)}
-              className="flex items-center gap-1 text-[13px] font-medium text-white/80 hover:text-orange"
+              className="flex items-center gap-1 whitespace-nowrap text-[12px] font-medium text-white/80 hover:text-orange xl:text-[13px]"
               aria-expanded={aboutOpen}
               aria-controls="about-dropdown-menu"
             >
@@ -206,7 +216,7 @@ export function Header() {
           </div>
 
           {TOP_SECTIONS.map((s) => (
-            <a key={s.id} href={sectionHref(s.id)} className="text-[13px] font-medium text-white/80 hover:text-orange">
+            <a key={s.id} href={sectionHref(s.id)} className="whitespace-nowrap text-[12px] font-medium text-white/80 hover:text-orange xl:text-[13px]">
               {t.nav[s.key]}
             </a>
           ))}
@@ -214,7 +224,7 @@ export function Header() {
             <Link
               key={r.href}
               href={r.href}
-              className={`text-[13px] font-medium hover:text-orange ${
+              className={`whitespace-nowrap text-[12px] font-medium hover:text-orange xl:text-[13px] ${
                 isRouteActive(pathname, r.href) ? "text-orange" : "text-white/80"
               }`}
             >
@@ -249,12 +259,12 @@ export function Header() {
            *  Programs.tsx/ProgramComparison.tsx already did this
            *  correctly; this makes every ENROLL_URL/LOGIN_URL link
            *  consistent. */}
-          <a href={`${LOGIN_URL}?lang=${lang}`} className="text-[13px] font-medium text-white/80 hover:text-orange">
+          <a href={`${LOGIN_URL}?lang=${lang}`} className="whitespace-nowrap text-[12px] font-medium text-white/80 hover:text-orange xl:text-[13px]">
             {t.nav.login}
           </a>
           <a
             href={`${ENROLL_URL}?lang=${lang}`}
-            className="rounded-full bg-orange px-4 py-2 text-[13px] font-semibold text-navy-deep hover:bg-orange/90"
+            className="whitespace-nowrap rounded-full bg-orange px-4 py-2 text-[13px] font-semibold text-navy-deep hover:bg-orange/90"
           >
             {t.nav.enroll}
           </a>

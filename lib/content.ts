@@ -99,6 +99,10 @@ export const content = {
       // the footer (see Header.tsx's own comment on that), not because
       // this page matters less.
       partners: "Partner With Us",
+      // Short label for the primary header link to /partners (added with the
+      // 2026-27 partnership page). `partners` above stays the longer footer
+      // wording.
+      partnersNav: "Partners",
     },
     hero: {
       eyebrow: "Abidjan & Grand-Bassam, Côte d'Ivoire",
@@ -1009,6 +1013,7 @@ export const content = {
       login: "Connexion parent",
       enroll: "Inscrire mon enfant",
       partners: "Devenir partenaire",
+      partnersNav: "Partenaires",
     },
     hero: {
       eyebrow: "Abidjan & Grand-Bassam, Côte d'Ivoire",
