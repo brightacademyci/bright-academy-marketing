@@ -10,6 +10,7 @@ import {
   CHEZ_NOUS_PHONE_TEL,
   IN_KIND_TYPES,
   OFFERS,
+  readEstimatedValue,
   copy,
 } from "@/lib/chez-nous";
 
@@ -46,6 +47,15 @@ function useSubmit(kind: Kind) {
       return;
     }
 
+    // Form-specific fields are read before anything is sent, so a value we
+    // cannot read blocks the submit instead of being guessed.
+    const added = extra ? extra(form) : {};
+    if (typeof added.__error === "string") {
+      setError(added.__error);
+      setStatus("error");
+      return;
+    }
+
     setStatus("submitting");
     setError(null);
     const text = (name: string) => String(form.get(name) ?? "").trim() || undefined;
@@ -59,7 +69,7 @@ function useSubmit(kind: Kind) {
       email: text("email"),
       phone: text("phone"),
       message: text("message"),
-      ...(extra ? extra(form) : {}),
+      ...added,
     };
 
     try {
@@ -68,9 +78,11 @@ function useSubmit(kind: Kind) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean };
       if (!res.ok || !data.ok) {
-        setError(data.error || f.error);
+        // Server messages are English-only and technical: show our own
+        // localized wording, chosen by what the status tells us.
+        setError(res.status === 400 ? f.invalid : res.status === 429 ? f.busy : f.error);
         setStatus("error");
         return;
       }
@@ -220,10 +232,11 @@ export function InKindForm() {
     <form
       onSubmit={(e) =>
         onSubmit(e, (form) => {
-          const raw = String(form.get("estimatedValueXof") ?? "").replace(/[^\d]/g, "");
+          const value = readEstimatedValue(String(form.get("estimatedValueXof") ?? ""));
+          if (value.kind === "unreadable") return { __error: copy[lang].form.valueUnreadable };
           return {
             inKindType: String(form.get("inKindType") ?? "").trim() || undefined,
-            estimatedValueXof: raw ? Number(raw) : undefined,
+            estimatedValueXof: value.kind === "ok" ? value.xof : undefined,
             deadline: String(form.get("deadline") ?? "").trim() || undefined,
           };
         })

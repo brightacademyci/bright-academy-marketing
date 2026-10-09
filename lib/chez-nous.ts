@@ -185,6 +185,25 @@ export function formatXof(n: number, lang: Lang): string {
   return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
+/**
+ * Reads the "estimated value" field of the in-kind form without guessing.
+ * Accepts whole francs written with spaces, dots, commas or apostrophes as
+ * thousands separators ("1 500 000", "1.500.000", "1,500,000"). Anything else
+ * (letters such as "2 millions", a decimal such as "2,5") is "unreadable":
+ * the form asks the person to write the amount in full instead of silently
+ * turning "2,5 M" into 25 francs. An empty field is simply "absent".
+ */
+export type ValueRead = { kind: "absent" } | { kind: "ok"; xof: number } | { kind: "unreadable" };
+
+export function readEstimatedValue(raw: string): ValueRead {
+  const s = raw.trim();
+  if (s === "") return { kind: "absent" };
+  if (!/^\d{1,3}([ .,'\u00a0\u202f]\d{3})+$|^\d+$/.test(s)) return { kind: "unreadable" };
+  const n = Number(s.replace(/[^\d]/g, ""));
+  if (!Number.isSafeInteger(n) || n > 100_000_000_000) return { kind: "unreadable" };
+  return { kind: "ok", xof: n };
+}
+
 export const IN_KIND_TYPES: { value: string; fr: string; en: string }[] = [
   { value: "materials", fr: "Matériaux", en: "Materials" },
   { value: "works", fr: "Travaux", en: "Works" },
@@ -342,7 +361,12 @@ export const copy = {
       required: "Merci de remplir les champs obligatoires et d'accepter la conservation de vos informations.",
       success: "Votre demande a bien été enregistrée par Bright Academy FC. Nous reviendrons vers vous.",
       error:
-        "Votre demande n'a pas pu être enregistrée. Aucune information n'a été conservée. Merci de réessayer ou de nous écrire directement.",
+        "Nous ne pouvons pas confirmer l'enregistrement de votre demande. Merci de réessayer ou de nous écrire directement.",
+      invalid:
+        "Certaines informations ne sont pas valides. Vérifiez les champs (e-mail ou téléphone, consentements) puis réessayez.",
+      valueUnreadable:
+        "La valeur estimée doit être écrite en francs CFA, en chiffres entiers (par exemple 2 500 000). Laissez le champ vide si vous ne savez pas.",
+      busy: "Trop de demandes en peu de temps. Merci de réessayer dans quelques minutes.",
       writeUs: "Nous écrire",
       call: "Appeler",
     },
@@ -479,7 +503,12 @@ export const copy = {
       required: "Please fill in the required fields and accept the retention of your information.",
       success: "Your request has been recorded by Bright Academy FC. We will get back to you.",
       error:
-        "Your request could not be recorded. No information was kept. Please try again or write to us directly.",
+        "We cannot confirm that your request was recorded. Please try again or write to us directly.",
+      invalid:
+        "Some information is not valid. Check the fields (e-mail or phone, consents) and try again.",
+      valueUnreadable:
+        "The estimated value must be written in CFA francs, as a whole number (for example 2 500 000). Leave it empty if you are not sure.",
+      busy: "Too many requests in a short time. Please try again in a few minutes.",
       writeUs: "Write to us",
       call: "Call",
     },

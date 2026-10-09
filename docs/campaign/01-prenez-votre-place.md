@@ -41,3 +41,16 @@ The three forms post to `POST {APP_URL}/api/public/partner-inquiry`. That route 
 - No manifesto film in the hero (no video file was provided; the hero is the Attinguié photo).
 - Fonts: the campaign asks for Nunito Sans Black and Bitter. The page keeps the site's Space Grotesk and Inter so it matches the rest of the site. A serif system font is used for the sub-line.
 - The tracking spreadsheet and the HTML mock-up mentioned in the document ("fournis séparément") were not received.
+
+## Form contract with the OS CRM (verified 2026-10-09)
+
+The three forms post JSON to `${APP_URL}/api/public/partner-inquiry`. The OS route (branch `feat/partner-crm`) answers `{ ok: true, recorded: true }` only after the row is stored, and a non-2xx status otherwise. The page therefore says "recorded" only on `ok: true`.
+
+Decisions made in this pass:
+
+- **No false reassurance on failure.** The error text no longer says "no information was kept": after a lost response we cannot know whether the request reached the database. It now says the recording cannot be confirmed and invites a retry or direct contact. A retry can create a duplicate; the CRM triage screen handles duplicates (status `spam`/`contacted` with notes), nothing is merged automatically.
+- **Localized, non-technical errors.** Server messages are English-only; the page now picks its own French/English wording from the HTTP status (400 invalid, 429 busy, anything else unconfirmed).
+- **Estimated in-kind value is never guessed.** `readEstimatedValue` (lib/chez-nous.ts) accepts whole francs with space, dot, comma or apostrophe thousands separators and refuses anything else ("2,5 M" used to become 25). On refusal the form asks for a full amount. The CRM shows this figure as the company's own unverified estimate; it is never a proposed, promised, contracted or received amount.
+- **Honeypot** still returns silently with no message.
+
+Still not done / not decided (unchanged): the page stays `noindex`, outside sitemap and navigation; no public launch until the editorial decisions and authorizations are confirmed. The marketing repo has no test runner, so `readEstimatedValue` was checked with a 16-case script (all passed) and the project typecheck, not with a committed test.
