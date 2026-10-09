@@ -46,6 +46,10 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        sheetIn: {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
@@ -55,6 +59,7 @@ const config: Config = {
         kenburns: "kenburns 12s ease-out forwards",
         fadeInUp: "fadeInUp 0.7s ease-out forwards",
         float: "float 2.4s ease-in-out infinite",
+        sheetIn: "sheetIn 0.22s ease-out both",
       },
       maxWidth: {
         content: "1180px",

@@ -6,7 +6,9 @@ import { Reveal } from "./Reveal";
 import { PitchDiagram } from "./PitchDiagram";
 import { BrandDiagram } from "./BrandDiagram";
 import { JerseyPlacements } from "./JerseyPlacements";
+import { DetailTrigger, usePartnerDetail } from "./PartnerDetailProvider";
 import { WHATSAPP_LINK, PARTNERSHIP_EMAIL, PARTNERSHIP_DOSSIER_URL } from "@/lib/content";
+import { ACTIVATION_KEYS, OFFER_KEYS, PLACEMENT_KEYS, PROGRAM_KEYS, SITE_SLUGS, STAT_KEYS, detailUi } from "@/lib/partners-detail";
 
 function CheckIcon() {
   return (
@@ -42,6 +44,16 @@ function Bullets({ items }: { items: string[] }) {
 }
 
 const CARD = "rounded-2xl bg-white/5 p-5 ring-1 ring-white/10";
+/** Hover/active affordance shared by every clickable card, chip and row. */
+const CLICKABLE = "hover:-translate-y-0.5 hover:bg-white/10 hover:ring-orange/50 active:translate-y-0 motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+const CHIP = `inline-flex min-h-[44px] items-center rounded-lg bg-white/10 px-3.5 py-2 text-[12px] font-semibold text-white/90 ring-1 ring-white/10 transition hover:bg-white/15 hover:ring-orange/50`;
+function Arrow() {
+  return (
+    <span aria-hidden className="text-orange">
+      →
+    </span>
+  );
+}
 const H2 = "font-display text-2xl font-bold text-white";
 const EYEBROW = "text-[12px] font-semibold uppercase tracking-wide text-orange";
 
@@ -52,8 +64,15 @@ const EYEBROW = "text-[12px] font-semibold uppercase tracking-wide text-orange";
  *  Sport SAS / PUMA supply agreement). See the partners dict in
  *  lib/content.ts. */
 export function PartnersSection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { open } = usePartnerDetail();
+  const ui = detailUi(lang);
   const p = t.partners;
+  const siteNames = t.sites.list.map((s) => s.name);
+  const programCats = t.programs.groups.flatMap((g) => g.categories);
+  const jerseyNames = Object.fromEntries(
+    p.placements.map((pl) => [pl.n, `${pl.n}. ${pl.label}, ${pl.role}, ${ui.viewDetails}`]),
+  ) as Record<number, string>;
   const whatsappHref = `${WHATSAPP_LINK}?text=${encodeURIComponent(p.whatsappPrefill)}`;
   const mailtoHref = `mailto:${PARTNERSHIP_EMAIL}?subject=${encodeURIComponent(p.title)}`;
   const ghostBtn =
@@ -89,14 +108,41 @@ export function PartnersSection() {
           <Reveal delay={100}>
             <h2 className="mt-12 text-[12px] font-semibold uppercase tracking-wide text-white/50">{p.statsTitle}</h2>
             <div className="mt-4 grid grid-cols-2 gap-3.5 sm:grid-cols-3">
-              {p.stats.map((s) => (
-                <div key={s.label} className={`${CARD} p-4`}>
-                  <p className="font-display text-lg font-bold text-orange sm:text-xl">{s.value}</p>
-                  <p className="mt-1 text-[12px] text-white/60">{s.label}</p>
-                </div>
+              {p.stats.map((s, i) => (
+                <DetailTrigger key={s.label} id={`stat-${STAT_KEYS[i]}`} className={`${CARD} relative block p-4 ${CLICKABLE}`}>
+                  <span className="block font-display text-lg font-bold text-orange sm:text-xl">{s.value}</span>
+                  <span className="mt-1 block pr-5 text-[12px] text-white/60">{s.label}</span>
+                  <span className="absolute bottom-3 right-3.5">
+                    <Arrow />
+                  </span>
+                </DetailTrigger>
               ))}
             </div>
             <p className="mt-3 text-[12px] text-white/50">{p.statsNote}</p>
+
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              <div>
+                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-orange">{t.sites.eyebrow}</h3>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {siteNames.map((name) => (
+                    <DetailTrigger key={name} id={`site-${SITE_SLUGS[name]}`} className={CHIP}>
+                      {name}
+                    </DetailTrigger>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-orange">{t.programs.eyebrow}</h3>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {programCats.map((c, i) => (
+                    <DetailTrigger key={c.name} id={`program-${PROGRAM_KEYS[i]}`} className={CHIP}>
+                      {c.name}
+                      <span className="ml-1.5 font-normal text-white/55">{c.range}</span>
+                    </DetailTrigger>
+                  ))}
+                </div>
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -164,10 +210,10 @@ export function PartnersSection() {
           <div>
             <h3 className="text-[12px] font-semibold uppercase tracking-wide text-orange">{p.activateTitle}</h3>
             <div className="mt-3 flex flex-wrap gap-2">
-              {p.activateItems.map((item) => (
-                <span key={item} className="rounded-lg bg-white/10 px-3 py-1.5 text-[12px] font-semibold text-white/90">
+              {p.activateItems.map((item, i) => (
+                <DetailTrigger key={item} id={`activation-${ACTIVATION_KEYS[i]}`} className={CHIP}>
                   {item}
-                </span>
+                </DetailTrigger>
               ))}
             </div>
           </div>
@@ -187,20 +233,31 @@ export function PartnersSection() {
 
         <Reveal delay={80} className="mt-8 grid items-center gap-8 md:grid-cols-[1.3fr_1fr]">
           <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:p-6">
-            <JerseyPlacements labels={p.placementLabels} className="h-auto w-full" />
+            <JerseyPlacements
+              labels={p.placementLabels}
+              className="h-auto w-full"
+              zoneNames={jerseyNames}
+              onSelect={(n, el) => open(`placement-${n}` as `placement-${(typeof PLACEMENT_KEYS)[number]}`, el)}
+            />
           </div>
           <div>
             <h3 className="text-[12px] font-semibold uppercase tracking-wide text-orange">{p.placementsTitle}</h3>
             <ul className="mt-3 divide-y divide-white/10 border-y border-white/10">
               {p.placements.map((pl) => (
-                <li key={pl.n} className="flex items-center gap-3 py-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange text-[12px] font-bold text-navy-deep">
-                    {pl.n}
-                  </span>
-                  <span className="flex-1">
-                    <span className="block text-[14px] font-semibold text-white">{pl.label}</span>
-                    <span className="block text-[12px] text-white/60">{pl.role}</span>
-                  </span>
+                <li key={pl.n}>
+                  <DetailTrigger
+                    id={`placement-${PLACEMENT_KEYS[pl.n - 1]}`}
+                    className="flex min-h-[52px] w-full items-center gap-3 px-1 py-3 hover:bg-white/5"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange text-[12px] font-bold text-navy-deep">
+                      {pl.n}
+                    </span>
+                    <span className="flex-1">
+                      <span className="block text-[14px] font-semibold text-white">{pl.label}</span>
+                      <span className="block text-[12px] text-white/60">{pl.role}</span>
+                    </span>
+                    <Arrow />
+                  </DetailTrigger>
                 </li>
               ))}
             </ul>
@@ -230,26 +287,32 @@ export function PartnersSection() {
         </Reveal>
 
         <div className="mt-8 flex flex-col gap-10">
-          {p.offerGroups.map((g, gi) => (
-            <Reveal key={g.n} delay={gi * 60}>
-              <h3 className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-wide text-white/70">
-                <span className="text-orange">{g.n}</span>
-                {g.title}
-                <span className="h-px flex-1 bg-white/10" />
-              </h3>
-              <div className={`mt-4 grid gap-4 ${g.items.length === 2 ? "sm:grid-cols-2" : g.items.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}>
-                {g.items.map((item) => (
-                  <div key={item.name} className={`${CARD} flex h-full flex-col`}>
-                    <span className="inline-flex w-fit items-center rounded-full bg-orange/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-orange ring-1 ring-orange/30">
-                      {item.tag}
-                    </span>
-                    <h4 className="mt-3 font-display text-[15px] font-semibold text-white">{item.name}</h4>
-                    <p className="mt-2 flex-1 text-[13px] leading-relaxed text-white/70">{item.body}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          ))}
+          {p.offerGroups.map((g, gi) => {
+            const offset = p.offerGroups.slice(0, gi).reduce((n, x) => n + x.items.length, 0);
+            return (
+              <Reveal key={g.n} delay={gi * 60}>
+                <h3 className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-wide text-white/70">
+                  <span className="text-orange">{g.n}</span>
+                  {g.title}
+                  <span className="h-px flex-1 bg-white/10" />
+                </h3>
+                <div className={`mt-4 grid gap-4 ${g.items.length === 2 ? "sm:grid-cols-2" : g.items.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3"}`}>
+                  {g.items.map((item, ii) => (
+                    <DetailTrigger key={item.name} id={`offer-${OFFER_KEYS[offset + ii]}`} className={`${CARD} flex h-full flex-col ${CLICKABLE}`}>
+                      <span className="inline-flex w-fit items-center rounded-full bg-orange/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-orange ring-1 ring-orange/30">
+                        {item.tag}
+                      </span>
+                      <span className="mt-3 block font-display text-[15px] font-semibold text-white">{item.name}</span>
+                      <span className="mt-2 block flex-1 text-[13px] leading-relaxed text-white/70">{item.body}</span>
+                      <span className="mt-4 flex items-center gap-1.5 text-[12px] font-semibold text-orange">
+                        {ui.details} <Arrow />
+                      </span>
+                    </DetailTrigger>
+                  ))}
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
 
         <Reveal delay={200} className="mt-6 max-w-2xl">
@@ -345,31 +408,34 @@ export function PartnersSection() {
           <p className="mt-3 text-[14px] leading-relaxed text-white/75">{p.audienceIntro}</p>
         </Reveal>
 
-        <Reveal delay={100} className="mt-6 overflow-x-auto rounded-2xl bg-white/5 ring-1 ring-white/10">
-          <table className="w-full min-w-[480px] text-left text-[13px]">
-            <thead>
-              <tr className="border-b border-white/10 text-white/60">
-                <th className="px-4 py-3 font-semibold">{p.audienceHeaders.account}</th>
-                <th className="px-4 py-3 font-semibold">{p.audienceHeaders.platform}</th>
-                <th className="px-4 py-3 text-right font-semibold">{p.audienceHeaders.audience}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {p.audienceRows.map((row) => (
-                <tr key={`${row.account}-${row.platform}`} className="border-b border-white/5 text-white/85 last:border-none">
-                  <td className="px-4 py-2.5">{row.account}</td>
-                  <td className="px-4 py-2.5 text-white/60">{row.platform}</td>
-                  <td className="px-4 py-2.5 text-right font-semibold">{row.audience}</td>
+        <Reveal delay={100} className="mt-6 rounded-2xl bg-white/5 ring-1 ring-white/10">
+          {/* Focusable scroll container so keyboard users can reach the columns on narrow screens. */}
+          <div tabIndex={0} role="region" aria-label={p.audienceTitle} className="overflow-x-auto rounded-2xl">
+            <table className="w-full min-w-[480px] text-left text-[13px]">
+              <thead>
+                <tr className="border-b border-white/10 text-white/60">
+                  <th className="px-4 py-3 font-semibold">{p.audienceHeaders.account}</th>
+                  <th className="px-4 py-3 font-semibold">{p.audienceHeaders.platform}</th>
+                  <th className="px-4 py-3 text-right font-semibold">{p.audienceHeaders.audience}</th>
                 </tr>
-              ))}
-              <tr className="bg-orange/10 font-semibold text-orange">
-                <td className="px-4 py-3" colSpan={2}>
-                  {p.audienceTotal}
-                </td>
-                <td className="px-4 py-3 text-right">{p.audienceGrandTotal}</td>
-              </tr>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {p.audienceRows.map((row) => (
+                  <tr key={`${row.account}-${row.platform}`} className="border-b border-white/5 text-white/85 last:border-none">
+                    <td className="px-4 py-2.5">{row.account}</td>
+                    <td className="px-4 py-2.5 text-white/60">{row.platform}</td>
+                    <td className="px-4 py-2.5 text-right font-semibold">{row.audience}</td>
+                  </tr>
+                ))}
+                <tr className="bg-orange/10 font-semibold text-orange">
+                  <td className="px-4 py-3" colSpan={2}>
+                    {p.audienceTotal}
+                  </td>
+                  <td className="px-4 py-3 text-right">{p.audienceGrandTotal}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </Reveal>
 
         <Reveal delay={150} className="mt-4 max-w-2xl">

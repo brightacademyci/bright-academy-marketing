@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { PartnersSection } from "@/components/PartnersSection";
+import { PartnerDetailProvider } from "@/components/PartnerDetailProvider";
+import { PartnerDetailDialog } from "@/components/PartnerDetailDialog";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { buildPageMetadata } from "@/lib/metadata";
@@ -19,7 +21,10 @@ export default function PartnersPage() {
   return (
     <main>
       <Header />
-      <PartnersSection />
+      <PartnerDetailProvider>
+        <PartnersSection />
+        <PartnerDetailDialog />
+      </PartnerDetailProvider>
       <Footer />
       <WhatsAppButton />
     </main>
