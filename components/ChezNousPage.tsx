@@ -61,13 +61,13 @@ export function ChezNousPage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#entreprises"
-              className="rounded-full bg-orange px-7 py-3 text-[14px] font-semibold text-navy-deep transition hover:-translate-y-0.5 hover:bg-orange/90"
+              className="rounded-full bg-orange px-7 py-3 text-[14px] font-semibold text-navy-deep transition hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 motion-reduce:transition-none hover:bg-orange/90"
             >
               {c.hero.ctaCompanies}
             </a>
             <a
               href="#communaute"
-              className="rounded-full border border-white/30 px-7 py-3 text-[14px] font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10"
+              className="rounded-full border border-white/30 px-7 py-3 text-[14px] font-semibold text-white transition hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 motion-reduce:transition-none hover:bg-white/10"
             >
               {c.hero.ctaCommunity}
             </a>

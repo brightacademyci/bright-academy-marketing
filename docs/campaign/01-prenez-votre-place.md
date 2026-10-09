@@ -54,3 +54,25 @@ Decisions made in this pass:
 - **Honeypot** still returns silently with no message.
 
 Still not done / not decided (unchanged): the page stays `noindex`, outside sitemap and navigation; no public launch until the editorial decisions and authorizations are confirmed. The marketing repo has no test runner, so `readEstimatedValue` was checked with a 16-case script (all passed) and the project typecheck, not with a committed test.
+
+## Static audit of the built page (2026-10-09)
+
+Method: `next build --webpack` on a copy of this branch, then a script over `.next/server/app/prenez-votre-place.html`. No real browser was available in the session (none installed, no network for one, and Claude does not sign in for the user), so this is an audit of the generated HTML, not a visual or keyboard test.
+
+| Check | Result |
+|---|---|
+| Build | Passed. `/prenez-votre-place` is prerendered static content. |
+| Not published for search | `<meta name="robots" content="noindex, follow">`; the route is absent from `sitemap.xml` and from the home page and Partners page links. |
+| Language and title | `lang="fr"`, title "Prenez votre place — Bright Academy FC", one `h1`, ten `h2`. |
+| Form fields | 37 fields, no duplicate id, every text field has a label; the nine offer checkboxes are labelled by wrapping labels. |
+| Consent | The consent box is `required` on the three forms, and the referral form also requires the referred person's agreement. |
+| Anti-spam | Three honeypot inputs, `tabindex=-1`, `autocomplete=off`. |
+| Payments | No payment provider name or checkout link anywhere in the HTML. The only disabled button is the contribution button. |
+| Prices | "à partir de" and "HT" are present. |
+| Images | None without alt text. |
+| Focus | A global `:focus-visible` outline exists (app/globals.css); inputs also have their own ring. |
+| Motion | Added `motion-reduce` to the two hover lift effects (the site had no reduced-motion handling). |
+
+Not checked and needing a person with a browser: contrast on the dark sections, the look at 360 px width, tab order through the three forms, the success and error messages on a real submit, and the photos and rights listed above. Run `npm run dev`, open `/prenez-votre-place`, and submit each form once against the QA OS app.
+
+Noted: the page's own contact block uses 07 99 84 47 58, while the site footer and WhatsApp links use 07 16 47 86 25 (already decision 5 above).
