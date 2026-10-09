@@ -12,6 +12,7 @@ import {
   SITE_SLUGS,
   STAT_KEYS,
   buildDetail,
+  detailUi,
   parseDetailId,
   programsAtSite,
   sentences,
@@ -106,7 +107,7 @@ test("no sponsorship amount and no parent fee is ever shown", () => {
 });
 
 test("offers, activations and placements say prices on request and availability not published", () => {
-  const por = { en: "Prices on request", fr: "Prix sur demande" };
+  const por = { en: "Prices on request", fr: "Tarifs sur demande" };
   const np = { en: "Not published", fr: "Non publié" };
   for (const l of langs) {
     for (const id of ALL_DETAIL_IDS.filter((i) => /^(offer|activation|placement)-/.test(i))) {
@@ -158,5 +159,65 @@ test("proposal requests are pre-filled with the topic", () => {
     const v = buildDetail("offer-main", src(l))!;
     assert.ok(v.proposal.body.includes(content[l].partners.offerGroups[0].items[0].name));
     assert.ok(v.proposal.whatsapp.includes("2026–2027"));
+  }
+});
+
+test("approved conservative wording: no unsupported claims, no invented activation text", () => {
+  const banned = [
+    /internal records|registres internes/i,
+    /being checked|en cours de vérification/i,
+    /any site|chaque site/i,
+    /can build|peut construire/i,
+    /can be associated|peut être associé/i,
+    /defined with (the|each) (partner|company)|défini avec (le|chaque) (partenaire|l'entreprise)/i,
+    /home page|page d'accueil/i,
+  ];
+  for (const l of langs) {
+    for (const id of ALL_DETAIL_IDS) {
+      for (const s of texts(buildDetail(id, src(l)))) {
+        for (const re of banned) assert.ok(!re.test(s), `${l} ${id}: "${s}" matches ${re}`);
+      }
+    }
+  }
+});
+
+test("sites and programs carry no sponsorship price or availability rows", () => {
+  for (const l of langs) {
+    for (const id of ALL_DETAIL_IDS.filter((i) => /^(site|program)-/.test(i))) {
+      const v = buildDetail(id, src(l))!;
+      const joined = texts(v).join(" | ");
+      assert.ok(!/Tarifs sur demande|Prices on request/.test(joined), `${l} ${id} shows a price status`);
+      assert.ok(!/sponsorship|partenariat de ce|Disponibilité de partenariat/i.test(joined.replace(/Programs? sponsorship/g, "")), `${l} ${id}: ${joined.slice(0, 80)}`);
+    }
+  }
+});
+
+test("activation views keep only sourced descriptions", () => {
+  const en = (k: string) => texts(buildDetail(`activation-${k}` as never, src("en"))).join(" | ");
+  assert.ok(en("competitions").includes("Competitions are listed among the activations. No format or date is published."));
+  assert.ok(en("company-events").includes("Company events are listed among the activations. No format or date is published."));
+  assert.ok(en("youth-operations").includes("Operations with young people are listed among the activations."));
+  // No invented link between Youth operations / Branded content and the Jersey sponsor or CSR offers.
+  for (const [act, offer] of [["youth-operations", "offer-csr"], ["branded-content", "offer-jersey"]] as const) {
+    const v = buildDetail(`activation-${act}` as never, src("en"))!;
+    for (const s of v.sections) if (s.kind === "links") assert.ok(!s.items.some((i) => i.id === offer), `${act} -> ${offer}`);
+  }
+  const csr = buildDetail("offer-csr", src("en"))!;
+  for (const s of csr.sections) if (s.kind === "links") assert.ok(!s.items.some((i) => i.id === "activation-youth-operations"));
+  // Technical is in kind only.
+  assert.ok(texts(buildDetail("offer-technical", src("en"))).includes("In kind"));
+  assert.ok(texts(buildDetail("offer-technical", src("fr"))).includes("En nature"));
+});
+
+test("the two known schedule conflicts are still marked to be confirmed in both languages", () => {
+  for (const [l, tbc] of [["en", "To be confirmed"], ["fr", "À confirmer"]] as const) {
+    for (const [id, label] of [["site-palais-des-sports", "Bright Kids"], ["program-kids", "Palais des Sports de Treichville"], ["site-arena-bassam", "Bright Junior"], ["program-junior", "Arena Bassam"]] as const) {
+      const v = buildDetail(id, src(l))!;
+      const links = v.sections.find((s) => s.kind === "links" && s.items.some((i) => i.label === label));
+      assert.ok(links && links.kind === "links", `${l} ${id} has ${label}`);
+      assert.equal(links.items.find((i) => i.label === label)?.status, "tbc");
+    }
+    assert.equal(detailUi(l).statusLabel.tbc, tbc);
+    assert.equal(detailUi(l).statusLabel.por, l === "en" ? "Prices on request" : "Tarifs sur demande");
   }
 });

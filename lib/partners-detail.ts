@@ -141,7 +141,7 @@ const UI = {
     details: "Détails",
     requestProposal: "Demander une proposition",
     askWhatsapp: "Écrire sur WhatsApp",
-    statusLabel: { np: "Non publié", tbc: "À confirmer", por: "Prix sur demande" } as Record<Status, string>,
+    statusLabel: { np: "Non publié", tbc: "À confirmer", por: "Tarifs sur demande" } as Record<Status, string>,
     kinds: {
       stat: "Chiffre clé",
       site: "Site d'entraînement",
@@ -224,7 +224,7 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
   const siteNames = siteList.map((s) => s.name);
   const seasonValue = "2026–2027";
   const np = (label: string): Fact => ({ label, value: ui.statusLabel.np, status: "np" });
-  const por = (label: string = T("Price", "Prix")): Fact => ({ label, value: ui.statusLabel.por, status: "por" });
+  const por = (label: string = T("Price", "Tarifs")): Fact => ({ label, value: ui.statusLabel.por, status: "por" });
 
   const [kind, ...restParts] = id.split("-") as [DetailKind, ...string[]];
   const key = restParts.join("-");
@@ -364,8 +364,6 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
         rows: [
           { label: T("Area", "Quartier"), value: site.area },
           np(T("Players at this site", "Joueurs sur ce site")),
-          np(T("Sponsorship availability at this site", "Disponibilité de partenariat sur ce site")),
-          por(T("Sponsorship price", "Prix de partenariat")),
         ],
       },
       {
@@ -383,8 +381,8 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
       sections.push({
         kind: "note",
         text: T(
-          "Pairings marked “To be confirmed” differ between the club's internal records and are being checked; none is final. Weekly times are shown on the Sites section of the home page.",
-          "Les associations marquées « À confirmer » diffèrent selon les registres internes du club et sont en cours de vérification ; aucune n'est définitive. Les horaires hebdomadaires figurent dans la section Sites de la page d'accueil.",
+          "Pairings marked “To be confirmed” are not final.",
+          "Les associations marquées « À confirmer » ne sont pas définitives.",
         ),
       });
     }
@@ -392,8 +390,8 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
       kind: "text",
       paragraphs: [
         T(
-          "Partner days, youth operations and match-day activations can be discussed for any site. None is scheduled or published at this stage.",
-          "Journées partenaires, opérations avec les jeunes et activations de jour de match peuvent être discutées pour chaque site. Aucune n'est programmée ni publiée à ce stade.",
+          "No site-specific partnership is published. Contact the club to discuss a proposal.",
+          "Aucun partenariat propre à un site n'est publié. Contactez le club pour en discuter.",
         ),
       ],
     });
@@ -415,7 +413,6 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
           { label: T("Age range", "Tranche d'âge"), value: cat.range },
           { label: T("Focus", "Objectif"), value: cat.note },
           np(T("Players in this program", "Joueurs dans ce programme")),
-          np(T("Sponsorship availability", "Disponibilité de partenariat")),
         ],
       },
       {
@@ -433,8 +430,8 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
       sections.push({
         kind: "note",
         text: T(
-          "Sites marked “To be confirmed” differ between the club's internal records and are being checked; none is final.",
-          "Les sites marqués « À confirmer » diffèrent selon les registres internes du club et sont en cours de vérification ; aucun n'est définitif.",
+          "Sites marked “To be confirmed” are not final.",
+          "Les sites marqués « À confirmer » ne sont pas définitifs.",
         ),
       });
     }
@@ -442,8 +439,8 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
       kind: "text",
       paragraphs: [
         T(
-          "A program can be associated with youth operations or a CSR partnership. The scope is defined with the club; no sponsorship of this program is currently published.",
-          "Un programme peut être associé à des opérations avec les jeunes ou à un partenariat RSE. Le périmètre est défini avec le club ; aucun partenariat de ce programme n'est publié à ce jour.",
+          `The ${offers[OFFER_KEYS.indexOf("csr")].item.name} offer covers “an identified youth program”. Which program is not published.`,
+          `L'offre ${offers[OFFER_KEYS.indexOf("csr")].item.name} porte sur « un programme jeunesse identifié ». Le programme concerné n'est pas publié.`,
         ),
       ],
     });
@@ -458,8 +455,7 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
     const placementsOf: Partial<Record<(typeof OFFER_KEYS)[number], number[]>> = { main: [1], jersey: [2, 3], official: [4, 5] };
     const activationsOf: Partial<Record<(typeof OFFER_KEYS)[number], (typeof ACTIVATION_KEYS)[number][]>> = {
       main: ["partner-days", "branded-content"],
-      jersey: ["challenges", "branded-content"],
-      csr: ["youth-operations"],
+      jersey: ["challenges"],
       mvp: ["trophy-presentations"],
     };
     const sections: Section[] = [
@@ -469,7 +465,7 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
         rows: [
           { label: T("Format", "Format"), value: o.item.tag },
           { label: T("Season", "Saison"), value: seasonValue },
-          { label: T("Contribution", "Contribution"), value: T("Cash or in kind", "Numéraire ou en nature") },
+          { label: T("Contribution", "Contribution"), value: ok === "technical" ? T("In kind", "En nature") : T("Cash or in kind", "Numéraire ou en nature") },
           por(),
           np(T("Availability", "Disponibilité")),
         ],
@@ -494,17 +490,17 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
     const paragraphs: string[] = (() => {
       switch (ak) {
         case "challenges":
-          return [T("Challenges are an activation built with each partner, alongside match-day content.", "Les challenges sont une activation construite avec chaque partenaire, en complément des contenus de jour de match.")];
+          return [T(`Challenges are listed in the ${offerByName("jersey").name} offer.`, `Les challenges figurent dans l'offre ${offerByName("jersey").name}.`)];
         case "partner-days":
           return [p.exampleBody];
         case "competitions":
-          return [T("Competitions are one of the activations the club can build with a partner. The format is defined with the partner; none is scheduled or published at this stage.", "Les concours font partie des activations que le club peut construire avec un partenaire. Le format est défini avec le partenaire ; aucun n'est programmé ni publié à ce stade.")];
+          return [T("Competitions are listed among the activations. No format or date is published.", "Les concours figurent parmi les activations. Aucun format ni aucune date n'est publié.")];
         case "youth-operations":
-          return [offerByName("csr").body];
+          return [T("Operations with young people are listed among the activations. No format or date is published.", "Les opérations avec les jeunes figurent parmi les activations. Aucun format ni aucune date n'est publié.")];
         case "branded-content":
           return [p.dimensions[2].body];
         case "company-events":
-          return [T("Company events are listed among the activations. No format or date is published; it is defined with the company.", "Les événements d'entreprise figurent parmi les activations. Aucun format ni aucune date n'est publié ; il est défini avec l'entreprise.")];
+          return [T("Company events are listed among the activations. No format or date is published.", "Les événements d'entreprise figurent parmi les activations. Aucun format ni aucune date n'est publié.")];
         case "trophy-presentations":
           return [offerByName("mvp").body, p.exampleBody];
       }
@@ -513,8 +509,8 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
       challenges: ["jersey"],
       "partner-days": ["main"],
       competitions: [],
-      "youth-operations": ["csr"],
-      "branded-content": ["main", "jersey"],
+      "youth-operations": [],
+      "branded-content": ["main"],
       "company-events": [],
       "trophy-presentations": ["mvp"],
     };
@@ -524,7 +520,6 @@ export function buildDetail(id: DetailId, src: DetailSources): DetailView | null
         kind: "facts",
         rows: [
           np(T("Dates", "Dates")),
-          { label: T("Format", "Format"), value: T("Defined with each partner", "Défini avec chaque partenaire") },
           por(),
           np(T("Availability", "Disponibilité")),
         ],
