@@ -4,9 +4,9 @@ Written 2026-10-09 during Patrick's overnight mission (Priority 3). Branch `feat
 
 ## Status of the brief
 
-The mission refers to Patrick's full document "BRIGHT ACADEMY FC: PROMPT PRINCIPAL" as the functional and editorial reference (phases, texts, offers, amounts, visual identity). **That document was not available to this session**: it is not in the conversation, the connected folders, Google Drive or Gmail. Only its title and the rules summarised in the mission message were available.
+The mission message refers to Patrick's full document "BRIGHT ACADEMY FC: PROMPT PRINCIPAL". **That document was not available to this session** (not in the conversation, the connected folders, Google Drive or Gmail). Later the same night Patrick sent the working document "Campagne CHEZ NOUS" (28 pages) and 12 campaign visuals. Those are the source actually used; see `01-prenez-votre-place.md`. Its concept names differ from the mission's (CHEZ NOUS and "Le club du village doit jouer chez lui" instead of "Le terrain qui n'attend que nous" and "Le club qui joue chez lui"), and it states the sporting status differently (see the conflict below).
 
-Consequence: no campaign copy, offer, amount, testimonial, figure or photograph has been written or invented. Everything below is limited to what the repositories show and to the rules stated in the mission message. Public pages for Concept 1 and the Entreprises space are **not started**; they need the brief.
+No copy, offer, amount, testimonial, figure or photograph was invented: everything on the page comes from that document or the visuals.
 
 ## Which repository, project and backend
 
@@ -49,7 +49,7 @@ The live `/partners` page (and `lib/content.ts`) says the club was **promoted to
 6. No exclusivity offered that conflicts with Tielo Sport SAS / PUMA kit rights.
 7. No contribution is mandatory for players or families. No fundraising target is shown before its budget and use are validated.
 
-## Proposed order of work once the brief is available
+## Order of work
 
 1. Concept 1 "LE TERRAIN QUI N'ATTEND QUE NOUS" (hero, status of the project split into existing / prepared / funded / still to do, signatures). Marketing repo.
 2. Entreprises & Partenaires space with the validated offers. Marketing repo plus the public route.
