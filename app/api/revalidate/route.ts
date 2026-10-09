@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { secretsMatch, selectPaths } from "@/lib/revalidate-paths";
 
-// Added 2026-08-29 alongside the paths cap below — a generous ceiling for
-// any real caller (a single publish action never touches more than a
-// handful of routes) while ruling out a single call revalidating hundreds
-// of paths at once.
-const MAX_REVALIDATE_PATHS = 50;
 
 /**
  * On-demand ISR revalidation, called by the OS app right after a Content
@@ -27,33 +23,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, skipped: "not_configured" });
   }
 
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${secret}`) {
+  // Constant-time comparison, so response time says nothing about the secret.
+  const authHeader = request.headers.get("authorization") ?? "";
+  const provided = authHeader.startsWith("Bearer ") ? authHeader.slice("Bearer ".length) : null;
+  if (!secretsMatch(provided, secret)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let paths: string[] = ["/"];
+  let requested: unknown;
   try {
-    const body = (await request.json()) as unknown;
-    const requested = (body as { paths?: unknown } | null)?.paths;
-    if (Array.isArray(requested) && requested.every((p) => typeof p === "string") && requested.length > 0) {
-      // Capped 2026-08-29 — this route is bearer-token protected, but the
-      // token is shared with the OS app's server, not scoped per-call, so
-      // nothing previously stopped one authenticated call from requesting
-      // an unbounded `paths` array and forcing excessive revalidation load.
-      // Truncating (not rejecting outright) keeps a legitimate multi-path
-      // call working while capping the blast radius of a misbehaving or
-      // malicious one.
-      paths = (requested as string[]).slice(0, MAX_REVALIDATE_PATHS);
-    }
+    requested = ((await request.json()) as { paths?: unknown } | null)?.paths;
   } catch {
-    // No body, or not JSON — fall back to revalidating "/" (the gallery's
-    // home).
+    // No body, or not JSON: refresh the home page, as before.
   }
 
-  for (const path of paths) {
+  // Only this site's real pages, de-duplicated and capped (see lib/revalidate-paths.ts).
+  const { accepted, rejected } = selectPaths(requested);
+  if (accepted.length === 0) {
+    return NextResponse.json({ error: "No valid path to revalidate" }, { status: 400 });
+  }
+
+  for (const path of accepted) {
     revalidatePath(path);
   }
 
-  return NextResponse.json({ ok: true, revalidated: paths });
+  return NextResponse.json({ ok: true, revalidated: accepted, ignored: rejected });
 }
