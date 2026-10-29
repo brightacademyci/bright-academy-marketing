@@ -12,6 +12,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/careers",
   title: "Carrières — Bright Academy",
   description: "Rejoignez l'équipe Bright Academy — coachs, personnel d'accueil et profils de soutien sur nos sites à Abidjan et Grand-Bassam.",
+  image: { path: "/images/og/careers.jpg", alt: "Rejoignez notre équipe — Bright Academy" },
 });
 
 export default async function CareersPage() {

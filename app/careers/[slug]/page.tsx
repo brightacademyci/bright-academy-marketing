@@ -5,6 +5,10 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { getJobOpening } from "@/lib/api";
 import { SITE_URL } from "@/lib/content";
+import { shareImage } from "@/lib/metadata";
+
+// Every job opening shares the Careers image ("Rejoignez notre équipe").
+const CAREERS_SHARE_IMAGE = { path: "/images/og/careers.jpg", alt: "Rejoignez notre équipe — Bright Academy" };
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -34,8 +38,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       ...(description ? { description } : {}),
       url: `${SITE_URL}/careers/${slug}`,
-      images: [{ url: "/images/og/social-share.jpg", width: 1200, height: 630 }],
+      images: [shareImage(CAREERS_SHARE_IMAGE)],
       type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      ...(description ? { description } : {}),
+      images: [CAREERS_SHARE_IMAGE.path],
     },
   };
 }

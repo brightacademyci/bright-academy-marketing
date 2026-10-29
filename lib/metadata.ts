@@ -10,6 +10,18 @@ import { SITE_URL } from "@/lib/content";
 
 const OG_IMAGE = { url: "/images/og/social-share.jpg", width: 1200, height: 630 };
 
+/**
+ * A page's own share image (what WhatsApp, Facebook, LinkedIn, X and
+ * iMessage show when its link is posted). Files live in public/images/og/
+ * and should be 1200x630 so no platform crops them. Pages that don't pass
+ * one keep the site-wide default above.
+ */
+export type ShareImage = { path: string; alt?: string };
+
+export function shareImage(image?: ShareImage) {
+  return image ? { url: image.path, width: 1200, height: 630, ...(image.alt ? { alt: image.alt } : {}) } : OG_IMAGE;
+}
+
 export type PageMetadataOptions = {
   /** Site-relative path, e.g. "/news". Used for canonical, hreflang stubs, and the OG url. */
   path: string;
@@ -38,6 +50,8 @@ export type PageMetadataOptions = {
    * default true, pass false to omit.
    */
   openGraph?: boolean;
+  /** This page's own share image; see ShareImage. Defaults to the site-wide image. */
+  image?: ShareImage;
 };
 
 export function buildPageMetadata({
@@ -47,6 +61,7 @@ export function buildPageMetadata({
   noindex,
   languages = true,
   openGraph = true,
+  image,
 }: PageMetadataOptions): Metadata {
   return {
     title,
@@ -62,9 +77,21 @@ export function buildPageMetadata({
             title,
             ...(description ? { description } : {}),
             url: `${SITE_URL}${path}`,
-            images: [OG_IMAGE],
+            images: [shareImage(image)],
             type: "website",
           },
+          // Next doesn't merge twitter with the layout's either: without
+          // this, X/Twitter would keep showing the site-wide image.
+          ...(image
+            ? {
+                twitter: {
+                  card: "summary_large_image" as const,
+                  title,
+                  ...(description ? { description } : {}),
+                  images: [image.path],
+                },
+              }
+            : {}),
         }
       : {}),
   };
