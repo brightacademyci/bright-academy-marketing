@@ -27,6 +27,12 @@ export function Reveal({ children, className = "", delay = 0, as = "div" }: Reve
       return;
     }
 
+    // A block taller than the screen (the 35-player squad on a phone) can
+    // never be 15% visible at once, so it would stay invisible forever.
+    // Cap the threshold to the share of the block a screen can show.
+    const height = el.offsetHeight || 1;
+    const threshold = Math.min(0.15, (window.innerHeight * 0.5) / height);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -34,7 +40,7 @@ export function Reveal({ children, className = "", delay = 0, as = "div" }: Reve
           observer.disconnect();
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      { threshold, rootMargin: "0px 0px -40px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
