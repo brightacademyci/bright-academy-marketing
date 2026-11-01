@@ -119,22 +119,31 @@ export function PlayerProfileSection({ profile }: { profile: PlayerProfile }) {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={profile.photoUrl} alt={profile.fullName} className="h-full w-full object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-white/10 font-display text-2xl font-bold text-white/70">
-                  {profile.jerseyNumber ?? "?"}
+                <div className="flex h-full w-full items-center justify-center bg-white/10">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-12 w-12 text-white/35">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8H4z" />
+                  </svg>
                 </div>
-              )}
-              {profile.jerseyNumber !== null && (
-                <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-orange text-[13px] font-bold text-navy-deep ring-4 ring-navy-deep">
-                  {profile.jerseyNumber}
-                </span>
               )}
             </div>
             <div className="text-center sm:text-left">
               <h1 className="font-display text-2xl font-bold text-white md:text-3xl">{profile.fullName}</h1>
+              {profile.nickname && <p className="mt-1 text-[14px] italic text-orange/80">“{profile.nickname}”</p>}
               {meta && <p className="mt-2 text-[14px] text-white/60">{meta}</p>}
-              {profile.heightCm !== null && (
+              {profile.heightCm !== null && profile.heightCm !== undefined && (
                 <p className="mt-1 text-[13px] text-white/50">
-                  {pt.heightLabel}: <span className="text-white/80">{profile.heightCm} cm</span>
+                  {pt.heightLabel}: <span className="text-white/80">{Math.round(profile.heightCm)} cm</span>
+                </p>
+              )}
+              {profile.weightKg !== null && profile.weightKg !== undefined && (
+                <p className="mt-1 text-[13px] text-white/50">
+                  {pt.weightLabel}: <span className="text-white/80">{Math.round(profile.weightKg)} kg</span>
+                </p>
+              )}
+              {profile.preferredFoot && (
+                <p className="mt-1 text-[13px] text-white/50">
+                  {pt.footLabel}: <span className="text-white/80">{t.firstTeam.footValues[profile.preferredFoot]}</span>
                 </p>
               )}
             </div>

@@ -128,6 +128,15 @@ export interface FirstTeamPlayer {
    *  bright-academy-os — a computed age, never the raw birthdate. See that
    *  repo's lib/data/public-site.ts for why the date itself stays private. */
   age: number | null;
+  /** 2027-28 squad update: nickname, strong foot, height (cm), weight (kg)
+   *  and which squad the player belongs to. jerseyNumber is always null on
+   *  the public endpoint now -- the shirt number is intentionally not
+   *  published. Optional so an older API deploy still renders. */
+  nickname?: string | null;
+  preferredFoot?: "left" | "right" | "both" | null;
+  heightCm?: number | null;
+  weightKg?: number | null;
+  squad?: "main" | "reserve";
 }
 
 /** Added 2026-08-30, mirrors PublicTopScorer in bright-academy-os. */
@@ -333,6 +342,11 @@ export interface PlayerProfile {
    *  field's own doc comment for why height ships here but preferredFoot
    *  doesn't. */
   heightCm: number | null;
+  /** 2027-28 squad update -- mirrors PublicPlayerProfile in bright-academy-os. */
+  weightKg?: number | null;
+  nickname?: string | null;
+  preferredFoot?: "left" | "right" | "both" | null;
+  squad?: "main" | "reserve";
   appearances: number;
   goals: number;
   recentAppearances: PlayerProfileAppearance[];

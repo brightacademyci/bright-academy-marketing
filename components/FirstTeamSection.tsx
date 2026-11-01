@@ -109,8 +109,31 @@ function peekWindow(standings: FirstTeamStanding[], windowSize = 5): FirstTeamSt
  *  Made clickable the same day, linking to the new player-profile page
  *  (app/first-team/players/[id]/page.tsx) — same crest-vs-crest Link
  *  pattern FixtureRow already uses for /live/[id] below. */
-function PlayerCard({ player, ageSuffix }: { player: FirstTeamPlayer; ageSuffix: string }) {
-  const meta = [player.position, player.age !== null ? `${player.age} ${ageSuffix}` : null].filter(Boolean).join(" · ");
+interface PlayerCardDict {
+  ageSuffix: string;
+  footValues: { left: string; right: string; both: string };
+}
+
+/** Generic head-and-shoulders placeholder for a player with no photo yet.
+ *  2027-28 squad update: the shirt number is no longer published, so the
+ *  placeholder no longer falls back to it. */
+function PhotoPlaceholder({ className = "h-7 w-7" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={`${className} text-white/35`}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8H4z" />
+    </svg>
+  );
+}
+
+function PlayerCard({ player, dict }: { player: FirstTeamPlayer; dict: PlayerCardDict }) {
+  const meta = [player.position, player.age !== null ? `${player.age} ${dict.ageSuffix}` : null].filter(Boolean).join(" · ");
+  const foot = player.preferredFoot ? dict.footValues[player.preferredFoot] : null;
+  const stats = [
+    player.heightCm ? `${Math.round(player.heightCm)} cm` : null,
+    player.weightKg ? `${Math.round(player.weightKg)} kg` : null,
+    foot,
+  ].filter(Boolean).join(" · ");
   return (
     <Link
       href={`/first-team/players/${player.id}`}
@@ -121,19 +144,16 @@ function PlayerCard({ player, ageSuffix }: { player: FirstTeamPlayer; ageSuffix:
           // eslint-disable-next-line @next/next/no-img-element
           <img src={player.photoUrl} alt={player.fullName} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-white/10 font-display text-[15px] font-bold text-white/70">
-            {player.jerseyNumber ?? "?"}
+          <div className="flex h-full w-full items-center justify-center bg-white/10">
+            <PhotoPlaceholder />
           </div>
         )}
-        {player.jerseyNumber !== null && (
-          <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange text-[10px] font-bold text-navy-deep ring-2 ring-navy-deep">
-            {player.jerseyNumber}
-          </span>
-        )}
       </div>
-      <div>
+      <div className="min-w-0">
         <h3 className="font-display text-[14px] font-semibold text-white">{player.fullName}</h3>
+        {player.nickname && <p className="text-[12px] italic text-orange/80">“{player.nickname}”</p>}
         {meta && <p className="text-[12px] text-white/60">{meta}</p>}
+        {stats && <p className="mt-0.5 text-[12px] text-white/50">{stats}</p>}
       </div>
     </Link>
   );
@@ -238,12 +258,18 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
   const [openAlbumId, setOpenAlbumId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>("squad");
   const [positionFilter, setPositionFilter] = useState<PositionGroup | "all">("all");
+  // 2027-28 squad update: main squad vs reserve squad. A player with no
+  // squad value (older API) counts as main.
+  const [squadTier, setSquadTier] = useState<"main" | "reserve">("main");
   // Standings peek/expand — added 2026-08-30, see peekWindow()'s own doc
   // comment above. Resets to collapsed on every language switch/remount is
   // fine — it's a glance, not a preference worth persisting.
   const [standingsExpanded, setStandingsExpanded] = useState(false);
 
-  const grouped = useMemo(() => groupPlayers(team.players), [team.players]);
+  const mainPlayers = useMemo(() => team.players.filter((p) => (p.squad ?? "main") === "main"), [team.players]);
+  const reservePlayers = useMemo(() => team.players.filter((p) => p.squad === "reserve"), [team.players]);
+  const tierPlayers = squadTier === "reserve" ? reservePlayers : mainPlayers;
+  const grouped = useMemo(() => groupPlayers(tierPlayers), [tierPlayers]);
   const availableGroups = POSITION_GROUP_ORDER.filter((g) => grouped[g].length > 0);
   const visibleGroups = positionFilter === "all" ? availableGroups : availableGroups.filter((g) => g === positionFilter);
 
@@ -267,7 +293,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
   const visibleStandings = standingsExpanded || !standingsNeedsPeek ? team.standings : peekWindow(team.standings);
 
   const TABS: { key: TabKey; label: string; count: number }[] = [
-    { key: "squad", label: tabs.squad, count: team.players.length },
+    { key: "squad", label: tabs.squad, count: mainPlayers.length + reservePlayers.length },
     { key: "staff", label: tabs.staff, count: team.staff.length },
     { key: "fixtures", label: tabs.fixtures, count: team.fixtures.length + team.results.length },
     { key: "gallery", label: tabs.gallery, count: team.gallery.length },
@@ -495,6 +521,31 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
               <p className="mt-4 text-[13px] text-white/60">{t.firstTeam.noSquad}</p>
             ) : (
               <>
+                {reservePlayers.length > 0 && (
+                  <div className="mt-5 inline-flex rounded-full bg-white/5 p-1 ring-1 ring-white/10" role="tablist">
+                    {(["main", "reserve"] as const).map((tier) => (
+                      <button
+                        key={tier}
+                        role="tab"
+                        aria-selected={squadTier === tier}
+                        onClick={() => {
+                          setSquadTier(tier);
+                          setPositionFilter("all");
+                        }}
+                        className={`rounded-full px-4 py-1.5 text-[12px] font-semibold transition ${
+                          squadTier === tier ? "bg-orange text-navy-deep" : "text-white/70 hover:text-white"
+                        }`}
+                      >
+                        {t.firstTeam.squadTiers[tier]} ({tier === "main" ? mainPlayers.length : reservePlayers.length})
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {tierPlayers.length === 0 && (
+                  <p className="mt-4 text-[13px] text-white/60">
+                    {squadTier === "reserve" ? t.firstTeam.noReserve : t.firstTeam.noSquad}
+                  </p>
+                )}
                 <div className="mt-5 flex flex-wrap gap-2">
                   <button
                     onClick={() => setPositionFilter("all")}
@@ -502,7 +553,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                       positionFilter === "all" ? "bg-orange text-navy-deep" : "bg-white/10 text-white/70 hover:bg-white/20"
                     }`}
                   >
-                    {posLabels.all} ({team.players.length})
+                    {posLabels.all} ({tierPlayers.length})
                   </button>
                   {availableGroups.map((g) => (
                     <button
@@ -528,7 +579,7 @@ export function FirstTeamSection({ teamEn, teamFr }: { teamEn: FirstTeam; teamFr
                       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {grouped[g].map((player, i) => (
                           <Reveal key={player.id} delay={i * 40}>
-                            <PlayerCard player={player} ageSuffix={t.firstTeam.ageSuffix} />
+                            <PlayerCard player={player} dict={t.firstTeam} />
                           </Reveal>
                         ))}
                       </div>
